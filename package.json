@@ -1,0 +1,46 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "npm run development",
+    "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "npm run development -- --watch",
+    "watch-poll": "npm run watch -- --watch-poll",
+    "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --disable-host-check --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "prod": "npm run production",
+    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+  },
+  "devDependencies": {
+    "axios": "^0.19.2",
+    "bootstrap": "^4.6.0",
+    "cross-env": "^7.0.3",
+    "jquery": "^3.6.0",
+    "laravel-mix": "^5.0.9",
+    "lodash": "^4.17.21",
+    "popper.js": "^1.12",
+    "resolve-url-loader": "^2.3.1",
+    "sass": "1.32.13",
+    "sass-loader": "^8.0.0",
+    "vue": "^2.6.14",
+    "vue-template-compiler": "^2.6.14"
+  },
+  "dependencies": {
+    "date-fns": "^2.23.0",
+    "laravel-vue-pagination": "^2.3.1",
+    "luxon": "^1.28.0",
+    "nprogress": "^0.2.0",
+    "object-to-formdata": "^4.1.0",
+    "sweetalert2": "^9.17.2",
+    "v-money": "^0.8.1",
+    "vform": "^1.0.1",
+    "vue-datetime": "^1.0.0-beta.14",
+    "vue-html-to-paper": "^1.4.3",
+    "vue-moment": "^4.1.0",
+    "vue-plugin-load-script": "^1.3.2",
+    "vue-router": "^3.5.2",
+    "vue-select": "^3.12.1",
+    "vue2-filters": "^0.11.0",
+    "vuejs-datepicker": "^1.6.2",
+    "vuex": "^3.5.1",
+    "weekstart": "^1.0.1"
+  }
+}
