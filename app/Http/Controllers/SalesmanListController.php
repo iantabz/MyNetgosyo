@@ -183,7 +183,7 @@ class SalesmanListController extends Controller
         //     ->where(['tbl_customer_salesman.salesman_code' => $request->usercode, 'tbl_customer_salesman.status' => 1])
         //     ->paginate(10);
 
-        return CustomerMasterFile::where('salesman_code', $request->usercode)->paginate(10);
+        return CustomerMasterFile::where('salesman_code', $request->usercode)->orderBy('address3')->paginate(10);
     }
 
     public function getAssignSalesmanCustomerList()
@@ -192,8 +192,8 @@ class SalesmanListController extends Controller
         //     ->whereNotIn('account_code', SalesmanList::leftJoin('tbl_customer_salesman', 'tbl_customer_salesman.salesman_code', 'salesman_lists.user_code')
         //         ->where('tbl_customer_salesman.salesman_code', request()->usercode)
         //         ->pluck('cus_customer_code'))->paginate(10);
-        
-         return CustomerMasterFile::where('salesman_code', '!=', request()->usercode)->paginate(10);
+
+        return CustomerMasterFile::where('salesman_code', '!=', request()->usercode)->paginate(10);
     }
 
     public function searchAssignSalesmanCustomerList()
@@ -211,15 +211,15 @@ class SalesmanListController extends Controller
 
         // $query = $query->paginate(10);
         // return $query;
-        
+
         $query =  CustomerMasterFile::where([
             ['salesman_code', '!=', request()->usercode],
             ['status',  1]
-            ]);
-        
+        ]);
+
         if ($search !== 'null') $query = $query->where('account_name', 'LIKE', "%$search%");
         if ($address !== 'null') $query = $query->where('address3', 'LIKE', "%$address%");
-        
+
         $query = $query->paginate(10);
         return $query;
     }
@@ -254,15 +254,15 @@ class SalesmanListController extends Controller
         // }
 
         // return response()->json(['message' => 'Error']);
-        
+
         foreach ($request->account_code as $key => $id) {
-        
+
             $result = CustomerMasterFile::where('account_code', $id)->update([
                 'salesman_code' => $request->user_code,
                 'status' => $request->status
-                ]);
+            ]);
         }
-        
+
         if ($result) {
             return response()->json(['message' => 'Success']);
         }
@@ -279,12 +279,12 @@ class SalesmanListController extends Controller
         //         ['customer_master_files.account_name', 'LIKE', "%$search%"],
         //         ['tbl_customer_salesman.status', 1]
         //     ])->paginate(10);
-        
+
         return CustomerMasterFile::where([
-                ['salesman_code', $request->usercode],
-                ['account_name', 'LIKE', "%$search%"],
-                ['status', 1]
-            ])->paginate(10);
+            ['salesman_code', $request->usercode],
+            ['account_name', 'LIKE', "%$search%"],
+            ['status', 1]
+        ])->paginate(10);
     }
 
     public function getMaxCode(Request $request)
@@ -310,7 +310,7 @@ class SalesmanListController extends Controller
             // $code = array_slice($code, 2);
 
             // $code = (int) implode('', $code) + 1;
-            
+
             $code = $code[1] + 1;
 
             $max = "$division-$const$code";
@@ -356,12 +356,12 @@ class SalesmanListController extends Controller
         //     'cus_customer_code' => request()->account_code,
         //     'salesman_code' => request()->code
         // ])->delete();
-        
+
         $result =  CustomerMasterFile::where([
-                'account_code' => request()->account_code,
-                'salesman_code' => request()->code
-                ])->update(['salesman_code' => '']);
-   
+            'account_code' => request()->account_code,
+            'salesman_code' => request()->code
+        ])->update(['salesman_code' => '']);
+
         if ($result) {
             return 'Success';
         }

@@ -12,9 +12,6 @@
           >
             <i class="fa fa-plus"></i> Add New
           </button>
-          <!-- <button class="btn btn-default">
-            <i class="demo-pli-printer"></i>
-          </button>-->
         </div>
         <div class="col-md-6 table-toolbar-right">
           <form class="form-horizontal">
@@ -37,6 +34,87 @@
           </form>
         </div>
       </div>
+      <table
+        class="table table-hover table-bordered table-striped table-vcenter"
+        width="100%"
+      >
+        <thead>
+          <tr>
+            <th>User code</th>
+            <th>Name</th>
+            <th>Mobile no.</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-if="!hepe.data.length">
+            <td colspan="4" class="text-center">No data available</td>
+          </tr>
+          <tr v-for="(hepeData, index) in hepe.data" :key="index">
+            <td>{{ hepeData.first_name + ' ' + hepeData.last_name }}</td>
+            <td></td>
+            <td></td>
+            <td>
+              <div class="btn-group dropdown" v-if="hepeData.status == '1'">
+                <button
+                  class="btn btn-xs btn-info btn-active-blue dropdown-toggle dropdown-toggle-icon"
+                  data-toggle="dropdown"
+                  type="button"
+                >
+                  Active
+                  <i class="dropdown-caret"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li>
+                    <a
+                      href="#"
+                      style="color: blue"
+                      @click="btn_activation(hepeData.id, '1')"
+                      >Active</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      style="color: red"
+                      @click="btn_activation(hepeData.id, '0')"
+                      >Inactive</a
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div class="btn-group dropdown" v-else>
+                <button
+                  class="btn btn-xs btn-danger btn-active-blue dropdown-toggle dropdown-toggle-icon"
+                  data-toggle="dropdown"
+                  type="button"
+                >
+                  Inactive
+                  <i class="dropdown-caret"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li>
+                    <a
+                      href="#"
+                      style="color: blue"
+                      @click="btn_activation(hepeData.id, '1')"
+                      >Active</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      style="color: red"
+                      @click="btn_activation(hepeData.id, '0')"
+                      >Inactive</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
       <div class="row">
         <div class="col-md-12" v-if="!hepe.data.length">
           <button
@@ -80,19 +158,6 @@
                         <i class="icon-lg icon-fw demo-psi-pen-5"></i> Edit
                       </a>
                     </li>
-                    <!-- <li>
-                      <a href="javascript:;">
-                        <i class="icon-lg icon-fw demo-pli-recycling"></i>
-                        Remove
-                      </a>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                      <a href="javascript:;">
-                        <i class="icon-lg icon-fw demo-pli-mail"></i> Send a
-                        Message
-                      </a>
-                    </li> -->
                     <li>
                       <a href="javascript:;">
                         <i class="icon-lg icon-fw demo-pli-calendar-4"></i> View
