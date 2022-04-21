@@ -1,5 +1,5 @@
 <!-- @format -->
-<template>
+<template> 
   <div id="page-body">
     <div class="panel">
       <div
@@ -11,7 +11,7 @@
           class="panel-title"
           style="font-weight: bold; font-size: 20px; padding: 15px 0px 0px 25px;"
         >
-          <i class="fa fa-truck"></i> Salesman List
+          <i class="fa fa-truck"></i> Salesman list
         </h3>
       </div>
       <div class="panel-body" v-if="!show_su_div && !show_edit" id="tblDtl">
