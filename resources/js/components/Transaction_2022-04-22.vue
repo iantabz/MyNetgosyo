@@ -57,6 +57,42 @@
             <div id="demo-lft-tab-1" class="tab-pane fade active in">
               <!-- style="background-color:#ffffff; padding:2px;" -->
               <div class="panel-body">
+                <!-- <div class="row" style="padding:0;"> -->
+                  <!-- <div class="col-md-12"> -->
+                    
+                      <!-- <div class="row">
+                        <div class="col-md-6">
+                          <form
+                            action="order"
+                            @submit.prevent="submitformorder"
+                            method="post"
+                            enctype="multipart/form-data"
+                            class="form-inline"
+                          >
+                            <div class="form-group form-inline col-md-6">
+                              <label for="dt-picker-from-1">Date From</label>
+                              <datetime class="form-controlx"
+                                  v-model="dateFrom"
+                                  value-zone="Asia/Manila"
+                                  zone="Asia/Manila"
+                                  id="dt-picker-from-1"
+                                ></datetime>
+                            </div>
+                            <div class="form-group form-inline col-md-6">
+                              <label for="dt-picker-to-1">Date To</label>
+                                <datetime class="form-controlx"
+                                  v-model="dateTo"
+                                  value-zone="Asia/Manila"
+                                  zone="Asia/Manila"
+                                  id="dt-picker-to-1"
+                                ></datetime>
+                            </div>
+                          </form>
+                        </div>
+                      </div> -->
+                  <!-- </div> -->
+                <!-- </div> -->
+                <!------------------------------------------------------------->
                 <div class="row">
                   <div class="col-md-12">
                       <!-- ongoingtrans_table_filter -->
@@ -106,7 +142,15 @@
                         </div>
                       </div>
                     
-                    <!-- /ongoingtrans_table_filter -->
+                    <!-- <div class="btn-tool">
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-default">Date From</button>
+                        <button type="button" class="btn btn-default">Date To</button>
+                        <button type="button" class="btn btn-default">Search</button>
+                      </div>
+                    </div> -->
+
+                      <!-- /ongoingtrans_table_filter -->
                     <div class="table-responsive" style="padding:5px;">
 
                       <!-- kaloy 2021-10-11 -->
@@ -117,7 +161,7 @@
                           @click="searchTrans=null;getResults();"
                           class="text-info"
                           title="Click to refresh list"
-                          style="margin-right:7px;"><span class="fa fa-refresh"></span></a>
+                          style="margin-right:7px;"><span class="fa fa-refresh"> Refresh List</span></a>
                       </div>
 
                       <table
@@ -133,8 +177,8 @@
                             <th>Date Ordered</th>
                             <!--kaloy 2022-04-07-->
                             <th>Total Amount <br>(Ordered)</th>
-                            <th>Total Amount <br>(Approved)</th>
-                            <th>%</th>
+                            <th>Total Amount <br>(Approved/Delivered)</th>
+                            
                             <th>Status</th>
                             <th>Action</th>
                           </tr>
@@ -157,10 +201,10 @@
                           <tr
                             v-for="MgaTransaction in transaction.data"
                             :key="MgaTransaction.id"
-                            :style="(MgaTransaction.tot_amt != parseFloat(MgaTransaction.lineTotal.toFixed(2))
-                                && (MgaTransaction.tran_stat != 'Approved')
-                              ) ? 'color:red;' : ''
-                            "
+                            :style="(MgaTransaction.tot_amt != 
+                              parseFloat(MgaTransaction.lineTotal.toFixed(2))
+                              && MgaTransaction.tran_stat != 'Approved'
+                            ) ? 'color:red;' : ''"
                           >
                             <!-- kaloy 09-22-21 -->
                             <td @click="copyTextToClipboard($event)"
@@ -183,11 +227,6 @@
                             </td>
                             <td style="text-align:right;">
                               {{ MgaTransaction.tot_del_amt | toCurrency }}
-                            </td>
-
-                            <!-- kaloy 2022-04-19 -->
-                            <td>
-                              {{ (MgaTransaction.tot_del_amt / MgaTransaction.tot_amt * 100).toFixed(1) }}%
                             </td>
                             
                             <td
@@ -279,46 +318,38 @@
                 </div>
                 <br />
                 <!-- <div class="row" style="text-align: right;"> -->
-                
-                <!-- //TODO: TOTAL_AMT_SECTION - Ongoing Transactions -->
+
                 <!-- total_amount -->
                 <div class="row">
-                  <div 
-                    class="col-md-12" 
-                    style="text-align:right;display:flex;justify-content:right;"
-                  >
-                    <div class="panel" 
-                      style="padding-bottom:0;margin-bottom:0;"
-                    >
-                      <div class="panel-body">
-                        Total Amount (Ordered)
-                        <br>
-                        <h3
-                          style="padding:0;margin:0;"
-                        >
-                          <span class="label label-success">{{ total_amt_tran | toCurrency }}</span>
-                        </h3>
+                  <div class="col-md-4"></div>
+                  <div class="col-md-4"></div>
+                  <div class="col-md-4">
+                    <div class="btn-group btn-group-justified pull-right">
+                      <div class="btn-group btn-group-lg">
+                        <button type="button" class="btn btn-secondary">Total Amount</button>
                       </div>
-                    </div>
-                    <div class="panel" 
-                      style="padding-bottom:0;margin-bottom:0;"
-                    >
-                      <div class="panel-body">
-                        Total Amount (Approved)
-                        <br>
-                        <h3
-                          style="padding:0;margin:0;"
-                        >
-                          <span class="label label-success">{{ total_amt_approved | toCurrency }}</span>
-                        </h3>
+                      <div class="btn-group btn-group-lg">
+                        <button type="button" class="btn btn-info">{{ total_amt_tran | toCurrency }}</button>
                       </div>
                     </div>
                   </div>
                 </div>
 
+                <!-- old total amount layout -->
+                <!-- <div class="row">
+                  <div class="col-md-11">
+                    <div class="col-lg-9">
+                      <h4 style="color: green;">Total Amount:</h4>
+                    </div>
+                    <div class="col-lg-2">
+                      <h4 style="color: green;">
+                        {{ total_amt_tran | toCurrency }}
+                      </h4>
+                    </div>
+                  </div>
+                </div> -->
               </div>
             </div>
-
             <div id="demo-lft-tab-5" class="tab-pane fade">
               <div class="panel-body">
                 <div class="row" style="padding:10px;">
@@ -1263,14 +1294,14 @@
                   </div>
                 </div>
                 <br />
-
+                <!-- total_amount -->
                 <div class="row">
                   <div class="col-md-4"></div>
                   <div class="col-md-4"></div>
                   <div class="col-md-4">
                     <div class="btn-group btn-group-justified pull-right">
                       <div class="btn-group btn-group-lg">
-                        <button type="button" class="btn btn-secondary">Total Amount (Approved/Delivered)</button>
+                        <button type="button" class="btn btn-secondary">Total Amount</button>
                       </div>
                       <div class="btn-group btn-group-lg">
                         <button type="button" class="btn btn-info">{{ total_amt_tran7 | toCurrency }}</button>
@@ -1643,9 +1674,7 @@
     </div>
 
     <!----------------------------------Form Modal 1------------------------------------------->
-    
-    <!-- //? Ongoing Transactions -->
-    <!-- //? View Order Items Modal -->
+
     <div
       class="modal fade"
       id="setupMdl1"
@@ -1722,24 +1751,16 @@
                   </table>
                 </div>
               <br />
-              <div class="row">
-                <div class="col-md-3" style="text-align:right;">
-                  
-                </div>
-                <div class="col-md-3" style="text-align:right;">
-                  
-                </div>
-                <div class="col-md-3" style="text-align:right;">
-                  <h4>
-                    <span>Total Amount:</span>
-                    <span>{{ total_amt_line | toCurrency }}</span>
-                  </h4>
-                </div>
-                <div class="col-md-3" style="text-align:right;">
-                  <h4>
-                    <span>Total Amount Served:</span>
-                    <span>{{ total_amt_served | toCurrency }}</span>
-                  </h4>
+              <div class="row" style="text-align: right;">
+                <div class="col-md-11">
+                  <div class="col-lg-9">
+                    <h4 style="color: green;">Total Amount:</h4>
+                  </div>
+                  <div class="col-lg-2">
+                    <h4 style="color: green;">
+                      {{ total_amt_line | toCurrency }}
+                    </h4>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2518,22 +2539,12 @@ export default {
       searchTrans6: null,
       searchTrans7: null,
       searchItemLog: null,
-
-      // ? Ongoing Trans' Total Amount(Ordered)
       total_amt_tran: 0,
-      // ? Ongoing Trans' Total Amount(Approved)
-      total_amt_approved: 0,
-
       total_amt_tran4: 0,
       total_amt_tran5: 0,
       total_amt_tran6: 0,
       total_amt_tran7: 0,
       total_amt_line: 0,
-
-      //? total amount served (Ongoing Trans' View Order Items Modal)
-      //? per transaction
-      total_amt_served: 0,
-      
       orderTable: {},
       dateActive: false,
       dateActive4: false,
@@ -2890,11 +2901,7 @@ export default {
           dateTo
         )}&name=${search}&dateActive=${dateActive}`
       )
-
-      // kaloy 2022-04-11
-      // console.log('TESSSSSST:', data);
-      this.total_amt_tran = data.total_amount_ongoing;
-      this.total_amt_approved = data.total_amount_approved;
+      this.total_amt_tran = data
     },
 
     async getTotalAmountDel(dateFrom, dateTo, search, dateActive) {
@@ -2948,9 +2955,7 @@ export default {
 
     async getAllTotalAmount() {
       const { data } = await axios.get('transaction/getTotalAll')
-      // kaloy 2022-04-11
-      this.total_amt_tran = data.total_amount_all_ongoing;
-      this.total_amt_approved = data.total_amount_all_approved;
+      this.total_amt_tran = data
     },
 
     async getDeliveredTotalAmount() {
@@ -2975,30 +2980,22 @@ export default {
 
     getResults(page = 1) {
       if (this.dateFrom != this.dateTo) {
-        this.dateActive = true;
+        this.dateActive = true
       }
-      this.total_amt_tran = 0;
-      this.total_amt_approved = 0;
+      this.total_amt_tran = 0
       // this.ongoingTransCurrentDatasetTotal = 0
-      let url = null;
-      // if (!this.searchTrans) {
-      //   url = `/transaction/getTransaction/transaction?dateFrom=${btoa(
-      //     this.dateFrom
-      //   )}&dateTo=${btoa(this.dateTo)}&dateActive=${this.dateActive}&page=`
-      // } else {
-      //   url = `/transaction/getTransaction/transaction?dateFrom=${btoa(
-      //     this.dateFrom
-      //   )}&dateTo=${btoa(this.dateTo)}&name=${this.searchTrans}&dateActive=${
-      //     this.dateActive
-      //   }&page=`
-      // }
-      if(this.searchTrans==null) this.searchTrans = '';
-      url = `/transaction/getTransaction/transaction?dateFrom=${btoa(
-        this.dateFrom
-      )}&dateTo=${btoa(this.dateTo)}&name=${this.searchTrans}&dateActive=${
-        this.dateActive
-      }&page=`;
-
+      let url = null
+      if (!this.searchTrans) {
+        url = `/transaction/getTransaction/transaction?dateFrom=${btoa(
+          this.dateFrom
+        )}&dateTo=${btoa(this.dateTo)}&dateActive=${this.dateActive}&page=`
+      } else {
+        url = `/transaction/getTransaction/transaction?dateFrom=${btoa(
+          this.dateFrom
+        )}&dateTo=${btoa(this.dateTo)}&name=${this.searchTrans}&dateActive=${
+          this.dateActive
+        }&page=`
+      }
       // kaloy 2021-09-29
       this.isLoadingTextVisible = 1
       axios.get(url + page).then(response => {
@@ -3007,7 +3004,7 @@ export default {
 
         console.log('RESDATA from getResults():', resData);
 
-        // kaloy 2021-10-05 =========================================
+        // kaloy 2021-10-05
         // let tot_amt_sum = 0
         // resData.data.forEach(function(tran){
         //   console.log('Transaction:', tran);
@@ -3015,49 +3012,44 @@ export default {
         // });
         // this.ongoingTransCurrentDatasetTotal = tot_amt_sum;
 
-        // kaloy 2022-04-11
-        // if (this.dateFrom != this.dateTo) {
-        //   this.getTotalAmount(
-        //     this.dateFrom,
-        //     this.dateTo,
-        //     this.searchTrans,
-        //     this.dateActive
-        //   )
-        // } else {
-        //   if (this.dateActive === true) {
-        //     if (this.dateFrom === this.dateTo) {
-        //       this.getTotalAmount(
-        //         this.dateFrom,
-        //         this.dateTo,
-        //         this.searchTrans,
-        //         this.dateActive
-        //       )
-        //     } else {
-        //       this.getTotalAmount(
-        //         this.dateFrom,
-        //         this.dateTo,
-        //         this.searchTrans,
-        //         this.dateActive
-        //       )
-        //     }
-        //   } else {
-        //     if (!this.searchTrans) {
-        //       this.getAllTotalAmount()
-        //     }
-        //   }
-        // }
-        if (!this.dateActive && !this.searchTrans) {
-          this.getAllTotalAmount();
-        } else {
+        if (this.dateFrom != this.dateTo) {
+          this.total_amt_tran = 0
+
           this.getTotalAmount(
             this.dateFrom,
             this.dateTo,
             this.searchTrans,
             this.dateActive
-          );
+          )
+        } else {
+          if (this.dateActive === true) {
+            if (this.dateFrom === this.dateTo) {
+              this.total_amt_tran = 0
+
+              this.getTotalAmount(
+                this.dateFrom,
+                this.dateTo,
+                this.searchTrans,
+                this.dateActive
+              )
+            } else {
+              this.total_amt_tran = 0
+
+              this.getTotalAmount(
+                this.dateFrom,
+                this.dateTo,
+                this.searchTrans,
+                this.dateActive
+              )
+            }
+          } else {
+            if (!this.searchTrans) {
+              this.total_amt_tran = 0
+
+              this.getAllTotalAmount()
+            }
+          }
         }
-
-
         // kaloy 2021-09-29
         this.isLoadingTextVisible = 0
         // setTimeout(() => {
@@ -3382,8 +3374,7 @@ export default {
     },
 
     orderDetails(tran_no) {
-      this.total_amt_line = 0;
-      this.total_amt_served = 0;
+      this.total_amt_line = 0
       axios
         .get(`/transaction/getOrderTransaction/order_detail/?id=${tran_no}`)
         .then(response => {
@@ -3393,11 +3384,7 @@ export default {
             // console.log(datas.downloaded)
             // this.downloaded = datas.downloaded
             this.total_amt_line =
-              this.total_amt_line + parseFloat(datas['tot_amt']);
-
-              if(datas['itm_stat'] == 'Served' || datas['itm_stat'] == 'Lacking') {
-                this.total_amt_served = this.total_amt_served + parseFloat(datas['tot_amt']);
-              }
+              this.total_amt_line + parseFloat(datas['tot_amt'])
           })
 
           if (Object.keys(this.order).length) {
@@ -3581,8 +3568,7 @@ export default {
           })
         })
 
-      // kaloy 2022-04-11
-      // this.getResults()
+      this.getResults()
     },
 
     detailsOrder4(doc_no) {
