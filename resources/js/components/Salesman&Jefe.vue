@@ -58,4 +58,9 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+/** @format */
+.nav-tabs li.active {
+  border-bottom: 0px solid #ff5722;
+}
+</style>

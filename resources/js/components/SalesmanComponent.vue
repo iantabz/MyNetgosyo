@@ -1074,22 +1074,33 @@
                     <div class="tab-content">
                       <div class="tab-pane fade in active" id="demo-tabs-box-1">
                         <div class="row">
+                          <div class="form-group">
+                            <label
+                              class="control-label text-main text-semibold"
+                              style="text-align: left; padding-left: 15px;"
+                              >Salesman Code:
+                            </label>
+
+                            <span
+                              class="text-warning text-semibold"
+                              style="text-align: left;"
+                              >{{ usercode }}
+                            </span>
+                          </div>
+                        </div>
+                        <div class="row">
                           <div
                             class="col-md-6 table-toolbar-left form-horizontal"
                           >
-                            <div class="form-group">
-                              <label
-                                class="control-label text-main text-semibold"
-                                style="text-align: left; padding-left: 15px;"
-                                >Salesman Code:
-                              </label>
-
-                              <span
-                                class="text-warning text-semibold"
-                                style="text-align: left;"
-                                >{{ usercode }}
-                              </span>
-                            </div>
+                            <button
+                              class="btn btn-primary btn-rounded"
+                              @click="addBtn()"
+                              style="margin-right: 8-px; margin-left: 8px;"
+                              :disabled="!salesmanCustomerList.data.length"
+                            >
+                              <i class="fa fa-print"></i>
+                              Print customer list
+                            </button>
                           </div>
                           <div class="col-md-6 table-toolbar-right">
                             <form class="form-horizontal">
@@ -2080,27 +2091,27 @@ export default {
                 //   allowOutsideClick: false
                 // }).then(result => {
                 //   if (result.value) {
-             
-            $.niftyNoty({
-                type: 'success',
-                icon: 'pli-cross icon-2x',
-                message:
-                  '<i class="fa fa-check"></i> Information has been changed.',
-                container: 'floating',
-                timer: 5000
-              })
-                    $('#container').css('position', 'relative')
-                    Promise.all([
-                      this.getAssignSalesmanCustomerList(code),
-                      this.getCustomerListTbl(code)
-                    ]).then(response => {
-                      this.assignCustomer = response[0].data
-                      this.salesmanCustomerList = response[1].data
-                      $('#customersMdl').modal('show')
-                    })
-                    this.searchSalesmanCustomer = null
-                    this.assignSearchCustomer = null
-                    this.address = null
+
+                $.niftyNoty({
+                  type: 'success',
+                  icon: 'pli-cross icon-2x',
+                  message:
+                    '<i class="fa fa-check"></i> Information has been changed.',
+                  container: 'floating',
+                  timer: 5000
+                })
+                $('#container').css('position', 'relative')
+                Promise.all([
+                  this.getAssignSalesmanCustomerList(code),
+                  this.getCustomerListTbl(code)
+                ]).then(response => {
+                  this.assignCustomer = response[0].data
+                  this.salesmanCustomerList = response[1].data
+                  $('#customersMdl').modal('show')
+                })
+                this.searchSalesmanCustomer = null
+                this.assignSearchCustomer = null
+                this.address = null
                 //   } else {
                 //     $.niftyNoty({
                 //       type: 'danger',
@@ -2248,7 +2259,7 @@ export default {
 .tab-base .nav-tabs > .active > a,
 .tab-base .nav-tabs > .active a:hover,
 .tab-base .nav-tabs > .active > a:focus {
-  box-shadow: inset 0 -2px 0 0 #1e3a57 !important;
+  /* box-shadow: inset 0 -2px 0 0 #1e3a57 !important; */
 }
 
 #container .table-hover > tbody > tr:hover {

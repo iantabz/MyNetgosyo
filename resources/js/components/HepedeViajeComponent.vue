@@ -3,292 +3,162 @@
 <template>
   <div id="page-body">
     <div v-if="!show_su_div && !show_edit">
-      <div class="row pad-btm" style="padding-bottom: 8px">
-        <div class="col-sm-6 toolbar-left">
-          <button
-            id="demo-btn-addrow"
-            class="btn btn-warning shadow"
-            @click="addBtn()"
+      <div class="panel">
+        <div class="panel-heading">
+          <h3
+            class="panel-title"
+            style="font-weight: bold; font-size: 20px; padding: 15px 0px 0px 25px;"
           >
-            <i class="fa fa-plus"></i> Add New
-          </button>
-          <!-- <button class="btn btn-default">
-            <i class="demo-pli-printer"></i>
-          </button>-->
+            <i class="fa fa-truck"></i> Jepe de viaje
+          </h3>
         </div>
-        <div class="col-md-6 table-toolbar-right">
-          <form class="form-horizontal">
-            <div class="form-group" style="margin-bottom: 0px">
-              <label
-                class="col-md-6 control-label text-main text-bold"
-                style="color: white"
-                >Search:</label
+        <div class="panel-body">
+          <div class="row" style="margin: 0px 0px 10px 0px">
+            <div class="col-lg-12">
+              <button
+                class="btn btn-primary btn-rounded pull-right"
+                @click="addBtn()"
+                style="margin-right: 8-px; margin-left: 8px;"
               >
-              <div class="col-md-6">
-                <input
-                  type="text"
-                  class="form-control shadow"
-                  @keyup="search"
-                  v-model="searchHepe"
-                  placeholder="Search Jefe name"
-                />
-              </div>
+                <i class="fa fa-plus"></i>
+                Add new
+              </button>
             </div>
-          </form>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12" v-if="!hepe.data.length">
-          <button
-            type="submit"
-            class="btn btn-default btn-block btn-lg text-main text-bold disabled"
-            style="cursor: not-allowed; margin: 35px 0px"
+          </div>
+          <div class="row">
+            <div class="col-md-6 table-toolbar-left">
+            </div>
+            <div class="col-md-6 table-toolbar-right">
+              <form class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-6 control-label">Search:</label>
+                  <div class="col-md-6">
+                    <input
+                      type="text"
+                      class="form-control"
+                      @keyup="search"
+                      v-model="searchHepe"
+                      placeholder="Search by name or usercode"
+                    />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <table
+            class="table table-hover table-bordered table-striped table-vcenter"
+            width="100%"
           >
-            No data available.
-          </button>
-        </div>
-        <div
-          class="col-sm-4 col-md-3"
-          v-for="(hepeData, index) in hepe.data"
-          :key="index"
-          style="margin-top: -5px"
-        >
-          <div class="panel pos-rel">
-            <div class="pad-all text-center shadow">
-              <div class="widget-control">
-                <a
-                  href="javascript:;"
-                  data-original-title="Favorite"
-                  class="add-tooltip btn btn-trans"
-                >
-                  <span id="star" @click="favoriteBtn(1)">
-                    <i class="demo-psi-star icon-lg"></i>
-                  </span>
-                </a>
-                <div class="btn-group dropdown">
-                  <a
-                    href="javascript:;"
-                    data-toggle="dropdown"
-                    aria-expanded="false"
-                    class="dropdown-toggle btn btn-trans"
+            <thead>
+              <tr>
+                <th>User code</th>
+                <th>Jefe</th>
+                <th>Mobile no.</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-if="!hepe.data.length">
+                <td colspan="4" class="text-center">No data available</td>
+              </tr>
+              <tr v-for="(hepeData, index) in hepe.data" :key="index">
+                <td>{{ hepeData.user_code }}</td>
+                <td>{{ hepeData.first_name + ' ' + hepeData.last_name }}</td>
+                <td>{{ hepeData.mobile }}</td>
+                <td>
+                  <div class="btn-group dropdown" v-if="hepeData.status == '1'">
+                    <button
+                      class="btn btn-xs btn-info btn-active-blue dropdown-toggle dropdown-toggle-icon"
+                      data-toggle="dropdown"
+                      type="button"
+                    >
+                      Active
+                      <i class="dropdown-caret"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                      <li>
+                        <a
+                          href="#"
+                          style="color: blue"
+                          @click="btn_activation(hepeData.id, '1')"
+                          >Active</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          href="#"
+                          style="color: red"
+                          @click="btn_activation(hepeData.id, '0')"
+                          >Inactive</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="btn-group dropdown" v-else>
+                    <button
+                      class="btn btn-xs btn-danger btn-active-blue dropdown-toggle dropdown-toggle-icon"
+                      data-toggle="dropdown"
+                      type="button"
+                    >
+                      Inactive
+                      <i class="dropdown-caret"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                      <li>
+                        <a
+                          href="#"
+                          style="color: blue"
+                          @click="btn_activation(hepeData.id, '1')"
+                          >Active</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          href="#"
+                          style="color: red"
+                          @click="btn_activation(hepeData.id, '0')"
+                          >Inactive</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                  <button class="btn btn-xs btn-info" @click="editBtn()">
+                    <i class="fa fa-edit"></i>
+                  </button>
+                  <button
+                    class="btn btn-xs btn-info"
+                    @click="list(hepeData, hepeData.user_code)"
                   >
-                    <i class="demo-psi-dot-vertical icon-lg"></i>
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-right">
-                    <li>
-                      <a href="javascript:;" @click="editBtn()">
-                        <i class="icon-lg icon-fw demo-psi-pen-5"></i> Edit
-                      </a>
-                    </li>
-                    <!-- <li>
-                      <a href="javascript:;">
-                        <i class="icon-lg icon-fw demo-pli-recycling"></i>
-                        Remove
-                      </a>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                      <a href="javascript:;">
-                        <i class="icon-lg icon-fw demo-pli-mail"></i> Send a
-                        Message
-                      </a>
-                    </li> -->
-                    <li>
-                      <a href="javascript:;">
-                        <i class="icon-lg icon-fw demo-pli-calendar-4"></i> View
-                        Details
-                      </a>
-                    </li>
-                    <li>
-                      <a href="javascript:;">
-                        <i class="icon-lg icon-fw demo-pli-lock-user"></i> Lock
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div class="">
-                <a href="#">
-                  <img
-                    v-if="index % 2"
-                    alt="Profile Picture"
-                    src="assets/img/profile-photos/1.png"
-                    class="img-lg img-circle mar-ver"
-                  />
-                  <img
-                    v-else
-                    alt="Profile Picture"
-                    src="assets/img/profile-photos/3.png"
-                    class="img-lg img-circle mar-ver"
-                  />
-                  <p class="text-lg text-semibold mar-no text-main">
-                    {{ hepeData.first_name + ' ' + hepeData.last_name }}
-                  </p>
-                  <p class="text-sm">{{ hepeData.title }}</p>
-                  <p class="text-sm text-muted" v-if="hepeData.status == '1'">
-                    <span
-                      class="label label-success"
-                      style="margin-bottom: 10px"
-                      >ACTIVE</span
-                    >
-                  </p>
-                  <p class="text-sm text-muted" v-else>
-                    <span class="label label-danger" style="margin-bottom: 10px"
-                      >INACTIVE</span
-                    >
-                  </p>
-                </a>
-                <!-- <div class="media pad-ver">
-                  <div class="media-left">
-                    <a href="javascript:;" class="box-inline">
-                      <img
-                        v-if="index % 2"
-                        alt="Profile Picture"
-                        src="assets/img/profile-photos/1.png"
-                        class="img-md img-circle"
-                      />
-                      <img
-                        v-else
-                        alt="Profile Picture"
-                        src="assets/img/profile-photos/3.png"
-                        class="img-md img-circle"
-                      />
-                    </a>
-                  </div>
-                  <div class="media-body pad-top">
-                    <a href="javascript:;" class="box-inline">
-                      <span class="text-lg text-semibold text-main">{{
-                        hepeData.first_name + ' ' + hepeData.last_name
-                      }}</span>
-                      <p class="text-sm" style="margin-bottom: 0">
-                        {{ hepeData.title }}
-                      </p>
-                      <p
-                        class="text-sm text-muted"
-                        v-if="hepeData.status == '1'"
-                      >
-                        <span
-                          class="label label-success"
-                          style="margin-bottom: 10px"
-                          >ACTIVE</span
-                        >
-                      </p>
-                      <p class="text-sm text-muted" v-else>
-                        <span
-                          class="label label-danger"
-                          style="margin-bottom: 10px"
-                          >INACTIVE</span
-                        >
-                      </p>
-                    </a>
-                  </div>
-                </div> -->
-                <!-- <table class="table table-condensed">
-                <tbody>
-                  <tr>
-                    <td class="text-main text-bold">User Code</td>
-                    <td class="text-main">{{hepeData.user_code}}</td>
-                  </tr>
-                  <tr>
-                    <td class="text-main text-bold">Username</td>
-                    <td class="text-main">{{hepeData.username}}</td>
-                  </tr>
-                </tbody>
-              </table>-->
-                <div class="text-center pad-top">
-                  <div class="btn-group">
-                    <a
-                      href="javascript:;"
-                      class="btn btn-sm btn-default"
-                      @click="list(hepeData, hepeData.user_code)"
-                    >
-                      <i class="demo-pli-consulting icon-lg icon-fw"></i>
-                      Salesman
-                    </a>
-                    <a
-                      href="javascript:;"
-                      class="btn-group dropdown"
-                      v-if="hepeData.status == '1'"
-                    >
-                      <button
-                        class="btn btn-default btn-sm btn-active-pink dropdown-toggle dropdown-toggle-icon"
-                        data-toggle="dropdown"
-                        type="button"
-                        aria-expanded="false"
-                      >
-                        <i class="demo-psi-gear"></i>
-                        Status
-                        <i class="dropdown-caret"></i>
-                      </button>
-                      <ul class="dropdown-menu" style>
-                        <li>
-                          <a
-                            href="javascript:;"
-                            style="color: red"
-                            @click="btn_activation(hepeData.id, '0')"
-                            >Inactive</a
-                          >
-                        </li>
-                        <li></li>
-                      </ul>
-                    </a>
-                    <a href="javascript:;" class="btn-group dropdown" v-else>
-                      <button
-                        class="btn btn-default btn-sm btn-active-pink dropdown-toggle dropdown-toggle-icon"
-                        data-toggle="dropdown"
-                        type="button"
-                        aria-expanded="false"
-                      >
-                        <i class="demo-psi-gear"></i>
-                        Status
-                        <i class="dropdown-caret"></i>
-                      </button>
-                      <ul class="dropdown-menu" style>
-                        <li>
-                          <a
-                            href="javascript:;"
-                            style="color: blue"
-                            @click="btn_activation(hepeData.id, '1')"
-                            >Active</a
-                          >
-                        </li>
-                        <li></li>
-                      </ul>
-                    </a>
-                    <!-- <a
-                      href="javascript:;"
-                      class="btn btn-sm btn-default"
-                      @click="editBtn()"
-                    >
-                      <i class="demo-pli-pen-5 icon-lg icon-fw"></i> Edit
-                    </a> -->
-                  </div>
-                </div>
+                    <i class="fa fa-list-ul"></i> Salesman
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="col-md-12">
+            <div class="col-md-6">
+              Showing {{ hepe.from }} to {{ hepe.to }} of
+              {{ hepe.total }} entries
+              <span v-if="searchHepe"
+                >(Filtered from {{ form.total_result }} total entries)</span
+              >
+            </div>
+            <div class="col-md-6">
+              <div class="text-right">
+                <pagination
+                  style="margin: 0 0 20px 0"
+                  :limit="1"
+                  :show-disabled="true"
+                  :data="hepe"
+                  @pagination-change-page="getResults"
+                ></pagination>
               </div>
             </div>
           </div>
+          <hr class="new-section-sm" />
         </div>
       </div>
-      <div class="col-md-12">
-        <div class="col-md-6">
-          Showing {{ hepe.from }} to {{ hepe.to }} of {{ hepe.total }} entries
-          <span v-if="searchHepe"
-            >(Filtered from {{ form.total_result }} total entries)</span
-          >
-        </div>
-        <div class="col-md-6">
-          <div class="text-right">
-            <pagination
-              style="margin: 0 0 20px 0"
-              :limit="1"
-              :show-disabled="true"
-              :data="hepe"
-              @pagination-change-page="getResults"
-            ></pagination>
-          </div>
-        </div>
-      </div>
-      <hr class="new-section-sm" />
     </div>
 
     <div class="panel">
