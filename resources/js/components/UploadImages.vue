@@ -199,7 +199,12 @@
                                   id="submitform"
                                   class="btn btn-primary"
                                 >
-                                  <i class="fa fa-cloud-upload"></i> {{ isSubmitting ? 'Uploading images, please wait...' : 'Upload Images' }}
+                                  <i class="fa fa-cloud-upload"></i>
+                                  {{
+                                    isSubmitting
+                                      ? 'Uploading images, please wait...'
+                                      : 'Upload Images'
+                                  }}
                                 </button>
                                 <button
                                   id="dz-remove-btn"
@@ -406,7 +411,6 @@
                       </tr>
                     </thead>
                     <tbody>
-                      
                       <tr v-if="!items.data.length">
                         <td colspan="6" class="text-center">
                           No data available
@@ -417,14 +421,19 @@
                         :key="MgaItems.item_masterfiles_id"
                       >
                         <td style="width:50px;padding:2px;text-align:center;">
-                        <!-- kaloy 2021-10-20 -->
-                          <a href="javascript:void(0)" 
-                            data-toggle="modal" 
-                            data-target="#mdlPreviewImage" 
-                            @click="currentImagePreviewUrl=MgaItems.image"
+                          <!-- kaloy 2021-10-20 -->
+                          <a
+                            href="javascript:void(0)"
+                            data-toggle="modal"
+                            data-target="#mdlPreviewImage"
+                            @click="currentImagePreviewUrl = MgaItems.image"
                           >
-                            <img :src="MgaItems.image" srcset=""
-                              width="50" height="50">
+                            <img
+                              :src="MgaItems.image"
+                              srcset=""
+                              width="50"
+                              height="50"
+                            />
                           </a>
                         </td>
                         <td>{{ MgaItems.product_name }}</td>
@@ -556,25 +565,31 @@
         </div>
       </div>
     </div>
-    
+
     <!-- kaloy 2022-04-04 -->
     <div class="panel">
       <div class="panel-body">
         <div class="panel-heading">
           <h3 class="panel-title" style="font-weight: bold; font-size: 20px">
-            <i class="fa fa-upload"></i> Upload Grouped Items (BCOM, BULK, FLOWRACK)
+            <i class="fa fa-upload"></i> Upload Grouped Items (BCOM, BULK,
+            FLOWRACK)
           </h3>
         </div>
         <div class="row">
           <div class="col-md-6">
-            <input type="file" name="file" ref="file_grouped_items" accept=".csv" @change="handleGroupedItemsUpload($event)"
+            <input
+              type="file"
+              name="file"
+              ref="file_grouped_items"
+              accept=".csv"
+              @change="handleGroupedItemsUpload($event)"
               class="form-control"
-            >
+            />
           </div>
           <div class="col-md-6">
             <button class="btn btn-primary" @click="submitGroupedItemsUpload()">
-                Upload
-              </button>
+              Upload
+            </button>
           </div>
           <div class="col-md-6"></div>
         </div>
@@ -864,9 +879,7 @@
                         <div class="col-md-2">
                           <div
                             class="thumbnail"
-                            v-if="
-                              form1.image !== this.$root.adminAccess
-                            "
+                            v-if="form1.image !== this.$root.adminAccess"
                           >
                             <img
                               v-bind:src="`/${form1.image}`"
@@ -874,12 +887,7 @@
                               alt
                             />
                             <div class="caption">
-                              <h6
-                                v-if="
-                                  form1.image !==
-                                    this.$root.adminAccess
-                                "
-                              >
+                              <h6 v-if="form1.image !== this.$root.adminAccess">
                                 {{ form1.prdct_name }}
                               </h6>
                             </div>
@@ -1037,7 +1045,7 @@
                   <tr>
                     <th>Item Code</th>
                     <th>Path</th>
-                    <th>Date Uploaded</th>  
+                    <th>Date Uploaded</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -1098,7 +1106,6 @@
             enctype="multipart/form-data"
           >
             <div class="modal-body">
-
               <!-- kaloy 2021-10-19 -->
               <div class="row">
                 <div class="col-md-9">
@@ -1335,11 +1342,7 @@
                     v-model="form.item_masterfiles_id"
                   />
                   <div class="thumbnailx">
-                    <img
-                      v-bind:src="form.image"
-                      style="width:100%;"
-                      alt
-                    />
+                    <img v-bind:src="form.image" style="width:100%;" alt />
                     <div class="caption">
                       <h5 class="text-center">
                         {{ form.prdct_name }}
@@ -1357,7 +1360,7 @@
                     </div>
                   </div> -->
                 </div>
-
+              </div>
             </div>
             <!-- /modal body -->
 
@@ -1643,9 +1646,7 @@
                         <div class="col-md-2">
                           <div
                             class="thumbnail"
-                            v-if="
-                              form2.image !== this.$root.adminAccess
-                            "
+                            v-if="form2.image !== this.$root.adminAccess"
                           >
                             <img
                               v-bind:src="form2.image"
@@ -1653,12 +1654,7 @@
                               alt
                             />
                             <div class="caption">
-                              <h6
-                                v-if="
-                                  form2.image !==
-                                    this.$root.adminAccess
-                                "
-                              >
+                              <h6 v-if="form2.image !== this.$root.adminAccess">
                                 {{ form2.prdct_name }}
                               </h6>
                             </div>
@@ -1710,7 +1706,7 @@
         Uploading images, please wait...
       </div>
     </div>
-    
+
     <!-- kaloy 2021-10-20 -->
     <!-- img_preview -->
     <div
@@ -1738,14 +1734,13 @@
           <div class="modal-body">
             <div class="row">
               <div class="col-md-12">
-                <img :src="currentImagePreviewUrl" style="width:100%;">
+                <img :src="currentImagePreviewUrl" style="width:100%;" />
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -1783,7 +1778,6 @@
     color: #ffffff;
   }
 }
-
 </style>
 
 <script>
@@ -1929,10 +1923,10 @@ export default {
       searchItemsFlowrack: null,
       searchItemsBCOM: null,
       category: null,
-    //   kaloy 2021-10-20
-    currentImagePreviewUrl: null,
-    // kaloy 2022-04-05
-    fileGroupedItems: '',
+      //   kaloy 2021-10-20
+      currentImagePreviewUrl: null,
+      // kaloy 2022-04-05
+      fileGroupedItems: ''
     }
   },
   components: {
@@ -1941,8 +1935,7 @@ export default {
   watch: {
     date() {
       this.getResultsConsolidated()
-    },
-    
+    }
   },
   methods: {
     searchC() {
@@ -2215,7 +2208,7 @@ export default {
             $('#container').css('position', 'sticky')
             // kaloy 2021-10-27
             let successMsg = `${data.message}. ${data.img_uploaded_count} images uploaded.`
-            Swal.fire(`Success!`, successMsg , 'success').then(result => {
+            Swal.fire(`Success!`, successMsg, 'success').then(result => {
               if (result.value) {
                 setTimeout(() => {
                   $('#container').css('position', 'relative')
@@ -2286,7 +2279,8 @@ export default {
       // this.form2.image = '../distribution.alturush.com/' + MgaConsolidated.image
       // this.form2.noimage = '../distribution.alturush.com/item-images/no_image_item.jpg'
       this.form2.image = this.$root.adminAccess + '' + MgaConsolidated.image
-      this.form2.noimage = this.$root.adminAccess + 'item-images/no_image_item.jpg'
+      this.form2.noimage =
+        this.$root.adminAccess + 'item-images/no_image_item.jpg'
 
       if (MgaConsolidated.sstatus === 1) {
         this.form2.status = 'Active'
@@ -2333,7 +2327,8 @@ export default {
       // this.form.image = '../distribution.alturush.com/' + MgaItems.image
       // this.form.noimage = '../distribution.alturush.com/item-images/no_image_item.jpg'
       this.form.image = this.$root.adminAccess + '' + MgaItems.image
-      this.form.noimage = this.$root.adminAccess + 'item-images/no_image_item.jpg'
+      this.form.noimage =
+        this.$root.adminAccess + 'item-images/no_image_item.jpg'
 
       if (MgaItems.status === 1) {
         this.form.status = 'Active'
@@ -2377,7 +2372,8 @@ export default {
             this.form1.conversion_qty = item.conversion_qty
             this.form1.conversion_uom = item.conversion_uom
             this.form1.image = this.$root.adminAccess + item.image
-            this.form1.noimage = this.$root.adminAccess + 'item-images/no_image_item.jpg'
+            this.form1.noimage =
+              this.$root.adminAccess + 'item-images/no_image_item.jpg'
             this.form1.change_price = formatter.format(item.price2)
             if (item.status === 1) {
               this.form1.status = 'Active'
@@ -2486,36 +2482,33 @@ export default {
         })
         .catch(error => {})
     },
-    
+
     // kaloy 2022-04-05
     handleGroupedItemsUpload(event) {
-      this.fileGroupedItems = event.target.files[0];
+      this.fileGroupedItems = event.target.files[0]
     },
 
     submitGroupedItemsUpload() {
-      let formData = new FormData();
-      formData.append('file', this.fileGroupedItems);
-      $('#loadMdl').modal('show');
-      axios.post(
-        '/grouped-items-upload',
-        formData,
-        {
+      let formData = new FormData()
+      formData.append('file', this.fileGroupedItems)
+      $('#loadMdl').modal('show')
+      axios
+        .post('/grouped-items-upload', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
-        }
-      )
-      .then(function(response){
-        $('#loadMdl').modal('hide');
-        if(response.data.success) {
-          Swal.fire('Done','','success');
-        }
-      })
-      .catch(function(err){
-        $('#loadMdl').modal('hide');
-        Swal.fire('Error',err,'error');
-      });
-    },
+        })
+        .then(function(response) {
+          $('#loadMdl').modal('hide')
+          if (response.data.success) {
+            Swal.fire('Done', '', 'success')
+          }
+        })
+        .catch(function(err) {
+          $('#loadMdl').modal('hide')
+          Swal.fire('Error', err, 'error')
+        })
+    }
   },
   // /methods
 
