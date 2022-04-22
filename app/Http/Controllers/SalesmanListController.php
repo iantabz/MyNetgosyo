@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use \PDF;
 use App\CustomerMasterFile;
+use App\Exports\SalesmanCustomerList;
 use App\HepeDeViaje;
 use App\SalesmanList;
 use App\TblCustomerSalesman;
@@ -12,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SalesmanListController extends Controller
 {
@@ -381,5 +383,27 @@ class SalesmanListController extends Controller
     {
         $address = request()->address;
         return CustomerMasterFile::selectRaw('DISTINCT(address3)')->where('address3', 'LIKE', "%$address%")->get();
+    }
+
+    public function exportCustomerList()
+    {
+        session(['data' => $this->dataCustomerExport()]);
+        return Excel::download(new SalesmanCustomerList, 'test.xlsx');
+    }
+
+    public function dataCustomerExport()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+
+        $query = CustomerMasterFile::where('salesman_code', request()->salesman_code)->orderBy('address3')->get()->toArray();
+        $salesman = SalesmanList::where('user_code', request()->salesman_code)->get()->first()->toArray();
+
+        // dd($salesman);
+        $header = array(
+            'salesman' => $salesman,
+            'data' => $query
+        );
+        return $header;
     }
 }

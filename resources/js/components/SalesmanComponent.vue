@@ -1,5 +1,5 @@
 <!-- @format -->
-<template> 
+<template>
   <div id="page-body">
     <div class="panel">
       <div
@@ -1094,12 +1094,12 @@
                           >
                             <button
                               class="btn btn-primary btn-rounded"
-                              @click="addBtn()"
+                              @click="generateBtn($event)"
                               style="margin-right: 8-px; margin-left: 8px;"
                               :disabled="!salesmanCustomerList.data.length"
                             >
                               <i class="fa fa-print"></i>
-                              Print customer list
+                              Export Excel
                             </button>
                           </div>
                           <div class="col-md-6 table-toolbar-right">
@@ -1556,6 +1556,38 @@ export default {
     }
   },
   methods: {
+    async generateBtn(e) {
+      const thisButton = e.target
+      const oldHTML = thisButton.innerHTML
+      let pass = null
+
+      thisButton.disabled = true
+      thisButton.innerHTML =
+        '<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading...'
+      const { headers, data } = await axios.get(
+        `/salesman/exportCustomerList?salesman_code=${this.usercode}`,
+        {
+          responseType: 'blob'
+        }
+      )
+      const { 'content-disposition': contentDisposition } = headers
+      const [attachment, file] = contentDisposition.split(' ')
+      const [key, fileName] = file.split('=')
+
+      const url = window.URL.createObjectURL(new Blob([data]))
+      const link = document.createElement('a')
+      link.href = url
+
+      link.setAttribute(
+        'download',
+        `Salesman Customer List - ${this.usercode}.xlsx`
+      )
+      document.body.appendChild(link)
+      link.click()
+
+      thisButton.disabled = false
+      thisButton.innerHTML = oldHTML
+    },
     singleApprove(data) {
       this.checkboxes_id = []
       this.allSelected = false
