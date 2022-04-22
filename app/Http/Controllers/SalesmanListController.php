@@ -183,7 +183,9 @@ class SalesmanListController extends Controller
         //     ->where(['tbl_customer_salesman.salesman_code' => $request->usercode, 'tbl_customer_salesman.status' => 1])
         //     ->paginate(10);
 
-        return CustomerMasterFile::where('salesman_code', $request->usercode)->orderBy('address3')->paginate(10);
+        return CustomerMasterFile::where('salesman_code', $request->usercode)
+            ->orderBy('address3')
+            ->paginate(10);
     }
 
     public function getAssignSalesmanCustomerList()
@@ -193,7 +195,9 @@ class SalesmanListController extends Controller
         //         ->where('tbl_customer_salesman.salesman_code', request()->usercode)
         //         ->pluck('cus_customer_code'))->paginate(10);
 
-        return CustomerMasterFile::where('salesman_code', '!=', request()->usercode)->paginate(10);
+        return CustomerMasterFile::where('salesman_code', '!=', request()->usercode)
+            ->orderBy('address3')
+            ->paginate(10);
     }
 
     public function searchAssignSalesmanCustomerList()
@@ -217,7 +221,7 @@ class SalesmanListController extends Controller
             ['status',  1]
         ]);
 
-        if ($search !== 'null') $query = $query->where('account_name', 'LIKE', "%$search%");
+        if ($search !== 'null') $query = $query->where('account_name', 'LIKE', "%$search%")->orWhere('location_code', 'LIKE', "%$search%");
         if ($address !== 'null') $query = $query->where('address3', 'LIKE', "%$address%");
 
         $query = $query->paginate(10);
@@ -284,7 +288,12 @@ class SalesmanListController extends Controller
             ['salesman_code', $request->usercode],
             ['account_name', 'LIKE', "%$search%"],
             ['status', 1]
-        ])->paginate(10);
+        ])->orWhere([
+            ['salesman_code', $request->usercode],
+            ['location_code', 'LIKE', "%$search%"],
+            ['status', 1]
+        ])
+            ->paginate(10);
     }
 
     public function getMaxCode(Request $request)
