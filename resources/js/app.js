@@ -59,6 +59,8 @@ Vue.filter("toCurrency", function (value) {
 const files = require.context('./components/globals/', true, /\.vue$/i)
 files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
+// kaloy 2022-04-22
+const host = window.location.protocol + '//' + window.location.host + '/';
 
 const app = new Vue({
   el: '#app',
@@ -67,8 +69,8 @@ const app = new Vue({
   data: () => ({
     authUser: null,
     newRequest: null,
-    adminAccess: 'https://distribution.alturush.com/',
-    // adminAccess: 'http://localhost:8001/',
+    // adminAccess: 'https://distribution.alturush.com/',
+    adminAccess: host,
     currentPage: 'Home',
   }),
 
