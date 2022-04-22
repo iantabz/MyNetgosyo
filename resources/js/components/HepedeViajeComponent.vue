@@ -26,8 +26,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-6 table-toolbar-left">
-            </div>
+            <div class="col-md-6 table-toolbar-left"></div>
             <div class="col-md-6 table-toolbar-right">
               <form class="form-horizontal">
                 <div class="form-group">

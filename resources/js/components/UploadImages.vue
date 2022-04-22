@@ -1690,7 +1690,7 @@
         </div>
       </div>
     </div>
-
+  
     <!-- kaloy 2021-10-19 -->
     <!-- uploading images overlay -->
     <div
