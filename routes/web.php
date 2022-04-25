@@ -49,7 +49,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('consolidated')->group(function () {
         Route::get('getConsolidated', 'ConsolidatedTransactionController@getConsolidated');
         Route::get('getConsolidated/consolidated', 'ConsolidatedTransactionController@searchConsolidated');
-        
+
         // kaloy 2021-11-10
         // for generating S.I. test data
         Route::post('generate_si_test', 'ConsolidatedTransactionController@generateSITest');
@@ -73,7 +73,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('getItem2', 'ItemMasterfileController@getListItems2');
         Route::get('getItem2/item2', 'ItemMasterfileController@searchItemu');
         Route::get('activate_item2', 'ItemMasterfileController@activate');
-        
+
         Route::get('getNoItem', 'ItemMasterfileController@getListNoItems');
         Route::get('getNoItem/noitem', 'ItemMasterfileController@searchNoItem');
         Route::get('drop_noitem', 'ItemMasterfileController@dropItem');
@@ -117,10 +117,10 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('additionalOrder', 'SalesOrderController@store');
         Route::get('cancelOrder', 'SalesOrderController@cancelOrder');
-        
+
         Route::get('getCustomerInfo', 'SalesOrderController@getCustomerInfo');
     });
-    
+
     Route::prefix('cut_off_time')->group(function () {
         Route::post('set_time_cutoff', 'SalesExportFilesController@setCutoffTime');
         Route::get('get_time_setup', 'SalesExportFilesController@getTimeSetup');
@@ -165,11 +165,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('getTotalReturned', 'TransactionController@getTotalAmountReturned');
         Route::get('getTotalCancelled', 'TransactionController@getTotalAmountCancelled');
         Route::get('getTotalAdvanced', 'TransactionController@getTotalAmountAdvanced');
-        
+
         // kaloy 2021-10-05
         Route::get('get-ongoing-transactions-count', 'TransactionController@getOngoingTransactionsCount');
         Route::get('advanced-orders-count', 'TransactionController@advancedOrdersCount');
-        
+
         // kaloy 2021-11-10
         // revert transaction util
         Route::post('revert-transaction', 'TransactionController@revertTransaction');
@@ -256,6 +256,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/getMunicipality', 'SalesmanListController@getMunicipality');
         Route::get('/forPrint', 'SalesmanListController@forPrint');
         Route::get('/getAddress', 'SalesmanListController@getAddress');
+        Route::get('/exportCustomerList', 'SalesmanListController@exportCustomerList');
     });
 
 
@@ -338,8 +339,7 @@ Route::middleware(['auth'])->group(function () {
         });
 
         Route::get('/getOrderHistory', 'SalesReportController@getOrderHistory');
-        Route::get('/printOrderHistory', 'SalesReportController@printOrderHistory'); 
-
+        Route::get('/printOrderHistory', 'SalesReportController@printOrderHistory');
     });
 
     Route::prefix('topReports')->group(function () {
@@ -358,7 +358,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/topJepe', 'TopReports@topJepe');
         Route::get('/topJepe/search', 'TopReports@topJepe');
         Route::get('/printTopJepe', 'TopReports@printTopJepe');
-        
+
         Route::get('/totalOrderCount', 'TopReports@totalOrderCount');
         Route::get('/printTotalOrderCount', 'TopReports@printTotalOrderCount');
 
@@ -372,7 +372,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('newViewingUser', 'ViewingUsersController@newViewingUser');
         Route::post('/getMaxCode', 'ViewingUsersController@getMaxCode');
     });
-    
+
     Route::prefix('feedbacks')->group(function () {
         Route::get('getResults', 'FeedBackController@getResults');
     });
@@ -382,12 +382,12 @@ Route::middleware(['auth'])->group(function () {
     // });
     Route::get('/getAuthUser', 'HomeController@getAuthUser');
     Route::post('/import_masterfile/import', 'ItemMasterfileController@item_masterfile_import')->name('import_file');
-    
+
     // kaloy 2022-03-09
-    Route::group(['prefix'=>'fixes'], function() {
+    Route::group(['prefix' => 'fixes'], function () {
         Route::get('/restore-lost-trans', 'Fixes\RestoreLostTrans@index');
     });
-    
+
     // kaloy 2022-04-05
     Route::post('/grouped-items-upload', 'ImportGroupedItemsController@groupedItemsUpload');
 });

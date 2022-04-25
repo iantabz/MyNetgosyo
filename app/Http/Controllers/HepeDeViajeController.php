@@ -157,8 +157,8 @@ class HepeDeViajeController extends Controller
             'tbl_municipality_masterfile.mun_name as mun_name'
         )
             ->join('tbl_municipality_masterfile', 'tbl_municipality_masterfile.mun_code', '=', 'tbl_hepe_de_viaje.address')
-            ->where('first_name', 'LIKE', "%$search%")->orWhere('last_name', 'LIKE', "%$search%")
-            ->paginate(8);
+            ->where('first_name', 'LIKE', "%$search%")->orWhere('last_name', 'LIKE', "%$search%")->orWhere('user_code', 'LIKE', "%$search%")
+            ->paginate(10);
     }
 
     public function getAssignHepeSalesmanList(Request $request)

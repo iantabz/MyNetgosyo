@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use \PDF;
 use App\CustomerMasterFile;
+use App\Exports\SalesmanCustomerList;
 use App\HepeDeViaje;
 use App\SalesmanList;
 use App\TblCustomerSalesman;
@@ -12,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SalesmanListController extends Controller
 {
@@ -183,7 +185,9 @@ class SalesmanListController extends Controller
         //     ->where(['tbl_customer_salesman.salesman_code' => $request->usercode, 'tbl_customer_salesman.status' => 1])
         //     ->paginate(10);
 
-        return CustomerMasterFile::where('salesman_code', $request->usercode)->orderBy('address3')->paginate(10);
+        return CustomerMasterFile::where('salesman_code', $request->usercode)
+            ->orderBy('address3')
+            ->paginate(10);
     }
 
     public function getAssignSalesmanCustomerList()
@@ -193,7 +197,9 @@ class SalesmanListController extends Controller
         //         ->where('tbl_customer_salesman.salesman_code', request()->usercode)
         //         ->pluck('cus_customer_code'))->paginate(10);
 
-        return CustomerMasterFile::where('salesman_code', '!=', request()->usercode)->paginate(10);
+        return CustomerMasterFile::where('salesman_code', '!=', request()->usercode)
+            ->orderBy('address3')
+            ->paginate(10);
     }
 
     public function searchAssignSalesmanCustomerList()
@@ -217,7 +223,7 @@ class SalesmanListController extends Controller
             ['status',  1]
         ]);
 
-        if ($search !== 'null') $query = $query->where('account_name', 'LIKE', "%$search%");
+        if ($search !== 'null') $query = $query->where('account_name', 'LIKE', "%$search%")->orWhere('location_code', 'LIKE', "%$search%");
         if ($address !== 'null') $query = $query->where('address3', 'LIKE', "%$address%");
 
         $query = $query->paginate(10);
@@ -284,7 +290,12 @@ class SalesmanListController extends Controller
             ['salesman_code', $request->usercode],
             ['account_name', 'LIKE', "%$search%"],
             ['status', 1]
-        ])->paginate(10);
+        ])->orWhere([
+            ['salesman_code', $request->usercode],
+            ['location_code', 'LIKE', "%$search%"],
+            ['status', 1]
+        ])
+            ->paginate(10);
     }
 
     public function getMaxCode(Request $request)
@@ -372,5 +383,27 @@ class SalesmanListController extends Controller
     {
         $address = request()->address;
         return CustomerMasterFile::selectRaw('DISTINCT(address3)')->where('address3', 'LIKE', "%$address%")->get();
+    }
+
+    public function exportCustomerList()
+    {
+        session(['data' => $this->dataCustomerExport()]);
+        return Excel::download(new SalesmanCustomerList, 'test.xlsx');
+    }
+
+    public function dataCustomerExport()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+
+        $query = CustomerMasterFile::where('salesman_code', request()->salesman_code)->orderBy('address3')->get()->toArray();
+        $salesman = SalesmanList::where('user_code', request()->salesman_code)->get()->first()->toArray();
+
+        // dd($salesman);
+        $header = array(
+            'salesman' => $salesman,
+            'data' => $query
+        );
+        return $header;
     }
 }
