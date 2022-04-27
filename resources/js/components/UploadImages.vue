@@ -2,317 +2,43 @@
 
 <template>
   <div id="page-content">
+    <!-- item_masterfile_panel -->
     <div class="panel">
       <div class="panel-body">
-        <div class="panel-heading">
-          <h3 class="panel-title" style="font-weight: bold; font-size: 20px">
-            <i class="fa fa-clipboard"></i> History Log
-          </h3>
-        </div>
-        <div class="panel-body">
-          <div class="table-responsive">
-            <div class="row">
-              <div class="col-md-6 table-toolbar-left"></div>
-              <div class="col-md-6 table-toolbar-right">
-                <form class="form-horizontal">
-                  <div class="form-group">
-                    <label class="col-md-6 control-label">Search:</label>
-                    <div class="col-md-6">
-                      <input
-                        type="text"
-                        class="form-control"
-                        @keyup="searchLog"
-                        v-model="searchItemLog"
-                        placeholder="Search"
-                      />
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-            <table
-              class="table table-hover table-bordered table-striped table-vcenter"
-              width="100%"
-            >
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th>From Date Uploaded</th>
-                  <th>To Date Uploaded</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-if="!items_log.data.length">
-                  <td colspan="6" class="text-center">No data available</td>
-                </tr>
-                <tr
-                  v-for="MgaItemsLog in items_log.data"
-                  :key="MgaItemsLog.id_log"
-                >
-                  <td v-if="MgaItemsLog.price2 != ''">
-                    <span style="color: red;">
-                      {{ MgaItemsLog.product_name }} has been change the price
-                      from {{ parseFloat(MgaItemsLog.price1) | toCurrency }} to
-                      {{ parseFloat(MgaItemsLog.price2) | toCurrency }}
-                    </span>
-                  </td>
-                  <td v-if="MgaItemsLog.product_family2 != ''">
-                    <span style="color: red;">
-                      {{ MgaItemsLog.product_name }} has been change the product
-                      family from {{ MgaItemsLog.product_family1 }} to
-                      {{ MgaItemsLog.product_family2 }}
-                    </span>
-                  </td>
-                  <td v-if="MgaItemsLog.principal2 != ''">
-                    <span style="color: red;">
-                      {{ MgaItemsLog.product_name }} has been change the
-                      principal from {{ MgaItemsLog.principal1 }} to
-                      {{ MgaItemsLog.principal2 }}
-                    </span>
-                  </td>
-                  <td v-if="MgaItemsLog.brand2 != ''">
-                    <span style="color: red;">
-                      {{ MgaItemsLog.product_name }} has been change the product
-                      family from {{ MgaItemsLog.brand1 }} to
-                      {{ MgaItemsLog.brand2 }}
-                    </span>
-                  </td>
-                  <td v-if="MgaItemsLog.keywords2 != ''">
-                    <span style="color: red;">
-                      {{ MgaItemsLog.product_name }} has been change the
-                      keywords from {{ MgaItemsLog.keywords1 }} to
-                      {{ MgaItemsLog.keywords2 }}
-                    </span>
-                  </td>
-                  <td v-if="MgaItemsLog.description2 != ''">
-                    <span style="color: red;">
-                      {{ MgaItemsLog.product_name }} has been change the
-                      description from {{ MgaItemsLog.description1 }} to
-                      {{ MgaItemsLog.description2 }}
-                    </span>
-                  </td>
-                  <td>{{ MgaItemsLog.date_from }}</td>
-                  <td>{{ MgaItemsLog.date_to }}</td>
-                  <td>
-                    <button
-                      @click="detailsLog(MgaItemsLog.log_id)"
-                      class="btn btn-info btn-xs"
-                    >
-                      <i class="fa fa-list-alt"></i>
-                    </button>
-                    &nbsp;
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="col-md-6">
-                  Showing {{ items_log.from }} to {{ items_log.to }} of
-                  {{ items_log.total }} entries
-                </div>
-                <div class="col-md-6">
-                  <div class="text-right">
-                    <pagination
-                      style="margin: 0 0 20px 0;"
-                      :limit="1"
-                      :show-disabled="true"
-                      :data="items_log"
-                      @pagination-change-page="getLogResults"
-                    ></pagination>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-body">
-        <div class="panel-heading">
-          <h3 class="panel-title" style="font-weight: bold; font-size: 20px">
-            <i class="fa fa-upload"></i> Upload Masterfile
-          </h3>
-        </div>
-        <div class="tab-base">
-          <!--Nav Tabs-->
-          <ul class="nav nav-tabs">
-            <li class="active">
-              <a data-toggle="tab" href="#demo-lft-tab-1">
-                Upload Image
-                <!-- <span class="badge badge-warning">{{ items.total }}</span> -->
-              </a>
-            </li>
-            <li>
-              <a data-toggle="tab" href="#demo-lft-tab-2">
-                Upload Excel
-                <!-- <span class="badge badge-success">{{ items1.total }}</span> -->
-              </a>
-            </li>
-            <li style="position:relative; float:right;right:35px;">
-              <div style="position: relative; float: right;right:35px;">
-                <button class="btn btn-md btn-danger" @click="nomatch_item()">
-                  Unfound Itemcode
-                </button>
-              </div>
-            </li>
-          </ul>
-
-          <div class="tab-content">
-            <div id="demo-lft-tab-1" class="tab-pane fade active in">
-              <div class="panel-body">
-                <div class="row" style="margin: 0px 0px 10px 0px">
-                  <div class="col-lg-12">
-                    <!--Dropzonejs using Bootstrap theme-->
-                    <!--===================================================-->
-                    <p>
-                      Only png / jpeg / jpg file format for item images
-                      pictures.
-                      <span style="color: red;"
-                        >Note: ".png / jpeg / jpg" file format only.</span
-                      >
-                    </p>
-
-                    <div class="bord-top pad-ver">
-                      <form id="myForm1" @submit.prevent="submitFiles1">
-                        <div class="panel-body">
-                          <div class="row">
-                            <div class="col-sm-12">
-                              <input
-                                type="file"
-                                id="input-file-import1"
-                                ref="images"
-                                name="images[]"
-                                class="btn btn-primary fileinput-button dz-clickable"
-                                style="border: 1px solid #ccc;display: inline-block;padding: 6px 12px;cursor: pointer;"
-                                @change="test()"
-                                multiple
-                              />
-
-                              <div class="btn-group pull-right">
-                                <button
-                                  :disabled="isSubmitting || !disabled"
-                                  type="submit"
-                                  id="submitform"
-                                  class="btn btn-primary"
-                                >
-                                  <i class="fa fa-cloud-upload"></i>
-                                  {{
-                                    isSubmitting
-                                      ? 'Uploading images, please wait...'
-                                      : 'Upload Images'
-                                  }}
-                                </button>
-                                <button
-                                  id="dz-remove-btn"
-                                  class="btn btn-danger cancel"
-                                  type="reset"
-                                  @click="clearData()"
-                                >
-                                  <i class="demo-psi-trash"></i>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-
-                <!------------------------------------------------------------->
-              </div>
-            </div>
-            <div id="demo-lft-tab-2" class="tab-pane fade">
-              <div class="panel-body">
-                <div class="row" style="margin: 0px 0px 10px 0px">
-                  <div class="col-lg-12">
-                    <!--Dropzonejs using Bootstrap theme-->
-                    <!--===================================================-->
-                    <p>
-                      Only csv file format for item images pictures.
-                      <span style="color: red;"
-                        >Note: ".csv" file format only.</span
-                      >
-                    </p>
-
-                    <div class="bord-top pad-ver">
-                      <form id="myForm2" @submit.prevent="submitFiles2">
-                        <div class="panel-body">
-                          <div class="row">
-                            <div class="col-sm-12">
-                              <input
-                                type="file"
-                                id="input-file-import"
-                                ref="excel2"
-                                accept=".csv"
-                                class="btn btn-primary fileinput-button dz-clickable"
-                                style="border: 1px solid #ccc;display: inline-block;padding: 6px 12px;cursor: pointer;"
-                                @change="test()"
-                              />
-
-                              <div class="btn-group pull-right">
-                                <button
-                                  :disabled="isSubmitting || !disabled"
-                                  type="submit"
-                                  id="submitform"
-                                  class="btn btn-primary"
-                                >
-                                  <i class="fa fa-cloud-upload"></i> Upload
-                                </button>
-                                <button
-                                  id="dz-remove-btn"
-                                  class="btn btn-danger cancel"
-                                  type="reset"
-                                  @click="clearData()"
-                                >
-                                  <i class="demo-psi-trash"></i>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                    <div id="dz-previews">
-                      <div v-if="error.message" class="invalid-feedback"></div>
-                    </div>
-                  </div>
-                </div>
-
-                <!------------------------------------------------------------->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-body">
-        <div class="panel-heading">
+        <!-- <div class="panel-heading">
           <h3 class="panel-title" style="font-weight: bold; font-size: 20px">
             <i class="fa fa-upload"></i> Item Masterfile
           </h3>
-        </div>
+        </div> -->
 
         <div class="tab-base">
           <!--Nav Tabs-->
           <ul class="nav nav-tabs">
             <li class="active">
-              <a data-toggle="tab" href="#demo-lft-tab-1">
+              <a data-toggle="tab" href="#item-masterfile-tab-1">
                 Item Masterfile (Navision)
-                <!-- <span class="badge badge-warning">{{ items.total }}</span> -->
+              </a>
+            </li>
+            <li class="">
+              <a data-toggle="tab" href="#item-masterfile-tab-2">
+                Upload Grouped Items
+              </a>
+            </li>
+            <li class="">
+              <a data-toggle="tab" href="#item-masterfile-tab-3">
+                Upload Image
+              </a>
+            </li>
+            <li class="">
+              <a data-toggle="tab" href="#item-masterfile-tab-4">
+                History Log
               </a>
             </li>
           </ul>
 
           <!--Tabs Content-->
           <div class="tab-content">
-            <div id="demo-lft-tab-1" class="tab-pane fade active in">
+            <div id="item-masterfile-tab-1" class="tab-pane fade active in">
               <div class="panel-body">
                 <div class="row" style="margin: 0px 0px 10px 0px">
                   <div class="col-lg-12">
@@ -561,43 +287,360 @@
               </div>
               <hr class="new-section-xs bord" />
             </div>
+            <div id="item-masterfile-tab-2" class="tab-pane fade">
+              <!-- Upload Grouped Items -->
+              <!-- kaloy 2022-04-04 -->
+              <div class="panel-body">
+                <div class="panel-heading">
+                  <h3
+                    class="panel-title"
+                    style="font-weight: bold; font-size: 20px"
+                  >
+                    <i class="fa fa-upload"></i> Upload Grouped Items (BCOM,
+                    BULK, FLOWRACK)
+                  </h3>
+                </div>
+                <div class="row">
+                  <div class="col-md-9">
+                    <input
+                      type="file"
+                      name="file"
+                      ref="file_grouped_items"
+                      accept=".csv"
+                      @change="handleGroupedItemsUpload($event)"
+                      class="form-control"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <button
+                      class="btn btn-primary btn-block"
+                      @click="submitGroupedItemsUpload()"
+                    >
+                      Upload
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- /kaloy 2022-04-04 -->
+              <!-- /Upload Grouped Items -->
+            </div>
+            <div id="item-masterfile-tab-3" class="tab-pane fade">
+              <div class="panel-body">
+                <div class="panel-heading">
+                  <h3
+                    class="panel-title"
+                    style="font-weight: bold; font-size: 20px"
+                  >
+                    <i class="fa fa-upload"></i> Upload Image
+                  </h3>
+                </div>
+                <div class="tab-base">
+                  <!--Nav Tabs-->
+                  <ul class="nav nav-tabs">
+                    <li class="active">
+                      <a data-toggle="tab" href="#demo-lft-tab-1">
+                        Upload Image
+                        <!-- <span class="badge badge-warning">{{ items.total }}</span> -->
+                      </a>
+                    </li>
+                    <li>
+                      <a data-toggle="tab" href="#demo-lft-tab-2">
+                        Upload Excel
+                        <!-- <span class="badge badge-success">{{ items1.total }}</span> -->
+                      </a>
+                    </li>
+                    <li style="position:relative; float:right;right:35px;">
+                      <div style="position: relative; float: right;right:35px;">
+                        <button
+                          class="btn btn-md btn-danger"
+                          @click="nomatch_item()"
+                        >
+                          Unfound Itemcode
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+
+                  <div class="tab-content">
+                    <div id="demo-lft-tab-1" class="tab-pane fade active in">
+                      <div class="panel-body">
+                        <div class="row" style="margin: 0px 0px 10px 0px">
+                          <div class="col-lg-12">
+                            <!--Dropzonejs using Bootstrap theme-->
+                            <!--===================================================-->
+                            <p>
+                              Only png / jpeg / jpg file format for item images
+                              pictures.
+                              <span style="color: red;"
+                                >Note: ".png / jpeg / jpg" file format
+                                only.</span
+                              >
+                            </p>
+
+                            <div class="bord-top pad-ver">
+                              <form id="myForm1" @submit.prevent="submitFiles1">
+                                <div class="panel-body">
+                                  <div class="row">
+                                    <div class="col-sm-12">
+                                      <input
+                                        type="file"
+                                        id="input-file-import1"
+                                        ref="images"
+                                        name="images[]"
+                                        class="btn btn-primary fileinput-button dz-clickable"
+                                        style="border: 1px solid #ccc;display: inline-block;padding: 6px 12px;cursor: pointer;"
+                                        @change="test()"
+                                        multiple
+                                      />
+
+                                      <div class="btn-group pull-right">
+                                        <button
+                                          :disabled="isSubmitting || !disabled"
+                                          type="submit"
+                                          id="submitform"
+                                          class="btn btn-primary"
+                                        >
+                                          <i class="fa fa-cloud-upload"></i>
+                                          {{
+                                            isSubmitting
+                                              ? "Uploading images, please wait..."
+                                              : "Upload Images"
+                                          }}
+                                        </button>
+                                        <button
+                                          id="dz-remove-btn"
+                                          class="btn btn-danger cancel"
+                                          type="reset"
+                                          @click="clearData()"
+                                        >
+                                          <i class="demo-psi-trash"></i>
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!------------------------------------------------------------->
+                      </div>
+                    </div>
+                    <div id="demo-lft-tab-2" class="tab-pane fade">
+                      <div class="panel-body">
+                        <div class="row" style="margin: 0px 0px 10px 0px">
+                          <div class="col-lg-12">
+                            <!--Dropzonejs using Bootstrap theme-->
+                            <!--===================================================-->
+                            <p>
+                              Only csv file format for item images pictures.
+                              <span style="color: red;"
+                                >Note: ".csv" file format only.</span
+                              >
+                            </p>
+
+                            <div class="bord-top pad-ver">
+                              <form id="myForm2" @submit.prevent="submitFiles2">
+                                <div class="panel-body">
+                                  <div class="row">
+                                    <div class="col-sm-12">
+                                      <input
+                                        type="file"
+                                        id="input-file-import"
+                                        ref="excel2"
+                                        accept=".csv"
+                                        class="btn btn-primary fileinput-button dz-clickable"
+                                        style="border: 1px solid #ccc;display: inline-block;padding: 6px 12px;cursor: pointer;"
+                                        @change="test()"
+                                      />
+
+                                      <div class="btn-group pull-right">
+                                        <button
+                                          :disabled="isSubmitting || !disabled"
+                                          type="submit"
+                                          id="submitform"
+                                          class="btn btn-primary"
+                                        >
+                                          <i class="fa fa-cloud-upload"></i>
+                                          Upload
+                                        </button>
+                                        <button
+                                          id="dz-remove-btn"
+                                          class="btn btn-danger cancel"
+                                          type="reset"
+                                          @click="clearData()"
+                                        >
+                                          <i class="demo-psi-trash"></i>
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </form>
+                            </div>
+                            <div id="dz-previews">
+                              <div
+                                v-if="error.message"
+                                class="invalid-feedback"
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!------------------------------------------------------------->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="item-masterfile-tab-4" class="tab-pane fade">
+              <!-- history_log_tab_pane -->
+              <div class="panel-body">
+                <div class="panel-heading">
+                  <h3
+                    class="panel-title"
+                    style="font-weight: bold; font-size: 20px"
+                  >
+                    <i class="fa fa-clipboard"></i> History Log
+                  </h3>
+                </div>
+                <div class="panel-body">
+                  <div class="table-responsive">
+                    <div class="row">
+                      <div class="col-md-6 table-toolbar-left"></div>
+                      <div class="col-md-6 table-toolbar-right">
+                        <form class="form-horizontal">
+                          <div class="form-group">
+                            <label class="col-md-6 control-label"
+                              >Search:</label
+                            >
+                            <div class="col-md-6">
+                              <input
+                                type="text"
+                                class="form-control"
+                                @keyup="searchLog"
+                                v-model="searchItemLog"
+                                placeholder="Search"
+                              />
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                    <table
+                      class="table table-hover table-bordered table-striped table-vcenter"
+                      width="100%"
+                    >
+                      <thead>
+                        <tr>
+                          <th>Description</th>
+                          <th>From Date Uploaded</th>
+                          <th>To Date Uploaded</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-if="!items_log.data.length">
+                          <td colspan="6" class="text-center">
+                            No data available
+                          </td>
+                        </tr>
+                        <tr
+                          v-for="MgaItemsLog in items_log.data"
+                          :key="MgaItemsLog.id_log"
+                        >
+                          <td v-if="MgaItemsLog.price2 != ''">
+                            <span style="color: red;">
+                              {{ MgaItemsLog.product_name }} has been change the
+                              price from
+                              {{ parseFloat(MgaItemsLog.price1) | toCurrency }}
+                              to
+                              {{ parseFloat(MgaItemsLog.price2) | toCurrency }}
+                            </span>
+                          </td>
+                          <td v-if="MgaItemsLog.product_family2 != ''">
+                            <span style="color: red;">
+                              {{ MgaItemsLog.product_name }} has been change the
+                              product family from
+                              {{ MgaItemsLog.product_family1 }} to
+                              {{ MgaItemsLog.product_family2 }}
+                            </span>
+                          </td>
+                          <td v-if="MgaItemsLog.principal2 != ''">
+                            <span style="color: red;">
+                              {{ MgaItemsLog.product_name }} has been change the
+                              principal from {{ MgaItemsLog.principal1 }} to
+                              {{ MgaItemsLog.principal2 }}
+                            </span>
+                          </td>
+                          <td v-if="MgaItemsLog.brand2 != ''">
+                            <span style="color: red;">
+                              {{ MgaItemsLog.product_name }} has been change the
+                              product family from {{ MgaItemsLog.brand1 }} to
+                              {{ MgaItemsLog.brand2 }}
+                            </span>
+                          </td>
+                          <td v-if="MgaItemsLog.keywords2 != ''">
+                            <span style="color: red;">
+                              {{ MgaItemsLog.product_name }} has been change the
+                              keywords from {{ MgaItemsLog.keywords1 }} to
+                              {{ MgaItemsLog.keywords2 }}
+                            </span>
+                          </td>
+                          <td v-if="MgaItemsLog.description2 != ''">
+                            <span style="color: red;">
+                              {{ MgaItemsLog.product_name }} has been change the
+                              description from {{ MgaItemsLog.description1 }} to
+                              {{ MgaItemsLog.description2 }}
+                            </span>
+                          </td>
+                          <td>{{ MgaItemsLog.date_from }}</td>
+                          <td>{{ MgaItemsLog.date_to }}</td>
+                          <td>
+                            <button
+                              @click="detailsLog(MgaItemsLog.log_id)"
+                              class="btn btn-info btn-xs"
+                            >
+                              <i class="fa fa-list-alt"></i>
+                            </button>
+                            &nbsp;
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="col-md-6">
+                          Showing {{ items_log.from }} to {{ items_log.to }} of
+                          {{ items_log.total }} entries
+                        </div>
+                        <div class="col-md-6">
+                          <div class="text-right">
+                            <pagination
+                              style="margin: 0 0 20px 0;"
+                              :limit="1"
+                              :show-disabled="true"
+                              :data="items_log"
+                              @pagination-change-page="getLogResults"
+                            ></pagination>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <!-- /item_masterfile_panel -->
 
-    <!-- kaloy 2022-04-04 -->
-    <div class="panel">
-      <div class="panel-body">
-        <div class="panel-heading">
-          <h3 class="panel-title" style="font-weight: bold; font-size: 20px">
-            <i class="fa fa-upload"></i> Upload Grouped Items (BCOM, BULK,
-            FLOWRACK)
-          </h3>
-        </div>
-        <div class="row">
-          <div class="col-md-6">
-            <input
-              type="file"
-              name="file"
-              ref="file_grouped_items"
-              accept=".csv"
-              @change="handleGroupedItemsUpload($event)"
-              class="form-control"
-            />
-          </div>
-          <div class="col-md-6">
-            <button class="btn btn-primary" @click="submitGroupedItemsUpload()">
-              Upload
-            </button>
-          </div>
-          <div class="col-md-6"></div>
-        </div>
-      </div>
-    </div>
-
+    <!-- **************************************************************** -->
     <!-------------------------Modal Form1--------------------------------->
-
     <div
       class="modal fade"
       id="setupMdl1"
@@ -1690,7 +1733,7 @@
         </div>
       </div>
     </div>
-  
+
     <!-- kaloy 2021-10-19 -->
     <!-- uploading images overlay -->
     <div
@@ -1782,129 +1825,129 @@
 
 <script>
 /** @format */
-import Vue from 'vue'
-import Swal from 'sweetalert2'
-import { Form, HasError, AlertError } from 'vform'
-import { serialize } from 'object-to-formdata'
-import _ from 'lodash'
-import { Datetime } from 'vue-datetime'
+import Vue from "vue";
+import Swal from "sweetalert2";
+import { Form, HasError, AlertError } from "vform";
+import { serialize } from "object-to-formdata";
+import _ from "lodash";
+import { Datetime } from "vue-datetime";
 // You need a specific loader for CSS files
-import 'vue-datetime/dist/vue-datetime.css'
+import "vue-datetime/dist/vue-datetime.css";
 // import moment from 'moment'
-import { DateTime } from 'luxon'
+import { DateTime } from "luxon";
 
-Vue.use(require('vue-moment'))
+Vue.use(require("vue-moment"));
 
-Vue.component('pagination', require('laravel-vue-pagination'))
-Vue.component(HasError.name, HasError)
-Vue.component(AlertError.name, AlertError)
+Vue.component("pagination", require("laravel-vue-pagination"));
+Vue.component(HasError.name, HasError);
+Vue.component(AlertError.name, AlertError);
 
-Vue.filter('toCurrency', function(value) {
-  if (typeof value !== 'number') {
-    return value
+Vue.filter("toCurrency", function(value) {
+  if (typeof value !== "number") {
+    return value;
   }
-  var formatter = new Intl.NumberFormat('en-PH', {
-    style: 'currency',
-    currency: 'PHP',
-    minimumFractionDigits: 2
-  })
-  return formatter.format(value)
-})
+  var formatter = new Intl.NumberFormat("en-PH", {
+    style: "currency",
+    currency: "PHP",
+    minimumFractionDigits: 2,
+  });
+  return formatter.format(value);
+});
 
 export default {
   data() {
     return {
       items: {
-        image: '',
+        image: "",
         data: [],
         current_page: null,
         from: null,
         to: null,
         total: null,
-        per_page: null
+        per_page: null,
       },
       noitems: {
-        image: '',
+        image: "",
         data: [],
         current_page: null,
         from: null,
         to: null,
         total: null,
-        per_page: null
+        per_page: null,
       },
 
       consolidatedTable: {},
       consolidated: [],
       items_log: {
-        image: '',
+        image: "",
         data: [],
         current_page: null,
         from: null,
         to: null,
         total: null,
-        per_page: null
+        per_page: null,
       },
       items_log_data: [],
       editCustomerDetails: null,
       form1: new Form({
-        prdct_name: '',
-        prdct_shrt_name: '',
-        description: '',
-        company_code: '',
-        itemcode: '',
-        barcode: '',
-        brand: '',
-        principal: '',
-        prdct_family: '',
-        keywords: '',
-        uom: '',
-        price_wout_tax: '',
-        price_wt_tax: '',
-        conversion_qty: '',
-        conversion_uom: '',
-        item_masterfiles_id: '',
-        status: '',
-        image: ''
+        prdct_name: "",
+        prdct_shrt_name: "",
+        description: "",
+        company_code: "",
+        itemcode: "",
+        barcode: "",
+        brand: "",
+        principal: "",
+        prdct_family: "",
+        keywords: "",
+        uom: "",
+        price_wout_tax: "",
+        price_wt_tax: "",
+        conversion_qty: "",
+        conversion_uom: "",
+        item_masterfiles_id: "",
+        status: "",
+        image: "",
       }),
       form: new Form({
-        item_masterfiles_id: '',
-        prdct_name: '',
-        prdct_shrt_name: '',
-        description: '',
-        company_code: '',
-        itemcode: '',
-        barcode: '',
-        brand: '',
-        principal: '',
-        prdct_family: '',
-        keywords: '',
-        uom: '',
-        price_wout_tax: '',
-        price_wt_tax: '',
-        conversion_qty: '',
-        conversion_uom: '',
-        item_masterfiles_id: '',
-        status: '',
-        image: ''
+        item_masterfiles_id: "",
+        prdct_name: "",
+        prdct_shrt_name: "",
+        description: "",
+        company_code: "",
+        itemcode: "",
+        barcode: "",
+        brand: "",
+        principal: "",
+        prdct_family: "",
+        keywords: "",
+        uom: "",
+        price_wout_tax: "",
+        price_wt_tax: "",
+        conversion_qty: "",
+        conversion_uom: "",
+        item_masterfiles_id: "",
+        status: "",
+        image: "",
       }),
       form2: new Form({
-        consolidated_id: '',
-        transaction_type: '',
-        sales_invoice: '',
-        reference_no: '',
-        posting_date: '',
-        customer_name: '',
-        customer_code: '',
-        salesman_name: '',
-        salesman_code: '',
-        itemcode: '',
-        qty: '',
-        uom: '',
-        price: '',
-        tot_amt: '',
-        status: '',
-        prdct_name: '',
-        image: ''
+        consolidated_id: "",
+        transaction_type: "",
+        sales_invoice: "",
+        reference_no: "",
+        posting_date: "",
+        customer_name: "",
+        customer_code: "",
+        salesman_name: "",
+        salesman_code: "",
+        itemcode: "",
+        qty: "",
+        uom: "",
+        price: "",
+        tot_amt: "",
+        status: "",
+        prdct_name: "",
+        image: "",
       }),
       isActive: 1,
       searchItem2: null,
@@ -1913,9 +1956,9 @@ export default {
       date: DateTime.local().toString(),
       disabled: 0,
       isSubmitting: false,
-      import_file: '',
-      import_file1: '',
-      import_file2: '',
+      import_file: "",
+      import_file1: "",
+      import_file2: "",
       error: {},
       excelErrors: [],
       searchItems: null,
@@ -1926,29 +1969,29 @@ export default {
       //   kaloy 2021-10-20
       currentImagePreviewUrl: null,
       // kaloy 2022-04-05
-      fileGroupedItems: ''
-    }
+      fileGroupedItems: "",
+    };
   },
   components: {
-    datetime: Datetime
+    datetime: Datetime,
   },
   watch: {
     date() {
-      this.getResultsConsolidated()
-    }
+      this.getResultsConsolidated();
+    },
   },
   methods: {
     searchC() {
-      this.searchForConsolidated(this.searchConsolidated, this)
+      this.searchForConsolidated(this.searchConsolidated, this);
     },
     search2() {
-      this.searchForItem2(this.searchItem2, this)
+      this.searchForItem2(this.searchItem2, this);
     },
     searchno() {
-      this.searchForNoItem(this.searchNoItem, this)
+      this.searchForNoItem(this.searchNoItem, this);
     },
     searchLog() {
-      this.searchForItemLog(this.searchItemLog, this)
+      this.searchForItemLog(this.searchItemLog, this);
     },
     searchForConsolidated: _.debounce((searchC, vm) => {
       axios
@@ -1957,569 +2000,569 @@ export default {
             vm.date
           )}&name=${searchC}&page=1`
         )
-        .then(response => {
-          vm.consolidated = response.data
-        })
+        .then((response) => {
+          vm.consolidated = response.data;
+        });
     }, 500),
     searchForItem2: _.debounce((search2, vm) => {
       axios
         .get(`/item/getItem2/item2/?name=${search2}&page=1`)
-        .then(response => {
-          vm.items = response.data
-        })
+        .then((response) => {
+          vm.items = response.data;
+        });
     }, 500),
     searchForNoItem: _.debounce((searchno, vm) => {
       axios
         .get(`/item/getNoItem/noitem/?name=${searchno}&page=1`)
-        .then(response => {
-          vm.noitems = response.data
-        })
+        .then((response) => {
+          vm.noitems = response.data;
+        });
     }, 500),
     searchForItemLog: _.debounce((searchLog, vm) => {
       axios
         .get(`/item/getItemLog/item_log/?name=${searchLog}&page=1`)
-        .then(response => {
-          vm.items_log = response.data
-        })
+        .then((response) => {
+          vm.items_log = response.data;
+        });
     }, 500),
     getResultsConsolidated(page = 1) {
-      let url = null
+      let url = null;
       if (!this.searchConsolidated) {
-        url = `/consolidated/getConsolidated/?date=${btoa(this.date)}&page=`
+        url = `/consolidated/getConsolidated/?date=${btoa(this.date)}&page=`;
       } else {
         url = `/consolidated/getConsolidated/consolidated/?date=${btoa(
           vm.date
-        )}&name=${this.searchConsolidated}&page=1`
+        )}&name=${this.searchConsolidated}&page=1`;
       }
-      axios.get(url + page).then(response => {
+      axios.get(url + page).then((response) => {
         if (Object.keys(this.consolidatedTable).length) {
-          this.consolidatedTable.clear().destroy()
+          this.consolidatedTable.clear().destroy();
         }
 
-        this.consolidated = response.data
+        this.consolidated = response.data;
 
         setTimeout(() => {
-          this.consolidatedTable = $('#consolidated_table').DataTable()
-        }, 250)
-      })
+          this.consolidatedTable = $("#consolidated_table").DataTable();
+        }, 250);
+      });
     },
     getResults(page = 1) {
-      let url = null
+      let url = null;
       if (!this.searchItem2) {
-        url = '/item/getItem2/?page='
+        url = "/item/getItem2/?page=";
       } else {
-        url = `/item/getItem2/item2/?name=${this.searchItem2}&page=`
+        url = `/item/getItem2/item2/?name=${this.searchItem2}&page=`;
       }
-      axios.get(url + page).then(response => {
-        this.items = response.data
-        console.log('getResults() - UploadImages.vue:', response.data)
-      })
+      axios.get(url + page).then((response) => {
+        this.items = response.data;
+        console.log("getResults() - UploadImages.vue:", response.data);
+      });
     },
     getNoItems(page = 1) {
-      let url = null
+      let url = null;
       if (!this.searchNoItem) {
-        url = '/item/getNoItem/?page='
+        url = "/item/getNoItem/?page=";
       } else {
-        url = `/item/getNoItem/noitem/?name=${this.searchNoItem}&page=`
+        url = `/item/getNoItem/noitem/?name=${this.searchNoItem}&page=`;
       }
-      axios.get(url + page).then(response => {
-        this.noitems = response.data
-      })
+      axios.get(url + page).then((response) => {
+        this.noitems = response.data;
+      });
     },
 
     dropitem(id) {
       axios
         .get(`/item/drop_noitem/?id=${id}`)
         .then(({ data }) => {
-          if (data.trim() == 'Success') {
+          if (data.trim() == "Success") {
             $.niftyNoty({
-              type: 'info',
-              icon: 'pli-cross icon-2x',
+              type: "info",
+              icon: "pli-cross icon-2x",
               message: '<i class="fa fa-check"></i> Item Deleted.',
-              container: 'floating',
-              timer: 5000
-            })
+              container: "floating",
+              timer: 5000,
+            });
 
-            this.getNoItems()
+            this.getNoItems();
           } else {
-            if (data.trim() == 'Error') {
+            if (data.trim() == "Error") {
               $.niftyNoty({
-                type: 'danger',
-                icon: 'pli-cross icon-2x',
+                type: "danger",
+                icon: "pli-cross icon-2x",
                 message: "<i class='fa fa-exclamation-circle'></i> Error!.",
-                container: 'floating',
-                timer: 5000
-              })
+                container: "floating",
+                timer: 5000,
+              });
             }
           }
         })
-        .catch(error => {})
+        .catch((error) => {});
     },
 
     getLogResults(page = 1) {
-      let url = null
+      let url = null;
       if (!this.searchItemLog) {
-        url = '/item/getItemLog/?page='
+        url = "/item/getItemLog/?page=";
       } else {
-        url = `/item/getItemLog/item_log/?name=${this.searchItemLog}&page=`
+        url = `/item/getItemLog/item_log/?name=${this.searchItemLog}&page=`;
       }
-      axios.get(url + page).then(response => {
-        this.items_log = response.data
-      })
+      axios.get(url + page).then((response) => {
+        this.items_log = response.data;
+      });
     },
     clearData() {
-      document.getElementById('myForm').reset()
-      document.getElementById('myForm1').reset()
-      document.getElementById('myForm2').reset()
-      this.disabled = 0
+      document.getElementById("myForm").reset();
+      document.getElementById("myForm1").reset();
+      document.getElementById("myForm2").reset();
+      this.disabled = 0;
       // this.category = null
     },
     test() {
-      this.disabled = 1
+      this.disabled = 1;
       // this.category = num
     },
     submitFiles() {
-      this.isSubmitting = true
-      let formData = new FormData()
-      formData.append('import_file', this.$refs.excel.files[0])
-      $('#loadMdl').modal('show')
+      this.isSubmitting = true;
+      let formData = new FormData();
+      formData.append("import_file", this.$refs.excel.files[0]);
+      $("#loadMdl").modal("show");
       axios
-        .post('/import_masterfile', formData, {
-          headers: { 'content-type': 'multipart/form-data' }
+        .post("/import_masterfile", formData, {
+          headers: { "content-type": "multipart/form-data" },
         })
         .then(({ status, data }) => {
-          this.isSubmitting = false
+          this.isSubmitting = false;
           if (status === 200) {
             // codes here after the file is upload successfully
             // alert(data.message)
-            $('#loadMdl').modal('hide')
-            $('#container').css('position', 'sticky')
-            Swal.fire('Success!', data.message, 'success').then(result => {
+            $("#loadMdl").modal("hide");
+            $("#container").css("position", "sticky");
+            Swal.fire("Success!", data.message, "success").then((result) => {
               if (result.value) {
                 setTimeout(() => {
-                  $('#container').css('position', 'relative')
-                  $('#show').hide()
-                  this.getResults()
-                  this.clearData()
-                  this.disabled = 0
-                  this.category = 1
-                  this.$router.go(0)
-                }, 50)
+                  $("#container").css("position", "relative");
+                  $("#show").hide();
+                  this.getResults();
+                  this.clearData();
+                  this.disabled = 0;
+                  this.category = 1;
+                  this.$router.go(0);
+                }, 50);
               }
-            })
+            });
           }
         })
         .catch(({ response }) => {
-          $('#loadMdl').modal('hide')
-          $('.pace-done').css('padding-right', '0px')
-          this.isSubmitting = false
+          $("#loadMdl").modal("hide");
+          $(".pace-done").css("padding-right", "0px");
+          this.isSubmitting = false;
           // code here when an upload is not valid
-          const { status, data } = response
+          const { status, data } = response;
           if (status === 422) {
-            const { errors } = data
+            const { errors } = data;
             // alert(errors.import_file[0])
-            this.excelErrors = errors
+            this.excelErrors = errors;
             if (!data.errors.import_file) {
               //   $('#show').show()
             }
-            $('#exampleModal').modal('show')
+            $("#exampleModal").modal("show");
           }
-          this.uploading = false
-          this.error = error.response.data
-          console.log('check error: ', this.error)
-        })
+          this.uploading = false;
+          this.error = error.response.data;
+          console.log("check error: ", this.error);
+        });
     },
     submitFiles2() {
-      this.isSubmitting = true
-      let formData = new FormData()
-      formData.append('import_file2', this.$refs.excel2.files[0])
-      $('#loadMdl').modal('show')
+      this.isSubmitting = true;
+      let formData = new FormData();
+      formData.append("import_file2", this.$refs.excel2.files[0]);
+      $("#loadMdl").modal("show");
       axios
-        .post('/import_csv_masterfile', formData, {
-          headers: { 'content-type': 'multipart/form-data' }
+        .post("/import_csv_masterfile", formData, {
+          headers: { "content-type": "multipart/form-data" },
         })
         .then(({ status, data }) => {
-          this.isSubmitting = false
+          this.isSubmitting = false;
           if (status === 200) {
             // codes here after the file is upload successfully
             // alert(data.message)
-            $('#loadMdl').modal('hide')
-            $('#container').css('position', 'sticky')
-            Swal.fire('Success!', data.message, 'success').then(result => {
+            $("#loadMdl").modal("hide");
+            $("#container").css("position", "sticky");
+            Swal.fire("Success!", data.message, "success").then((result) => {
               if (result.value) {
                 setTimeout(() => {
-                  $('#container').css('position', 'relative')
-                  $('#show').hide()
-                  this.getResults()
-                  this.clearData()
-                  this.disabled = 0
-                  this.category = 1
-                  this.$router.go(0)
-                }, 50)
+                  $("#container").css("position", "relative");
+                  $("#show").hide();
+                  this.getResults();
+                  this.clearData();
+                  this.disabled = 0;
+                  this.category = 1;
+                  this.$router.go(0);
+                }, 50);
               }
-            })
+            });
           }
         })
         .catch(({ response }) => {
-          $('#loadMdl').modal('hide')
-          $('.pace-done').css('padding-right', '0px')
-          this.isSubmitting = false
+          $("#loadMdl").modal("hide");
+          $(".pace-done").css("padding-right", "0px");
+          this.isSubmitting = false;
           // code here when an upload is not valid
-          const { status, data } = response
+          const { status, data } = response;
           if (status === 422) {
-            const { errors } = data
+            const { errors } = data;
             // alert(errors.import_file[0])
-            this.excelErrors = errors
+            this.excelErrors = errors;
             if (!data.errors.import_file2) {
               //   $('#show').show()
             }
-            $('#exampleModal').modal('show')
+            $("#exampleModal").modal("show");
           }
-          this.uploading = false
-          this.error = error.response.data
-          console.log('check error: ', this.error)
-        })
+          this.uploading = false;
+          this.error = error.response.data;
+          console.log("check error: ", this.error);
+        });
     },
     submitFiles1() {
-      this.isSubmitting = true
-      const images = document.getElementById('input-file-import1').files
+      this.isSubmitting = true;
+      const images = document.getElementById("input-file-import1").files;
 
-      let formData = new FormData()
+      let formData = new FormData();
       for (var i = 0; i < images.length; i++) {
-        let file = images.item(i)
-        formData.append('images[' + i + ']', file, file.name)
+        let file = images.item(i);
+        formData.append("images[" + i + "]", file, file.name);
       }
       // formData.append('import_file1', images)
-      $('#loadMdl').modal('show')
+      $("#loadMdl").modal("show");
       axios
-        .post('/item/saved_item_image1', formData, {
-          headers: { 'content-type': 'multipart/form-data' },
+        .post("/item/saved_item_image1", formData, {
+          headers: { "content-type": "multipart/form-data" },
 
-          onUploadProgress: e => {
+          onUploadProgress: (e) => {
             // Do whatever you want with the progress event
-          }
+          },
         })
         .then(({ status, data }) => {
-          this.isSubmitting = false
+          this.isSubmitting = false;
           if (status === 200) {
             // codes here after the file is upload successfully
             // alert(data.message)
-            $('#loadMdl').modal('hide')
-            $('#container').css('position', 'sticky')
+            $("#loadMdl").modal("hide");
+            $("#container").css("position", "sticky");
             // kaloy 2021-10-27
-            let successMsg = `${data.message}. ${data.img_uploaded_count} images uploaded.`
-            Swal.fire(`Success!`, successMsg, 'success').then(result => {
+            let successMsg = `${data.message}. ${data.img_uploaded_count} images uploaded.`;
+            Swal.fire(`Success!`, successMsg, "success").then((result) => {
               if (result.value) {
                 setTimeout(() => {
-                  $('#container').css('position', 'relative')
-                  $('#show').hide()
+                  $("#container").css("position", "relative");
+                  $("#show").hide();
                   // this.getResultsConsolidated()
                   // this.clearData()
                   // this.disabled = 0
                   // this.category = 1
-                  this.$router.go(0)
-                }, 50)
+                  this.$router.go(0);
+                }, 50);
               }
-            })
+            });
           }
         })
         .catch(({ response }) => {
-          $('#loadMdl').modal('hide')
-          $('.pace-done').css('padding-right', '0px')
-          this.isSubmitting = false
+          $("#loadMdl").modal("hide");
+          $(".pace-done").css("padding-right", "0px");
+          this.isSubmitting = false;
           // code here when an upload is not valid
-          const { status, data } = response
+          const { status, data } = response;
           if (status === 422) {
-            const { errors } = data
+            const { errors } = data;
             // alert(errors.import_file[0])
-            this.excelErrors = errors
+            this.excelErrors = errors;
             if (!data.errors.import_file) {
               //   $('#show').show()
             }
-            $('#exampleModal').modal('show')
+            $("#exampleModal").modal("show");
           }
-          this.uploading = false
-          this.error = error.response.data
-          console.log('check error: ', this.error)
-        })
+          this.uploading = false;
+          this.error = error.response.data;
+          console.log("check error: ", this.error);
+        });
     },
 
     details1(MgaConsolidated) {
-      $('#setupMdl2').modal('show')
-      $('#MdlTitle2').html('Consolidated Item Details')
-      $('#submitformreupload').html('Set')
+      $("#setupMdl2").modal("show");
+      $("#MdlTitle2").html("Consolidated Item Details");
+      $("#submitformreupload").html("Set");
 
-      const formatter = new Intl.NumberFormat('en-PH', {
-        style: 'currency',
-        currency: 'PHP',
-        minimumFractionDigits: 2
-      })
+      const formatter = new Intl.NumberFormat("en-PH", {
+        style: "currency",
+        currency: "PHP",
+        minimumFractionDigits: 2,
+      });
 
-      this.form2.consolidated_id = MgaConsolidated.consolidated_id
-      this.form2.prdct_name = MgaConsolidated.product_name
-      this.form2.transaction_type = MgaConsolidated.transaction_type
-      this.form2.description = MgaConsolidated.description
-      this.form2.sales_invoice = MgaConsolidated.sales_invoice
-      this.form2.reference_no = MgaConsolidated.reference_no
-      this.form2.posting_date = MgaConsolidated.posting_date
-      this.form2.customer_name = MgaConsolidated.account_name
-      this.form2.customer_code = MgaConsolidated.customer_code
+      this.form2.consolidated_id = MgaConsolidated.consolidated_id;
+      this.form2.prdct_name = MgaConsolidated.product_name;
+      this.form2.transaction_type = MgaConsolidated.transaction_type;
+      this.form2.description = MgaConsolidated.description;
+      this.form2.sales_invoice = MgaConsolidated.sales_invoice;
+      this.form2.reference_no = MgaConsolidated.reference_no;
+      this.form2.posting_date = MgaConsolidated.posting_date;
+      this.form2.customer_name = MgaConsolidated.account_name;
+      this.form2.customer_code = MgaConsolidated.customer_code;
       let salesman_name =
-        MgaConsolidated.first_name + ' ' + MgaConsolidated.last_name
-      this.form2.salesman_name = salesman_name
-      this.form2.salesman_code = MgaConsolidated.salesman_code
-      this.form2.itemcode = MgaConsolidated.itemcode
-      this.form2.qty = MgaConsolidated.qty
-      this.form2.prdct_family = MgaConsolidated.product_family
-      this.form2.keywords = MgaConsolidated.keywords
-      this.form2.uom = MgaConsolidated.uom
-      this.form2.price = formatter.format(MgaConsolidated.unit_price)
-      this.form2.price_w_vat = MgaConsolidated.price_w_vat
-      this.form2.tot_amt = formatter.format(MgaConsolidated.total_amt)
+        MgaConsolidated.first_name + " " + MgaConsolidated.last_name;
+      this.form2.salesman_name = salesman_name;
+      this.form2.salesman_code = MgaConsolidated.salesman_code;
+      this.form2.itemcode = MgaConsolidated.itemcode;
+      this.form2.qty = MgaConsolidated.qty;
+      this.form2.prdct_family = MgaConsolidated.product_family;
+      this.form2.keywords = MgaConsolidated.keywords;
+      this.form2.uom = MgaConsolidated.uom;
+      this.form2.price = formatter.format(MgaConsolidated.unit_price);
+      this.form2.price_w_vat = MgaConsolidated.price_w_vat;
+      this.form2.tot_amt = formatter.format(MgaConsolidated.total_amt);
       // this.form2.image = '../distribution.alturush.com/' + MgaConsolidated.image
       // this.form2.noimage = '../distribution.alturush.com/item-images/no_image_item.jpg'
-      this.form2.image = this.$root.adminAccess + '' + MgaConsolidated.image
+      this.form2.image = this.$root.adminAccess + "" + MgaConsolidated.image;
       this.form2.noimage =
-        this.$root.adminAccess + 'item-images/no_image_item.jpg'
+        this.$root.adminAccess + "item-images/no_image_item.jpg";
 
       if (MgaConsolidated.sstatus === 1) {
-        this.form2.status = 'Active'
+        this.form2.status = "Active";
       } else {
-        this.form2.status = 'Inactive'
+        this.form2.status = "Inactive";
       }
     },
 
     nomatch_item() {
-      $('#noitemMdl').modal('show')
-      $('#MdlTitleN').html('Unfound Item Details')
-      $('#submitformreupload').html('Set')
+      $("#noitemMdl").modal("show");
+      $("#MdlTitleN").html("Unfound Item Details");
+      $("#submitformreupload").html("Set");
     },
 
     details(MgaItems) {
-      $('#setupMdl').modal('show')
-      $('#MdlTitle').html('Item Details')
-      $('#submitformreupload').html('Set')
+      $("#setupMdl").modal("show");
+      $("#MdlTitle").html("Item Details");
+      $("#submitformreupload").html("Set");
 
-      const formatter = new Intl.NumberFormat('en-PH', {
-        style: 'currency',
-        currency: 'PHP',
-        minimumFractionDigits: 2
-      })
+      const formatter = new Intl.NumberFormat("en-PH", {
+        style: "currency",
+        currency: "PHP",
+        minimumFractionDigits: 2,
+      });
 
-      this.form.item_masterfiles_id = MgaItems.item_masterfiles_id
-      this.form.prdct_name = MgaItems.product_name
-      this.form.prdct_shrt_name = MgaItems.product_shrt_name
-      this.form.description = MgaItems.description
-      this.form.company_code = MgaItems.company_code
-      this.form.itemcode = MgaItems.itemcode
-      this.form.barcode = MgaItems.barcode
-      this.form.brand = MgaItems.brand
-      this.form.principal = MgaItems.principal
-      this.form.prdct_family = MgaItems.product_family
-      this.form.keywords = MgaItems.keywords
-      this.form.uom = MgaItems.uom
-      this.form.price_wout_tax = formatter.format(MgaItems.list_price_wouttax)
-      this.form.price_wt_tax = formatter.format(MgaItems.list_price_wtax)
-      this.form.conversion_qty = MgaItems.conversion_qty
-      this.form.conversion_uom = MgaItems.conversion_uom
+      this.form.item_masterfiles_id = MgaItems.item_masterfiles_id;
+      this.form.prdct_name = MgaItems.product_name;
+      this.form.prdct_shrt_name = MgaItems.product_shrt_name;
+      this.form.description = MgaItems.description;
+      this.form.company_code = MgaItems.company_code;
+      this.form.itemcode = MgaItems.itemcode;
+      this.form.barcode = MgaItems.barcode;
+      this.form.brand = MgaItems.brand;
+      this.form.principal = MgaItems.principal;
+      this.form.prdct_family = MgaItems.product_family;
+      this.form.keywords = MgaItems.keywords;
+      this.form.uom = MgaItems.uom;
+      this.form.price_wout_tax = formatter.format(MgaItems.list_price_wouttax);
+      this.form.price_wt_tax = formatter.format(MgaItems.list_price_wtax);
+      this.form.conversion_qty = MgaItems.conversion_qty;
+      this.form.conversion_uom = MgaItems.conversion_uom;
 
       // kaloy 2021-10-19
       // this.form.image = '../distribution.alturush.com/' + MgaItems.image
       // this.form.noimage = '../distribution.alturush.com/item-images/no_image_item.jpg'
-      this.form.image = this.$root.adminAccess + '' + MgaItems.image
+      this.form.image = this.$root.adminAccess + "" + MgaItems.image;
       this.form.noimage =
-        this.$root.adminAccess + 'item-images/no_image_item.jpg'
+        this.$root.adminAccess + "item-images/no_image_item.jpg";
 
       if (MgaItems.status === 1) {
-        this.form.status = 'Active'
+        this.form.status = "Active";
       } else {
-        this.form.status = 'Inactive'
+        this.form.status = "Inactive";
       }
     },
     detailsLog(id) {
       axios
         .get(`/item/getItemDetailsLog/itemlogdetail/?id=${id}`)
-        .then(response => {
-          this.items_log_data = response.data
+        .then((response) => {
+          this.items_log_data = response.data;
 
-          $('#setupMdl1').modal('show')
-          $('#MdlTitle1').html('Item Details')
-          $('#submitformreupload1').html('Set')
+          $("#setupMdl1").modal("show");
+          $("#MdlTitle1").html("Item Details");
+          $("#submitformreupload1").html("Set");
 
-          const formatter = new Intl.NumberFormat('en-PH', {
-            style: 'currency',
-            currency: 'PHP',
-            minimumFractionDigits: 2
-          })
+          const formatter = new Intl.NumberFormat("en-PH", {
+            style: "currency",
+            currency: "PHP",
+            minimumFractionDigits: 2,
+          });
 
-          this.items_log_data.forEach(item => {
-            this.form1.item_masterfiles_id = item.item_masterfiles_id
-            this.form1.prdct_name = item.product_name
-            this.form1.prdct_shrt_name = item.product_shrt_name
-            this.form1.description = item.description
-            this.form1.company_code = item.company_code
-            this.form1.itemcode = item.itemcode
-            this.form1.barcode = item.barcode
-            this.form1.brand = item.brand
-            this.form1.principal = item.principal
-            this.form1.prdct_family = item.product_family
-            this.form1.keywords = item.keywords
-            this.form1.uom = item.uom
+          this.items_log_data.forEach((item) => {
+            this.form1.item_masterfiles_id = item.item_masterfiles_id;
+            this.form1.prdct_name = item.product_name;
+            this.form1.prdct_shrt_name = item.product_shrt_name;
+            this.form1.description = item.description;
+            this.form1.company_code = item.company_code;
+            this.form1.itemcode = item.itemcode;
+            this.form1.barcode = item.barcode;
+            this.form1.brand = item.brand;
+            this.form1.principal = item.principal;
+            this.form1.prdct_family = item.product_family;
+            this.form1.keywords = item.keywords;
+            this.form1.uom = item.uom;
             this.form1.price_wout_tax = formatter.format(
               item.list_price_wouttax
-            )
-            this.form1.price_wt_tax = formatter.format(item.price1)
-            this.form1.conversion_qty = item.conversion_qty
-            this.form1.conversion_uom = item.conversion_uom
-            this.form1.image = this.$root.adminAccess + item.image
+            );
+            this.form1.price_wt_tax = formatter.format(item.price1);
+            this.form1.conversion_qty = item.conversion_qty;
+            this.form1.conversion_uom = item.conversion_uom;
+            this.form1.image = this.$root.adminAccess + item.image;
             this.form1.noimage =
-              this.$root.adminAccess + 'item-images/no_image_item.jpg'
-            this.form1.change_price = formatter.format(item.price2)
+              this.$root.adminAccess + "item-images/no_image_item.jpg";
+            this.form1.change_price = formatter.format(item.price2);
             if (item.status === 1) {
-              this.form1.status = 'Active'
+              this.form1.status = "Active";
             } else {
-              this.form1.status = 'Inactive'
+              this.form1.status = "Inactive";
             }
-          })
-        })
+          });
+        });
     },
     closeModal() {
-      document.getElementById('close').click()
+      document.getElementById("close").click();
     },
     submitformreupload() {
-      this.form.image = this.$refs.image.files[0]
+      this.form.image = this.$refs.image.files[0];
 
       this.form
-        .submit('post', '/item/saved_item_image', {
+        .submit("post", "/item/saved_item_image", {
           // Transform form data to FormData
           transformRequest: [
             function(data, headers) {
-              return serialize(data)
-            }
+              return serialize(data);
+            },
           ],
 
-          onUploadProgress: e => {
+          onUploadProgress: (e) => {
             // Do whatever you want with the progress event
             // console.log(e)
-          }
+          },
         })
         .then(({ data }) => {
-          console.log(data)
-          if (data.trim() == 'Success') {
+          console.log(data);
+          if (data.trim() == "Success") {
             $.niftyNoty({
-              type: 'info',
-              icon: 'pli-cross icon-2x',
+              type: "info",
+              icon: "pli-cross icon-2x",
               message: '<i class="fa fa-check"></i> Items has been updated.',
-              container: 'floating',
-              timer: 5000
-            })
+              container: "floating",
+              timer: 5000,
+            });
           } else {
-            if (data.trim() == 'Error') {
+            if (data.trim() == "Error") {
               $.niftyNoty({
-                type: 'danger',
-                icon: 'pli-cross icon-2x',
+                type: "danger",
+                icon: "pli-cross icon-2x",
                 message: "<i class='fa fa-exclamation-circle'></i> Error.",
-                container: 'floating',
-                timer: 5000
-              })
+                container: "floating",
+                timer: 5000,
+              });
             }
           }
         })
-        .catch(error => {})
+        .catch((error) => {});
 
-      this.getResults()
-      $('#setupMdl').modal('hide')
+      this.getResults();
+      $("#setupMdl").modal("hide");
     },
 
     btn_activation(id, status) {
       axios
         .get(`/item/activate_item/?id=${id}&status=${status}`)
         .then(({ data }) => {
-          if (data.trim() == 'Success') {
-            if (status == '1') {
+          if (data.trim() == "Success") {
+            if (status == "1") {
               $.niftyNoty({
-                type: 'info',
-                icon: 'pli-cross icon-2x',
+                type: "info",
+                icon: "pli-cross icon-2x",
                 message:
                   '<i class="fa fa-check"></i> Status now changed to Active.',
-                container: 'floating',
-                timer: 5000
-              })
+                container: "floating",
+                timer: 5000,
+              });
             } else {
               $.niftyNoty({
-                type: 'info',
-                icon: 'pli-cross icon-2x',
+                type: "info",
+                icon: "pli-cross icon-2x",
                 message:
                   "<i class='fa fa-check'></i> Status now changed to Inactive.",
-                container: 'floating',
-                timer: 5000
-              })
+                container: "floating",
+                timer: 5000,
+              });
             }
-            this.getResults()
+            this.getResults();
           } else {
-            if (data.trim() == 'Error') {
-              if (status == '1') {
+            if (data.trim() == "Error") {
+              if (status == "1") {
                 $.niftyNoty({
-                  type: 'danger',
-                  icon: 'pli-cross icon-2x',
+                  type: "danger",
+                  icon: "pli-cross icon-2x",
                   message:
                     "<i class='fa fa-exclamation-circle'></i> Invalid, it's already active.",
-                  container: 'floating',
-                  timer: 5000
-                })
+                  container: "floating",
+                  timer: 5000,
+                });
               } else {
                 $.niftyNoty({
-                  type: 'danger',
-                  icon: 'pli-cross icon-2x',
+                  type: "danger",
+                  icon: "pli-cross icon-2x",
                   message:
                     "<i class='fa fa-exclamation-circle'></i> Invalid, it's already inactive.",
-                  container: 'floating',
-                  timer: 5000
-                })
+                  container: "floating",
+                  timer: 5000,
+                });
               }
             }
           }
         })
-        .catch(error => {})
+        .catch((error) => {});
     },
 
     // kaloy 2022-04-05
     handleGroupedItemsUpload(event) {
-      this.fileGroupedItems = event.target.files[0]
+      this.fileGroupedItems = event.target.files[0];
     },
 
     submitGroupedItemsUpload() {
-      let formData = new FormData()
-      formData.append('file', this.fileGroupedItems)
-      $('#loadMdl').modal('show')
+      let formData = new FormData();
+      formData.append("file", this.fileGroupedItems);
+      $("#loadMdl").modal("show");
       axios
-        .post('/grouped-items-upload', formData, {
+        .post("/grouped-items-upload", formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+            "Content-Type": "multipart/form-data",
+          },
         })
         .then(function(response) {
-          $('#loadMdl').modal('hide')
+          $("#loadMdl").modal("hide");
           if (response.data.success) {
-            Swal.fire('Done', '', 'success')
+            Swal.fire("Done", "", "success");
           }
         })
         .catch(function(err) {
-          $('#loadMdl').modal('hide')
-          Swal.fire('Error', err, 'error')
-        })
-    }
+          $("#loadMdl").modal("hide");
+          Swal.fire("Error", err, "error");
+        });
+    },
   },
   // /methods
 
   mounted() {
-    console.log('Component mounted.')
-    this.getResults()
-    this.getNoItems()
-    this.getLogResults()
-    this.getResultsConsolidated()
-    $('#container').css('position', 'relative')
-    this.$root.currentPage = this.$route.meta.name
-  }
-}
+    console.log("Component mounted.");
+    this.getResults();
+    this.getNoItems();
+    this.getLogResults();
+    this.getResultsConsolidated();
+    $("#container").css("position", "relative");
+    this.$root.currentPage = this.$route.meta.name;
+  },
+};
 </script>

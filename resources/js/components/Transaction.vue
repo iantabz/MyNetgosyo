@@ -133,7 +133,7 @@
                             <th>Date Ordered</th>
                             <!--kaloy 2022-04-07-->
                             <th>Total Amount <br>(Ordered)</th>
-                            <th>Total Amount <br>(Approved)</th>
+                            <th>Total Amount <br>(Served)</th>
                             <th>%</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -190,10 +190,14 @@
                               {{ (MgaTransaction.tot_del_amt / MgaTransaction.tot_amt * 100).toFixed(1) }}%
                             </td>
                             
+                            <!--***************** tran_stat *************-->
                             <td
                               v-if="MgaTransaction.tran_stat === 'On-Process'"
-                              style="color: #008000;"
+                              style="color: #36bf73;"
                             >
+                              <span class="badge badge-sm warning">
+
+                              </span>
                               {{ MgaTransaction.tran_stat }}
                             </td>
                             <td
@@ -226,6 +230,8 @@
                             >
                               {{ MgaTransaction.tran_stat }}
                             </td>
+                            <!--***************** /tran_stat *************-->
+
                             <td style="width: 90px;">
                               &nbsp;
                               <button
@@ -304,7 +310,7 @@
                       style="padding-bottom:0;margin-bottom:0;"
                     >
                       <div class="panel-body">
-                        Total Amount (Approved)
+                        Total Amount (Served)
                         <br>
                         <h3
                           style="padding:0;margin:0;"

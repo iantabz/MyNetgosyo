@@ -88,6 +88,7 @@ class ConsolidatedTransactionController extends Controller
             })
             ->orderBy('consolidated_id', 'DESC')
             ->paginate(10);
+            // ->paginate(3000);
 
         // dd($searchKey);
 
@@ -110,32 +111,34 @@ class ConsolidatedTransactionController extends Controller
                     ->where('uom', $row1->uom)
                     ->exists();
 
-                $data_res[] = array(
-                    'consolidated_id'               =>  $row1->consolidated_id,
-                    'product_name'                  =>  $row1->product_name,
-                    'transaction_type'              =>  $row1->transaction_type,
-                    'description'                   =>  $row1->description,
-                    'sales_invoice'                 =>  $row1->sales_invoice,
-                    'reference_no'                  =>  $row1->reference_no,
-                    'posting_date'                  =>  $row1->posting_date,
-                    'account_name'                  =>  $res2->account_name ?? 'NA',
-                    'customer_code'                 =>  $row1->customer_code,
-                    'first_name'                    =>  $res3->first_name ?? 'NA',
-                    'last_name'                     =>  $res3->last_name ?? 'NA',
-                    'salesman_code'                 =>  $row1->salesman_code,
-                    'itemcode'                      =>  $row1->itemcode,
-                    'qty'                           =>  $row1->qty,
-                    'total_amt'                     =>  $row1->total_amt,
-                    'product_family'                =>  $row1->product_family,
-                    'keywords'                      =>  $row1->keywords,
-                    'uom'                           =>  $row1->uom,
-                    'unit_price'                    =>  $row1->unit_price,
-                    'price_w_vat'                   =>  $row1->price_w_vat,
-                    'image'                         =>  $row1->image,
-                    'sstatus'                       =>  $row1->sstatus,
-                    'tran_no'                       => $row1->tran_no,
-                    'present_on_tranline'           => $checkOnTranLine,
-                );
+                // if($checkOnTranLine == false) {
+                    $data_res[] = array(
+                        'consolidated_id'               =>  $row1->consolidated_id,
+                        'product_name'                  =>  $row1->product_name,
+                        'transaction_type'              =>  $row1->transaction_type,
+                        'description'                   =>  $row1->description,
+                        'sales_invoice'                 =>  $row1->sales_invoice,
+                        'reference_no'                  =>  $row1->reference_no,
+                        'posting_date'                  =>  $row1->posting_date,
+                        'account_name'                  =>  $res2->account_name ?? 'NA',
+                        'customer_code'                 =>  $row1->customer_code,
+                        'first_name'                    =>  $res3->first_name ?? 'NA',
+                        'last_name'                     =>  $res3->last_name ?? 'NA',
+                        'salesman_code'                 =>  $row1->salesman_code,
+                        'itemcode'                      =>  $row1->itemcode,
+                        'qty'                           =>  $row1->qty,
+                        'total_amt'                     =>  $row1->total_amt,
+                        'product_family'                =>  $row1->product_family,
+                        'keywords'                      =>  $row1->keywords,
+                        'uom'                           =>  $row1->uom,
+                        'unit_price'                    =>  $row1->unit_price,
+                        'price_w_vat'                   =>  $row1->price_w_vat,
+                        'image'                         =>  $row1->image,
+                        'sstatus'                       =>  $row1->sstatus,
+                        'tran_no'                       => $row1->tran_no,
+                        'present_on_tranline'           => $checkOnTranLine,
+                    );
+                // }
             }
         }
 
