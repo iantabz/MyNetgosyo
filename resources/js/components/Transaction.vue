@@ -1276,7 +1276,7 @@
                   <div class="col-md-4">
                     <div class="btn-group btn-group-justified pull-right">
                       <div class="btn-group btn-group-lg">
-                        <button type="button" class="btn btn-secondary">Total Amount (Approved/Delivered)</button>
+                        <button type="button" class="btn btn-secondary">Total Amount</button>
                       </div>
                       <div class="btn-group btn-group-lg">
                         <button type="button" class="btn btn-info">{{ total_amt_tran7 | toCurrency }}</button>

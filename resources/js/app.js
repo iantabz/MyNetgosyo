@@ -20,6 +20,24 @@ import { showNotif } from './utils/helpers'
 
 Vue.filter('numberFormat', number => new Intl.NumberFormat().format(number))
 Vue.filter('formatDate', date => moment(date).format('MMMM Do YYYY, h:mm:ss a'))
+
+Vue.filter('formatDateYMD', 
+  date => {
+    let temp = moment(date).format('YYYY-MM-DD, H:mm:ss');
+    return temp == 'Invalid date' ? '' : temp;
+  });
+
+Vue.filter('compareYMDates', 
+  date => {
+    let date1 = moment(date).format('YYYY-MM-DD');
+    let date2 = moment(new Date()).format('YYYY-MM-DD');
+    if(date1==date2) {
+      return 'color:green';
+    } else {
+      return '';
+    }
+  });
+
 Vue.filter('formatDateNoTime', date => moment(date).format('MMMM Do YYYY'))
 Vue.filter('onlyTime', date => moment(date).format('h:mm:ss a'))
 Vue.component('breadcrumb', Breadcrumb)

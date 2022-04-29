@@ -31,6 +31,11 @@
             </li>
             <li class="">
               <a data-toggle="tab" href="#item-masterfile-tab-4">
+                Price Changes
+              </a>
+            </li>
+            <li class="">
+              <a data-toggle="tab" href="#item-masterfile-tab-5">
                 History Log
               </a>
             </li>
@@ -133,6 +138,7 @@
                         <th>Item Code</th>
                         <th>UOM</th>
                         <th>Price</th>
+                        <th>Updated At</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -170,6 +176,14 @@
                           {{
                             parseFloat(MgaItems.list_price_wtax) | toCurrency
                           }}
+                        </td>
+                        <!-- <td :style="
+                            ((MgaItems.updated_at | formatDateYMD).substring(0,10))==moment()
+                          "
+                        > -->
+                        <td :style="MgaItems.updated_at|compareYMDates">
+                        {{  }}
+                          {{ MgaItems.updated_at | formatDateYMD }}
                         </td>
                         <td class="text-center">
                           <div
@@ -287,6 +301,7 @@
               </div>
               <hr class="new-section-xs bord" />
             </div>
+
             <div id="item-masterfile-tab-2" class="tab-pane fade">
               <!-- Upload Grouped Items -->
               <!-- kaloy 2022-04-04 -->
@@ -324,6 +339,7 @@
               <!-- /kaloy 2022-04-04 -->
               <!-- /Upload Grouped Items -->
             </div>
+
             <div id="item-masterfile-tab-3" class="tab-pane fade">
               <div class="panel-body">
                 <div class="panel-heading">
@@ -495,7 +511,41 @@
                 </div>
               </div>
             </div>
+
             <div id="item-masterfile-tab-4" class="tab-pane fade">
+              <div class="panel-body">
+                <div class="panel-heading">
+                  <h3
+                    class="panel-title"
+                    style="font-weight: bold; font-size: 20px"
+                  >
+                    <i class="fa fa-upload"></i> Upload Price Changes
+                  </h3>
+                </div>
+                <div class="row">
+                  <div class="col-md-9">
+                    <input
+                      type="file"
+                      name="file"
+                      ref="file_upload_price_changes"
+                      accept=".txt"
+                      class="form-control"
+                      @change="handleUploadPriceChanges( $event )"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <button
+                      class="btn btn-primary btn-block"
+                      @click="submitUploadPriceChanges()"
+                    >
+                      Upload
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="item-masterfile-tab-5" class="tab-pane fade">
               <!-- history_log_tab_pane -->
               <div class="panel-body">
                 <div class="panel-heading">
@@ -1970,6 +2020,8 @@ export default {
       currentImagePreviewUrl: null,
       // kaloy 2022-04-05
       fileGroupedItems: "",
+      // kaloy 2022-04-29
+      filePriceChanges: "",
     };
   },
   components: {
@@ -2526,7 +2578,7 @@ export default {
         .catch((error) => {});
     },
 
-    // kaloy 2022-04-05
+    // kaloy 2022-04-05 ====================================
     handleGroupedItemsUpload(event) {
       this.fileGroupedItems = event.target.files[0];
     },
@@ -2552,6 +2604,36 @@ export default {
           Swal.fire("Error", err, "error");
         });
     },
+    // /kaloy 2022-04-05 ====================================
+
+    // kaloy 2022-04-29 ====================================
+    handleUploadPriceChanges(event) {
+      this.filePriceChanges = event.target.files[0];
+    },
+
+    submitUploadPriceChanges() {
+      let formData = new FormData();
+      formData.append("file", this.filePriceChanges);
+      $("#loadMdl").modal("show");
+      axios
+        .post("/upload-price-changes", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(function(response) {
+          $("#loadMdl").modal("hide");
+          if (response.data.success) {
+            Swal.fire("Done", "", "success");
+          }
+        })
+        .catch(function(err) {
+          $("#loadMdl").modal("hide");
+          Swal.fire("Error", err, "error");
+        });
+    },
+    // /kaloy 2022-04-29 ====================================
+
   },
   // /methods
 
