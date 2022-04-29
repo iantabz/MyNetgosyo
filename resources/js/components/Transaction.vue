@@ -3751,7 +3751,7 @@ export default {
       this.form.export_date = MgaTransaction.export_date
       this.form.itm_del_count = MgaTransaction.itm_del_count
       // kaloy 2021-09-29
-      this.getResults()
+      // this.getResults()
     },
 
     // tran head view (delivered)

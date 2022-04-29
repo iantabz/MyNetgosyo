@@ -112,6 +112,10 @@
             padding-left:10px;
             padding-right:10px;
         }
+
+        table tr {
+            color: #333333;
+        }
     </style>
 </head>
 
