@@ -112,6 +112,10 @@
             padding-left:10px;
             padding-right:10px;
         }
+
+        table tr {
+            color: #333333;
+        }
     </style>
 </head>
 
@@ -132,8 +136,8 @@
                     <!--================================-->
                     <div class="navbar-header">
                         <a href="#" class="navbar-brand">
-                            <img src="{{ asset('assets/img/logo.png') }}" alt="') }}Nifty Logo" class="brand-icon">
-                            <div class="brand-title" style="background-color: #ff5722;">
+                            {{-- <img src="{{ asset('assets/img/mng_logo_test.png') }}" alt="') }}Nifty Logo" class="brand-icon"> --}}
+                            <div class="brand-title">
                                 <span class="brand-text">My NETgosyo</span>
                             </div>
                         </a>

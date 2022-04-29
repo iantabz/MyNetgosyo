@@ -633,7 +633,7 @@ class ItemMasterfileController extends Controller
 
     public function getListItems2()
     {
-        return ItemMasterfile::paginate(10);
+        return ItemMasterfile::orderBy('status', 'DESC')->paginate(10);
     }
 
     public function searchItemu()
@@ -645,6 +645,7 @@ class ItemMasterfileController extends Controller
                 ->orWhere('itemcode', 'LIKE', "%$search%")
                 ->orWhere('uom', 'LIKE', "%$search%");
         })
+            ->orderBy('status', 'DESC')
             ->paginate(10);
     }
 

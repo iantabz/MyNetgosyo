@@ -789,13 +789,9 @@ class TransactionController extends Controller
     private $totalAmtReturned = 0;
     private $totalAmtCancelled = 0;
 
-    //TODO: getTotalAmount
     // ongoing_trans total_amount
     public function getTotalAmount()
     {
-        $totalAmountApproved = 0.00;
-        $totalAmountOngoing = 0.00;
-
         // dd(request()->all());
         $dateFrom = Carbon::parse(base64_decode(request()->dateFrom));
         $dateTo = Carbon::parse(base64_decode(request()->dateTo));
@@ -803,6 +799,7 @@ class TransactionController extends Controller
         $dateActive = request()->dateActive;
 
         if (request()->name != 'null') {
+
             if ($dateFrom->isToday() === true && $dateTo->isToday() === true) {
 
                 if ($dateActive === 'false') {
@@ -817,38 +814,14 @@ class TransactionController extends Controller
                                 ->orWhere('tb_tran_head.p_meth', 'LIKE', "%$search%");
                         })
                         ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
-                        // kaloy 2022-04-08 ==============================================
-                        ->where(function($query){
-                            $dateToday = date('Y-m-d', strtotime('today'));
-                            $cutOffTime = DB::table('order_cut_off_time')
-                                ->select('cut_off_time')
-                                ->where('status', 1)
-                                ->first();
-                            $query->whereRaw("DATE(date_req) = DATE('$dateToday')")
-                            ->whereRaw("TIME(date_req) < TIME('$cutOffTime->cut_off_time')")
-                            ->orWhereRaw("DATE(date_req) < DATE('$dateToday')")
-                            ->orWhere('order_by','Backend');
-                        })
-
                         ->get();
 
                     foreach ($calc as $row) {
-                        //TODO: Calculate base on tot_amt only (1)
-                        // if ($row->tran_stat === 'Pending' || $row->tran_stat === 'On-Process') {
-                        //     $this->totalAmt += $row->tot_amt;
-                        // }
-                        // if ($row->tran_stat === 'Approved') {
-                        //     $this->totalAmt += $row->tot_del_amt;
-                        // }
-                        
-                        // kaloy 2022-04-11
-                        if ($row->tran_stat == 'Pending' 
-                            || $row->tran_stat == 'On-Process' 
-                            || $row->tran_stat == 'Approved') {
-                            $totalAmountOngoing += $row->tot_amt;
+                        if ($row->tran_stat === 'Pending' || $row->tran_stat === 'On-Process') {
+                            $this->totalAmt += $row->tot_amt;
                         }
-                        if ($row->tran_stat == 'Approved') {
-                            $totalAmountApproved += $row->tot_del_amt;
+                        if ($row->tran_stat === 'Approved') {
+                            $this->totalAmt += $row->tot_del_amt;
                         }
                     }
                 } else {
@@ -865,38 +838,14 @@ class TransactionController extends Controller
                         ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
                         ->whereDate('tb_tran_head.date_req', '>=', $dateFrom->toDateString())
                         ->WhereDate('tb_tran_head.date_req', '<=', $dateTo->toDateString())
-                        // kaloy 2022-04-08 ==============================================
-                        ->where(function($query){
-                            $dateToday = date('Y-m-d', strtotime('today'));
-                            $cutOffTime = DB::table('order_cut_off_time')
-                                ->select('cut_off_time')
-                                ->where('status', 1)
-                                ->first();
-                            $query->whereRaw("DATE(date_req) = DATE('$dateToday')")
-                            ->whereRaw("TIME(date_req) < TIME('$cutOffTime->cut_off_time')")
-                            ->orWhereRaw("DATE(date_req) < DATE('$dateToday')")
-                            ->orWhere('order_by','Backend');
-                        })
-
                         ->get();
 
                     foreach ($calc as $row) {
-                        //TODO: Calculate base on tot_amt only (2)
-                        // if ($row->tran_stat === 'Pending' || $row->tran_stat === 'On-Process') {
-                        //     $this->totalAmt += $row->tot_amt;
-                        // }
-                        // if ($row->tran_stat === 'Approved') {
-                        //     $this->totalAmt += $row->tot_del_amt;
-                        // }
-                        
-                        // kaloy 2022-04-11
-                        if ($row->tran_stat == 'Pending' 
-                            || $row->tran_stat == 'On-Process' 
-                            || $row->tran_stat == 'Approved') {
-                            $totalAmountOngoing += $row->tot_amt;
+                        if ($row->tran_stat === 'Pending' || $row->tran_stat === 'On-Process') {
+                            $this->totalAmt += $row->tot_amt;
                         }
-                        if ($row->tran_stat == 'Approved') {
-                            $totalAmountApproved += $row->tot_del_amt;
+                        if ($row->tran_stat === 'Approved') {
+                            $this->totalAmt += $row->tot_del_amt;
                         }
                     }
                 }
@@ -914,86 +863,36 @@ class TransactionController extends Controller
                     ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
                     ->whereDate('tb_tran_head.date_req', '>=', $dateFrom->toDateString())
                     ->WhereDate('tb_tran_head.date_req', '<=', $dateTo->toDateString())
-                    // kaloy 2022-04-08 ==============================================
-                    ->where(function($query){
-                        $dateToday = date('Y-m-d', strtotime('today'));
-                        $cutOffTime = DB::table('order_cut_off_time')
-                            ->select('cut_off_time')
-                            ->where('status', 1)
-                            ->first();
-                        $query->whereRaw("DATE(date_req) = DATE('$dateToday')")
-                        ->whereRaw("TIME(date_req) < TIME('$cutOffTime->cut_off_time')")
-                        ->orWhereRaw("DATE(date_req) < DATE('$dateToday')")
-                        ->orWhere('order_by','Backend');
-                    })
-
                     ->get();
 
                 foreach ($calc as $row) {
-                    //TODO: Calculate base on tot_amt only (3)
-                    // if ($row->tran_stat === 'Pending' || $row->tran_stat === 'On-Process') {
-                    //     $this->totalAmt += $row->tot_amt;
-                    // }
-                    // if ($row->tran_stat === 'Approved') {
-                    //     $this->totalAmt += $row->tot_del_amt;
-                    // }
-                    
-                    // kaloy 2022-04-11
-                    if ($row->tran_stat == 'Pending' 
-                        || $row->tran_stat == 'On-Process' 
-                        || $row->tran_stat == 'Approved') {
-                        $totalAmountOngoing += $row->tot_amt;
+                    if ($row->tran_stat === 'Pending' || $row->tran_stat === 'On-Process') {
+                        $this->totalAmt += $row->tot_amt;
                     }
-                    if ($row->tran_stat == 'Approved') {
-                        $totalAmountApproved += $row->tot_del_amt;
+                    if ($row->tran_stat === 'Approved') {
+                        $this->totalAmt += $row->tot_del_amt;
                     }
                 }
             }
         } else {
+
             $calc = DB::table('tb_tran_head')
                 ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
                 ->whereDate('tb_tran_head.date_req', '>=', $dateFrom->toDateString())
                 ->WhereDate('tb_tran_head.date_req', '<=', $dateTo->toDateString())
-                // kaloy 2022-04-08 ==============================================
-                ->where(function($query){
-                    $dateToday = date('Y-m-d', strtotime('today'));
-                    $cutOffTime = DB::table('order_cut_off_time')
-                        ->select('cut_off_time')
-                        ->where('status', 1)
-                        ->first();
-                    $query->whereRaw("DATE(date_req) = DATE('$dateToday')")
-                    ->whereRaw("TIME(date_req) < TIME('$cutOffTime->cut_off_time')")
-                    ->orWhereRaw("DATE(date_req) < DATE('$dateToday')")
-                    ->orWhere('order_by','Backend');
-                })
-
                 ->get();
 
             foreach ($calc as $row) {
-                //TODO: Calculate base on tot_amt only (4)
-                // if ($row->tran_stat === 'Pending' || $row->tran_stat === 'On-Process') {
-                //     $this->totalAmt += $row->tot_amt;
-                // }
-                // if ($row->tran_stat === 'Approved') {
-                //     $this->totalAmt += $row->tot_del_amt;
-                // }
-                
-                // kaloy 2022-04-11
-                if ($row->tran_stat == 'Pending' 
-                    || $row->tran_stat == 'On-Process' 
-                    || $row->tran_stat == 'Approved') {
-                    $totalAmountOngoing += $row->tot_amt;
+                if ($row->tran_stat === 'Pending' || $row->tran_stat === 'On-Process') {
+                    $this->totalAmt += $row->tot_amt;
                 }
-                if ($row->tran_stat == 'Approved') {
-                    $totalAmountApproved += $row->tot_del_amt;
+                if ($row->tran_stat === 'Approved') {
+                    $this->totalAmt += $row->tot_del_amt;
                 }
             }
         }
 
-        return response()->json([
-            'total_amount_ongoing' => $totalAmountOngoing,
-            'total_amount_approved' => $totalAmountApproved,
-        ]);
+        return $this->totalAmt;
     }
 
     public function getTotalAmountDel()
@@ -1360,55 +1259,19 @@ class TransactionController extends Controller
         return $this->totalAmt;
     }
 
-    //TODO: getTotalAmountAll
     public function getTotalAmountAll()
     {
-        // kaloy 2022-04-11
-        $totalAmountAllOngoing = 0.00;
-        $totalAmountAllApproved = 0.00;
-
-        $calc = DB::table('tb_tran_head')
-        // kaloy 2022-04-11
-        ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
-        ->where(function($query){
-            $dateToday = date('Y-m-d', strtotime('today'));
-            $cutOffTime = DB::table('order_cut_off_time')
-                ->select('cut_off_time')
-                ->where('status', 1)
-                ->first();
-            $query->whereRaw("DATE(date_req) = DATE('$dateToday')")
-            ->whereRaw("TIME(date_req) < TIME('$cutOffTime->cut_off_time')")
-            ->orWhereRaw("DATE(date_req) < DATE('$dateToday')")
-            ->orWhere('order_by','Backend');
-        })
-        ->get();
-
-        // kaloy 2022-04-11
-        // foreach ($calc as $row) {
-        //     if ($row->tran_stat === 'Pending' || $row->tran_stat === 'On-Process') {
-        //         $this->totalAmtAll += $row->tot_amt;
-        //     }
-        //     if ($row->tran_stat === 'Approved' || $row->tran_stat === 'Delivered' || $row->tran_stat === 'Returned') {
-        //         $this->totalAmtAll += $row->tot_del_amt;
-        //     }
-        // }
+        $calc = DB::table('tb_tran_head')->get();
         foreach ($calc as $row) {
-            // kaloy 2022-04-11
-            if ($row->tran_stat == 'Pending' 
-                || $row->tran_stat == 'On-Process' 
-                || $row->tran_stat == 'Approved') {
-                $totalAmountAllOngoing += $row->tot_amt;
+            if ($row->tran_stat === 'Pending' || $row->tran_stat === 'On-Process') {
+                $this->totalAmtAll += $row->tot_amt;
             }
-            if ($row->tran_stat == 'Approved') {
-                $totalAmountAllApproved += $row->tot_del_amt;
+            if ($row->tran_stat === 'Approved' || $row->tran_stat === 'Delivered' || $row->tran_stat === 'Returned') {
+                $this->totalAmtAll += $row->tot_del_amt;
             }
         }
 
-        // return $this->totalAmtAll;
-        return response()->json([
-            'total_amount_all_ongoing' => $totalAmountAllOngoing,
-            'total_amount_all_approved' => $totalAmountAllApproved,
-        ]);
+        return $this->totalAmtAll;
     }
 
     public function getTotalAmountSubmitted()
@@ -1772,7 +1635,6 @@ class TransactionController extends Controller
         return response($res->count());
     }
 
-    // TODO: Test UTILS
     /**
      * Revert transaction status into pending
      * kaloy 2021-11-10
@@ -1782,12 +1644,6 @@ class TransactionController extends Controller
         $transaction_number = $request->transaction_number;
 
         if($transaction_number !== null || $transaction_number !== '') {
-            // kaloy 2022-04-08
-            // delete consolidation entry if the transaction is reverted
-            $res_consolidated_transactions = DB::table('consolidated_transactions')
-                ->where('reference_no', $transaction_number)
-                ->delete();
-                
             $res_tb_tran_head = DB::table('tb_tran_head')
                 ->where('tran_no', $transaction_number)
                 ->update([

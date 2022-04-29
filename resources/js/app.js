@@ -20,6 +20,24 @@ import { showNotif } from './utils/helpers'
 
 Vue.filter('numberFormat', number => new Intl.NumberFormat().format(number))
 Vue.filter('formatDate', date => moment(date).format('MMMM Do YYYY, h:mm:ss a'))
+
+Vue.filter('formatDateYMD', 
+  date => {
+    let temp = moment(date).format('YYYY-MM-DD, H:mm:ss');
+    return temp == 'Invalid date' ? '' : temp;
+  });
+
+Vue.filter('compareYMDates', 
+  date => {
+    let date1 = moment(date).format('YYYY-MM-DD');
+    let date2 = moment(new Date()).format('YYYY-MM-DD');
+    if(date1==date2) {
+      return 'color:green';
+    } else {
+      return '';
+    }
+  });
+
 Vue.filter('formatDateNoTime', date => moment(date).format('MMMM Do YYYY'))
 Vue.filter('onlyTime', date => moment(date).format('h:mm:ss a'))
 Vue.component('breadcrumb', Breadcrumb)
@@ -59,6 +77,8 @@ Vue.filter("toCurrency", function (value) {
 const files = require.context('./components/globals/', true, /\.vue$/i)
 files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
+// kaloy 2022-04-22
+const host = window.location.protocol + '//' + window.location.host + '/';
 
 const app = new Vue({
   el: '#app',
@@ -67,8 +87,8 @@ const app = new Vue({
   data: () => ({
     authUser: null,
     newRequest: null,
-    adminAccess: 'https://distribution.alturush.com/',
-    // adminAccess: 'http://localhost:8001/',
+    // adminAccess: 'https://distribution.alturush.com/',
+    adminAccess: host,
     currentPage: 'Home',
   }),
 

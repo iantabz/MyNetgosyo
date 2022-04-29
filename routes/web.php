@@ -390,6 +390,13 @@ Route::middleware(['auth'])->group(function () {
 
     // kaloy 2022-04-05
     Route::post('/grouped-items-upload', 'ImportGroupedItemsController@groupedItemsUpload');
+
+    // kaloy 2022-04-27
+    // Dashboard
+    Route::get('/average-transactions-per-day','DashboardController@averageTransactionsPerDay');
+
+    // Price Changes
+    Route::post('/upload-price-changes','PriceChangesController@uploadPriceChanges');
 });
 
 
