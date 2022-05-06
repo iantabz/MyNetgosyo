@@ -117,8 +117,8 @@ class ConsolidatedTransactionController extends Controller
             })
             // ========================================================================
             ->orderBy('consolidated_transactions.consolidated_id', 'DESC')
-            ->paginate(10);
-            // ->paginate(5000);
+            // ->paginate(10);
+            ->paginate(5000);
 
         // dd($res1);
 
