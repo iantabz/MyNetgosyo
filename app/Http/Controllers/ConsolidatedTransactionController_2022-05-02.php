@@ -28,8 +28,8 @@ class ConsolidatedTransactionController extends Controller
             ->whereDate('posting_date', $date)
             ->paginate(10);
     }
-    
-    
+
+
     // kaloy 2022-04-07
     public function getConsolidated(Request $request)
     {
@@ -54,14 +54,30 @@ class ConsolidatedTransactionController extends Controller
             'item_masterfiles.product_family AS product_family',
             'item_masterfiles.description AS description',
             'item_masterfiles.status AS sstatus',
-            'item_masterfiles.image AS image'
+            'item_masterfiles.image AS image',
+            'tb_tran_head.tran_no'
         )
-            ->join(
+            ->leftJoin(
                 'item_masterfiles',
                 'consolidated_transactions.itemcode',
                 '=',
                 'item_masterfiles.itemcode'
             )
+            ->leftJoin(
+                'tb_tran_head',
+                'consolidated_transactions.reference_no',
+                '=',
+                'tb_tran_head.tran_no'
+            )
+
+            // ->leftJoin(
+            //     'tb_tran_line',
+            //     'consolidated_transactions.itemcode',
+            //     '=',
+            //     'tb_tran_line.itm_code'
+            // )
+            // ->whereRaw('tb_tran_line.tran_no = consolidated_transactions.reference_no')
+
             ->whereRaw('consolidated_transactions.uom = item_masterfiles.uom')
             // ->whereDate('posting_date', $date)
             ->where(function ($query) use (&$searchKey) {
@@ -70,7 +86,9 @@ class ConsolidatedTransactionController extends Controller
                     ->orWhere('posting_date', 'like', '%' . $searchKey . '%')
                     ->orWhere('consolidated_transactions.itemcode', 'like', '%' . $searchKey . '%');
             })
+            ->orderBy('consolidated_id', 'DESC')
             ->paginate(10);
+            // ->paginate(3000);
 
         // dd($searchKey);
 
@@ -87,30 +105,40 @@ class ConsolidatedTransactionController extends Controller
                     ->where('user_code', $row1->salesman_code)
                     ->first();
 
-                $data_res[] = array(
-                    'consolidated_id'               =>  $row1->consolidated_id,
-                    'product_name'                  =>  $row1->product_name,
-                    'transaction_type'              =>  $row1->transaction_type,
-                    'description'                   =>  $row1->description,
-                    'sales_invoice'                 =>  $row1->sales_invoice,
-                    'reference_no'                  =>  $row1->reference_no,
-                    'posting_date'                  =>  $row1->posting_date,
-                    'account_name'                  =>  $res2->account_name ?? 'NA',
-                    'customer_code'                 =>  $row1->customer_code,
-                    'first_name'                    =>  $res3->first_name ?? 'NA',
-                    'last_name'                     =>  $res3->last_name ?? 'NA',
-                    'salesman_code'                 =>  $row1->salesman_code,
-                    'itemcode'                      =>  $row1->itemcode,
-                    'qty'                           =>  $row1->qty,
-                    'total_amt'                     =>  $row1->total_amt,
-                    'product_family'                =>  $row1->product_family,
-                    'keywords'                      =>  $row1->keywords,
-                    'uom'                           =>  $row1->uom,
-                    'unit_price'                    =>  $row1->unit_price,
-                    'price_w_vat'                   =>  $row1->price_w_vat,
-                    'image'                         =>  $row1->image,
-                    'sstatus'                       =>  $row1->sstatus
-                );
+                $checkOnTranLine = DB::table('tb_tran_line')
+                    ->where('tran_no', $row1->reference_no)
+                    ->where('itm_code', $row1->itemcode)
+                    ->where('uom', $row1->uom)
+                    ->exists();
+
+                // if($checkOnTranLine == false) {
+                    $data_res[] = array(
+                        'consolidated_id'               =>  $row1->consolidated_id,
+                        'product_name'                  =>  $row1->product_name,
+                        'transaction_type'              =>  $row1->transaction_type,
+                        'description'                   =>  $row1->description,
+                        'sales_invoice'                 =>  $row1->sales_invoice,
+                        'reference_no'                  =>  $row1->reference_no,
+                        'posting_date'                  =>  $row1->posting_date,
+                        'account_name'                  =>  $res2->account_name ?? 'NA',
+                        'customer_code'                 =>  $row1->customer_code,
+                        'first_name'                    =>  $res3->first_name ?? 'NA',
+                        'last_name'                     =>  $res3->last_name ?? 'NA',
+                        'salesman_code'                 =>  $row1->salesman_code,
+                        'itemcode'                      =>  $row1->itemcode,
+                        'qty'                           =>  $row1->qty,
+                        'total_amt'                     =>  $row1->total_amt,
+                        'product_family'                =>  $row1->product_family,
+                        'keywords'                      =>  $row1->keywords,
+                        'uom'                           =>  $row1->uom,
+                        'unit_price'                    =>  $row1->unit_price,
+                        'price_w_vat'                   =>  $row1->price_w_vat,
+                        'image'                         =>  $row1->image,
+                        'sstatus'                       =>  $row1->sstatus,
+                        'tran_no'                       => $row1->tran_no,
+                        'present_on_tranline'           => $checkOnTranLine,
+                    );
+                // }
             }
         }
 
@@ -144,7 +172,9 @@ class ConsolidatedTransactionController extends Controller
             ]);
 
             $path = $request->file('import_file1')->getRealPath();
-            $data = file_get_contents($path);
+            // kaloy 2022-04-11
+            $data = utf8_encode(file_get_contents($path));
+            
             // dump($data);
             $data_lines = explode("\r\n", $data);
             $total_lines = count($data_lines);
@@ -177,6 +207,12 @@ class ConsolidatedTransactionController extends Controller
                     $currTime = date('H:i:s');
                     $datetime_request = Carbon::parse("$posting_date $currTime");
 
+                    // kaloy 2022-05-02
+                    $isItemManuallyAdded = DB::table('tb_tran_line')
+                        ->where('tran_no', $ref_no)
+                        ->where('itm_code', $itemcode)
+                        ->where('uom', $uom)
+                        ->exists();
 
                     $check1 = DB::table('customer_master_files')
                         ->where('account_code', '=', $cust_code)
@@ -250,10 +286,10 @@ class ConsolidatedTransactionController extends Controller
                                                 $consolidate->status = '';
                                                 $consolidate->date_uploaded = $date;
                                                 $consolidate->flag = 0;
+                                                $consolidate->is_manual = $isItemManuallyAdded;
                                                 $consolidate->save();
 
                                                 // $date_request = Carbon::parse($posting_date)->toDateString();
-
                                                 //calculation
                                                 $disct = $discount / 100;
                                                 $discounted_line_amt = $disct * $total_amt;
@@ -331,6 +367,7 @@ class ConsolidatedTransactionController extends Controller
                                                 $consolidate->status = '';
                                                 $consolidate->date_uploaded = $date;
                                                 $consolidate->flag = 0;
+                                                $consolidate->is_manual = $isItemManuallyAdded;
                                                 $consolidate->save();
 
                                                 // $date_request = Carbon::parse($posting_date)->toDateString();
@@ -409,6 +446,7 @@ class ConsolidatedTransactionController extends Controller
                                         $consolidate->status = '';
                                         $consolidate->date_uploaded = $date;
                                         $consolidate->flag = 0;
+                                        $consolidate->is_manual = $isItemManuallyAdded;
                                         $consolidate->save();
 
                                         // $date_request = Carbon::parse($posting_date)->toDateString();
@@ -487,6 +525,7 @@ class ConsolidatedTransactionController extends Controller
                                 $consolidate->status = '';
                                 $consolidate->date_uploaded = $date;
                                 $consolidate->flag = 0;
+                                $consolidate->is_manual = $isItemManuallyAdded;
                                 $consolidate->save();
 
                                 // $date_request = Carbon::parse($posting_date)->toDateString();
@@ -743,7 +782,7 @@ class ConsolidatedTransactionController extends Controller
 
         return response()->json(['message' => 'Uploaded successfully'], 200);
     }
-    
+
 
     /**
      * Show the form for creating a new resource.
@@ -810,10 +849,11 @@ class ConsolidatedTransactionController extends Controller
     {
         //
     }
-    
+
     // S.I. TEST DATA GENERATION
     // kaloy 2021-11-10
-    public function generateSITest(Request $request) {
+    public function generateSITest(Request $request)
+    {
         $request->validate([
             'file' => 'required|file|mimes:csv,txt'
         ]);
@@ -821,15 +861,15 @@ class ConsolidatedTransactionController extends Controller
         $filePath = $request->file('file')->getRealPath();
         $data = file_get_contents($filePath);
 
-        $data_rows = explode("\n" ,$data);
+        $data_rows = explode("\n", $data);
         $row_count = count($data_rows);
-        
+
         $formatted_data = '';
-        
-        for($i=1; $i<$row_count; $i++) {
-            if($data_rows[$i] != NULL) {
+
+        for ($i = 1; $i < $row_count; $i++) {
+            if ($data_rows[$i] != NULL) {
                 $row_cols = explode(",", $data_rows[$i]);
-                $row_cols = str_replace('"','',$row_cols);
+                $row_cols = str_replace('"', '', $row_cols);
 
                 $is_downloaded = trim($row_cols[0]);
                 $trans_no = trim($row_cols[1]);
@@ -849,20 +889,19 @@ class ConsolidatedTransactionController extends Controller
                 $qty_todeliver = trim($row_cols[15]);
                 $qty_ordered = trim($row_cols[16]);
 
-                $sample_invoice_num = str_replace('-','',$trans_no);
+                $sample_invoice_num = str_replace('-', '', $trans_no);
                 $product_price = DB::table('item_masterfiles')->select('list_price_wtax')
                     ->where('itemcode', $product_code)
                     ->where('uom', $product_uom)
                     ->first('list_price_wtax');
                 $product_price = $product_price->list_price_wtax;
                 $order_item_total = $qty_todeliver * $product_price;
-                
+
                 try {
                     $timestamp = Carbon::parse($timestamp)->format('m/d/Y');
                 } catch (\Throwable $th) {
-                    
                 }
-                
+
                 $formatted_data .= "Invoice|$sample_invoice_num|$account_code|$timestamp|$product_code|$qty_todeliver|$product_price|$order_item_total|Yes|$user_code|$product_uom|$trans_no" . "\n";
             }
         }
