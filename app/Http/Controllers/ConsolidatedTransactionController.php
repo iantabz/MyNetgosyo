@@ -33,11 +33,15 @@ class ConsolidatedTransactionController extends Controller
     // kaloy 2022-04-07
     public function getConsolidated(Request $request)
     {
+        set_time_limit(0);
+
         $data_res = [];
         // $date = Carbon::parse(base64_decode(request()->date))->toDateString();
 
         // kaloy 2022-04-06
         $searchKey = $request->searchKey ?? '';
+        $manuallyAddedOnly = $request->is_manual ?? 'false';
+        $is_manual = $manuallyAddedOnly=='false' ? 0 : 1;
 
         // return ConsolidatedTransaction::select('consolidated_transactions.*', 'item_masterfiles.description AS description', 'item_masterfiles.status AS sstatus', 'item_masterfiles.image AS image', 'customer_master_files.account_name AS account_name', 'salesman_lists.first_name AS first_name', 'salesman_lists.last_name AS last_name')
         //     ->join('item_masterfiles', 'consolidated_transactions.itemcode', '=', 'item_masterfiles.itemcode')
@@ -49,20 +53,25 @@ class ConsolidatedTransactionController extends Controller
 
         $res1 = ConsolidatedTransaction::select(
             'consolidated_transactions.*',
-            'item_masterfiles.product_name AS product_name',
-            'item_masterfiles.keywords AS keywords',
-            'item_masterfiles.product_family AS product_family',
-            'item_masterfiles.description AS description',
-            'item_masterfiles.status AS sstatus',
-            'item_masterfiles.image AS image',
+            // 'item_masterfiles.product_name AS product_name',
+            // 'item_masterfiles.keywords AS keywords',
+            // 'item_masterfiles.product_family AS product_family',
+            // 'item_masterfiles.description AS description',
+            // 'item_masterfiles.status AS sstatus',
+            // 'item_masterfiles.image AS image',
             'tb_tran_head.tran_no'
         )
-            ->leftJoin(
-                'item_masterfiles',
-                'consolidated_transactions.itemcode',
-                '=',
-                'item_masterfiles.itemcode'
-            )
+            // ->leftJoin(
+            //     'item_masterfiles',
+            //     'consolidated_transactions.itemcode',
+            //     '=',
+            //     'item_masterfiles.itemcode'
+            // )
+            // ->join('item_masterfiles', function($join) {
+            //     $join->on('item_masterfiles.itemcode','=', 'consolidated_transactions.itemcode')
+            //         ->whereRaw('item_masterfiles.uom = consolidated_transactions.uom')
+            //         ;
+            // })
             ->leftJoin(
                 'tb_tran_head',
                 'consolidated_transactions.reference_no',
@@ -78,19 +87,40 @@ class ConsolidatedTransactionController extends Controller
             // )
             // ->whereRaw('tb_tran_line.tran_no = consolidated_transactions.reference_no')
 
-            ->whereRaw('consolidated_transactions.uom = item_masterfiles.uom')
+            // ->whereRaw('consolidated_transactions.uom = item_masterfiles.uom')
+            // ->where('consolidated_transactions.uom', 'item_masterfiles.uom')
+
             // ->whereDate('posting_date', $date)
             ->where(function ($query) use (&$searchKey) {
-                $query->where('sales_invoice', 'like', '%' . $searchKey . '%')
-                    ->orWhere('reference_no', 'like', '%' . $searchKey . '%')
-                    ->orWhere('posting_date', 'like', '%' . $searchKey . '%')
-                    ->orWhere('consolidated_transactions.itemcode', 'like', '%' . $searchKey . '%');
+                $query->where('consolidated_transactions.sales_invoice', 'like', '%' . $searchKey . '%')
+                    ->orWhere('consolidated_transactions.reference_no', 'like', '%' . $searchKey . '%')
+                    ->orWhere('consolidated_transactions.posting_date', 'like', '%' . $searchKey . '%')
+                    ->orWhere('consolidated_transactions.itemcode', 'like', '%' . $searchKey . '%')
+                    ;
             })
-            ->orderBy('consolidated_id', 'DESC')
-            ->paginate(10);
-            // ->paginate(3000);
+            
+            // ========================================================================
+            // ->where('consolidated_transactions.is_manual', $is_manual)
+            // ->when($is_manual == 1, function($q){
+                //     return $q->where('consolidated_transactions.is_manual_appended', 0);
+                // })
 
-        // dd($searchKey);
+            ->when($is_manual == 0, function($q){
+                return $q->where('consolidated_transactions.is_manual', 0)
+                    ->orWhere('consolidated_transactions.is_manual_appended', 1)
+                ;
+            })
+            ->when($is_manual == 1, function($q){
+                return $q->where('consolidated_transactions.is_manual', 1)
+                    ->where('consolidated_transactions.is_manual_appended', 0)
+                ;
+            })
+            // ========================================================================
+            ->orderBy('consolidated_transactions.consolidated_id', 'DESC')
+            // ->paginate(10);
+            ->paginate(5000);
+
+        // dd($res1);
 
         $transformed = $res1->getCollection();
 
@@ -105,18 +135,44 @@ class ConsolidatedTransactionController extends Controller
                     ->where('user_code', $row1->salesman_code)
                     ->first();
 
+                // =================================================================
                 $checkOnTranLine = DB::table('tb_tran_line')
                     ->where('tran_no', $row1->reference_no)
                     ->where('itm_code', $row1->itemcode)
                     ->where('uom', $row1->uom)
                     ->exists();
+                // $checkOnTranLine = true;
+                if($checkOnTranLine == false) {
+                    DB::table('consolidated_transactions')
+                        ->where('reference_no', $row1->reference_no)
+                        ->where('itemcode', $row1->itemcode)
+                        ->where('uom', $row1->uom)
+                        ->update([
+                            'is_manual' => 1
+                        ]);
+                }
+                // =================================================================
+
+                $item_no_uom = DB::table('item_masterfiles')
+                    ->where('itemcode', $row1->itemcode)
+                    // ->where('uom', $row1->uom)
+                    ->first();
+                $checkOnMasterfile = $item_no_uom != null ? true : false;
+
+                $item = DB::table('item_masterfiles')
+                    ->where('itemcode', $row1->itemcode)
+                    ->where('uom', $row1->uom)
+                    ->first();
+                $checkOnMasterfile_with_UOM = $item != null ? true : false;
 
                 // if($checkOnTranLine == false) {
                     $data_res[] = array(
                         'consolidated_id'               =>  $row1->consolidated_id,
-                        'product_name'                  =>  $row1->product_name,
+                        // 'product_name'                  =>  $row1->product_name,
+                        'product_name'                  =>  $item_no_uom->product_name ?? 'NA',
                         'transaction_type'              =>  $row1->transaction_type,
-                        'description'                   =>  $row1->description,
+                        // 'description'                   =>  $row1->description,
+                        'description'                   =>  $item_no_uom->description ?? 'NA',
                         'sales_invoice'                 =>  $row1->sales_invoice,
                         'reference_no'                  =>  $row1->reference_no,
                         'posting_date'                  =>  $row1->posting_date,
@@ -128,15 +184,22 @@ class ConsolidatedTransactionController extends Controller
                         'itemcode'                      =>  $row1->itemcode,
                         'qty'                           =>  $row1->qty,
                         'total_amt'                     =>  $row1->total_amt,
-                        'product_family'                =>  $row1->product_family,
+                        // 'product_family'                =>  $row1->product_family,
+                        'product_family'                =>  $item_no_uom->product_family ?? 'NA',
                         'keywords'                      =>  $row1->keywords,
                         'uom'                           =>  $row1->uom,
                         'unit_price'                    =>  $row1->unit_price,
+                        // 'unit_price'                    =>  $item->list_price_wouttax ?? 'NA',
                         'price_w_vat'                   =>  $row1->price_w_vat,
-                        'image'                         =>  $row1->image,
-                        'sstatus'                       =>  $row1->sstatus,
+                        // 'price_w_vat'                   =>  $item->list_price_wtax ?? 'NA',
+                        // 'image'                         =>  $row1->image,
+                        'image'                         =>  $item_no_uom->image ?? 'NA',
+                        // 'sstatus'                       =>  $row1->sstatus,
+                        'sstatus'                       =>  $item->status ?? 'NA',
                         'tran_no'                       => $row1->tran_no,
-                        'present_on_tranline'           => $checkOnTranLine,
+                        // 'present_on_tranline'           => $checkOnTranLine,
+                        'present_on_masterfile'             => $checkOnMasterfile,
+                        'present_on_masterfile_with_uom'    => $checkOnMasterfile_with_UOM,
                     );
                 // }
             }
@@ -207,6 +270,12 @@ class ConsolidatedTransactionController extends Controller
                     $currTime = date('H:i:s');
                     $datetime_request = Carbon::parse("$posting_date $currTime");
 
+                    // kaloy 2022-05-02
+                    $isItemManuallyAdded = DB::table('tb_tran_line')
+                        ->where('tran_no', $ref_no)
+                        ->where('itm_code', $itemcode)
+                        ->where('uom', $uom)
+                        ->exists() == false;
 
                     $check1 = DB::table('customer_master_files')
                         ->where('account_code', '=', $cust_code)
@@ -280,6 +349,7 @@ class ConsolidatedTransactionController extends Controller
                                                 $consolidate->status = '';
                                                 $consolidate->date_uploaded = $date;
                                                 $consolidate->flag = 0;
+                                                $consolidate->is_manual = $isItemManuallyAdded;
                                                 $consolidate->save();
 
                                                 // $date_request = Carbon::parse($posting_date)->toDateString();
@@ -360,6 +430,7 @@ class ConsolidatedTransactionController extends Controller
                                                 $consolidate->status = '';
                                                 $consolidate->date_uploaded = $date;
                                                 $consolidate->flag = 0;
+                                                $consolidate->is_manual = $isItemManuallyAdded;
                                                 $consolidate->save();
 
                                                 // $date_request = Carbon::parse($posting_date)->toDateString();
@@ -438,6 +509,7 @@ class ConsolidatedTransactionController extends Controller
                                         $consolidate->status = '';
                                         $consolidate->date_uploaded = $date;
                                         $consolidate->flag = 0;
+                                        $consolidate->is_manual = $isItemManuallyAdded;
                                         $consolidate->save();
 
                                         // $date_request = Carbon::parse($posting_date)->toDateString();
@@ -516,6 +588,7 @@ class ConsolidatedTransactionController extends Controller
                                 $consolidate->status = '';
                                 $consolidate->date_uploaded = $date;
                                 $consolidate->flag = 0;
+                                $consolidate->is_manual = $isItemManuallyAdded;
                                 $consolidate->save();
 
                                 // $date_request = Carbon::parse($posting_date)->toDateString();
@@ -771,6 +844,112 @@ class ConsolidatedTransactionController extends Controller
 
 
         return response()->json(['message' => 'Uploaded successfully'], 200);
+    }
+
+
+    public function addIsManualItems(Request $request) {
+        set_time_limit(0);
+
+        $mankey = $request->manager_key;
+
+        if($mankey == '123') {
+            $res = ConsolidatedTransaction::select(
+                'consolidated_transactions.*',
+                // 'item_masterfiles.uom AS uom',
+                // 'item_masterfiles.product_name AS product_name',
+                // 'item_masterfiles.keywords AS keywords',
+                // 'item_masterfiles.product_family AS product_family',
+                // 'item_masterfiles.description AS description',
+                // 'item_masterfiles.status AS sstatus',
+                // 'item_masterfiles.image AS image',
+                'tb_tran_head.tran_no'
+            )
+                // ->join('item_masterfiles', function($join) {
+                //     $join->on('consolidated_transactions.itemcode','=', 'item_masterfiles.itemcode')
+                //         ->whereRaw('consolidated_transactions.uom = item_masterfiles.uom')
+                //         ;
+                // })
+                ->join(
+                    'tb_tran_head',
+                    'consolidated_transactions.reference_no',
+                    '=',
+                    'tb_tran_head.tran_no'
+                )
+                ->where('consolidated_transactions.is_manual', 1)
+                ->where('consolidated_transactions.is_manual_appended', 0)
+                ->get();
+            
+            // dd($res);
+
+            foreach($res as $item) {
+                // dd($item);
+                $affected = 0;
+                $tempItem = DB::table('item_masterfiles')
+                    ->select('description','product_family')
+                    ->where('itemcode',$item->itemcode)
+                    // ->where('uom', $item->uom)
+                    ->first();
+
+                // dd($tempItem);
+                
+                if($tempItem != null) {
+                    DB::table('tb_tran_line')->insert([
+                        'tran_no' => $item->reference_no,
+                        'nav_invoice_no' => $item->sales_invoice,
+                        'itm_code' => $item->itemcode,
+                        'item_desc' => $tempItem->description,
+                        'req_qty' => $item->qty,
+                        'del_qty' => $item->qty,
+                        'uom' => $item->uom,
+                        'amt' => $item->unit_price,
+                        'discount' => 0.000000000000000000000000000000,
+                        'tot_amt' => $item->total_amt,
+                        'discounted_amount' => 0.00,
+                        'itm_cat' => $tempItem->product_family,
+                        'itm_stat' => 'Served',
+                        'flag' => 0,
+                        'account_code' => $item->customer_code,
+                        'date_req' => DB::table('tb_tran_head')
+                            ->select('date_req')
+                            ->where('tran_no', $item->reference_no)
+                            ->first()->date_req,
+                        'date_del' => null,
+                        'lrate' => 0.00,
+                        'rated' => null,
+                    ]);
+                    
+                    DB::table('tb_tran_head')->where('tran_no', $item->reference_no)
+                        ->update([
+                            'itm_count' => DB::raw('itm_count + '. $item->qty),
+                            'tot_amt' => DB::raw('tot_amt + '. $item->total_amt),
+                        ]);
+
+                    DB::table('consolidated_transactions')->where('reference_no', $item->reference_no)
+                        ->where('itemcode', $item->itemcode)
+                        ->where('uom', $item->uom)
+                        ->update([
+                            'is_manual_appended' => 1
+                        ]);
+
+                    $affected+=1;
+                }
+            }
+
+            $response['success'] = true;
+            $response['message'] = 'Done';
+
+            // if($affected > 0) {
+            //     $response['success'] = true;
+            //     $response['message'] = $affected. ' item/s appended on it\'s respective transaction';
+            // } else {
+            //     $response['message'] = 'None added';
+            // }
+            return response()->json($response);
+        } else {
+            $response['success'] = false;
+            $response['message'] = 'Invalid key';
+            return response()->json($response);
+        }
     }
 
 

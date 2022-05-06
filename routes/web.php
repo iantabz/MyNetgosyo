@@ -53,6 +53,9 @@ Route::middleware(['auth'])->group(function () {
         // kaloy 2021-11-10
         // for generating S.I. test data
         Route::post('generate_si_test', 'ConsolidatedTransactionController@generateSITest');
+
+        // kaloy 2022-05-05
+        Route::post('/add-is-manual-items', 'ConsolidatedTransactionController@addIsManualItems');
     });
 
     Route::prefix('item')->group(function () {

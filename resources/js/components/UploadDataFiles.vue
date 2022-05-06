@@ -6,7 +6,7 @@
       <div class="panel-body">
         <div class="panel-heading">
           <h3 class="panel-title" style="font-weight: bold; font-size: 20px">
-            <i class="fa fa-upload"></i> Consolidate File
+            <i class="fa fa-upload"></i> Import Sales Invoice/TDS
           </h3>
         </div>
 
@@ -14,32 +14,30 @@
           <!--Nav Tabs-->
           <ul class="nav nav-tabs">
             <li class="active">
-              <!-- <a data-toggle="tab" href="#demo-lft-tab-1">
-                Item Masterfile (Navision)
-               
-              </a>
-            </li> -->
-            </li>
-
-            <li class="active">
-              <a data-toggle="tab" href="#demo-lft-tab-2">
-                Consolidated File (Navision)
+              <a data-toggle="tab" href="#demo-lft-tab-1">
+                Import Sales Invoice/TDS (Navision)
                 <!-- <span class="badge badge-success">{{ items1.total }}</span> -->
+              </a>
+            </li>
+            <li class="">
+              <a data-toggle="tab" href="#demo-lft-tab-2">
+                Manually Added Items
               </a>
             </li>
           </ul>
 
           <!--Tabs Content-->
           <div class="tab-content">
-            <div id="demo-lft-tab-2" class="tab-pane fade active in">
+            <div id="demo-lft-tab-1" class="tab-pane fade active in">
               <div class="panel-body">
-                <div class="row" style="margin: 0px 0px 10px 0px">
+                <!-- <div class="row" style="margin: 0px 0px 10px 0px"> -->
+                <div class="row">
                   <div class="col-lg-12">
                     <!--Dropzonejs using Bootstrap theme-->
                     <!--===================================================-->
                     <p>
-                      Only Consolidated Files / Item Consolidated Files will
-                      upload in this form.
+                      Only Consolidated Files / Item Consolidated Files should
+                      be uploaded in this form.
                       <span style="color: red"
                         >Note: ".csv" file format only.</span
                       >
@@ -47,48 +45,36 @@
 
                     <div class="bord-top pad-ver">
                       <form id="myForm1" @submit.prevent="submitFiles1">
-                        <div class="panel-body">
-                          <div class="row">
-                            <div class="col-sm-12">
-                              <input
-                                type="file"
-                                id="input-file-import"
-                                ref="text"
-                                accept=".txt"
-                                class="
+                        <input
+                          type="file"
+                          id="input-file-import"
+                          ref="text"
+                          accept=".txt"
+                          class="
                                   btn btn-primary
                                   fileinput-button
                                   dz-clickable
                                 "
-                                style="
-                                  border: 1px solid #ccc;
-                                  display: inline-block;
-                                  padding: 6px 12px;
-                                  cursor: pointer;
-                                "
-                                @change="test()"
-                              />
-
-                              <div class="btn-group pull-right">
-                                <button
-                                  :disabled="isSubmitting || !disabled"
-                                  type="submit"
-                                  id="submitform"
-                                  class="btn btn-primary"
-                                >
-                                  <i class="fa fa-cloud-upload"></i> Upload
-                                </button>
-                                <button
-                                  id="dz-remove-btn"
-                                  class="btn btn-danger cancel"
-                                  type="reset"
-                                  @click="clearData()"
-                                >
-                                  <i class="demo-psi-trash"></i>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
+                          
+                          @change="test()"
+                        />
+                        <div class="btn-group pull-right">
+                          <button
+                            :disabled="isSubmitting || !disabled"
+                            type="submit"
+                            id="submitform"
+                            class="btn btn-primary"
+                          >
+                            <i class="fa fa-cloud-upload"></i> Upload
+                          </button>
+                          <button
+                            id="dz-remove-btn"
+                            class="btn btn-danger cancel"
+                            type="reset"
+                            @click="clearData()"
+                          >
+                            <i class="demo-psi-trash"></i>
+                          </button>
                         </div>
                       </form>
                     </div>
@@ -127,11 +113,22 @@
                     </div>
                     <div class="col-md-3"></div>
                     <div class="col-md-3 table-toolbar-right">
-                      <input type="search" v-model="searchKey"
+                      <input
+                        type="search"
+                        v-model="searchKey"
                         class="form-control"
                         placeholder="Search"
-                      >
+                      />
                     </div>
+                  </div>
+                  <div style="background-color:#f2f2f2;padding:2px 6px;">
+                    <a
+                      href="javascript:void(0)"
+                      class="btn btn-sm btn-secondary"
+                      @click="getResultsConsolidated()"
+                    >
+                      Refresh List
+                    </a>
                   </div>
                   <table
                     id="consolidated_table"
@@ -162,23 +159,26 @@
                       <tr
                         v-for="(MgaConsolidated, index) in consolidated.data"
                         :key="index"
-                        
                       >
                         <td>{{ MgaConsolidated.transaction_type }}</td>
                         <td>{{ MgaConsolidated.sales_invoice }}</td>
-                        <td
-                          :style="MgaConsolidated.tran_no==null ? 'color:red;' : ''"
-                          :title="MgaConsolidated.tran_no==null ? 'Unknown Transaction #' : ''"
-                        >
+                        <td>
                           {{ MgaConsolidated.reference_no }}
                         </td>
                         <td>{{ MgaConsolidated.customer_code }}</td>
-                        <td
-                          :style="MgaConsolidated.present_on_tranline==false ? 'color:red;' : ''"
-                        >
+                        <td>
                           {{ MgaConsolidated.itemcode }}
                         </td>
-                        <td>{{ MgaConsolidated.uom }}</td>
+                        <td
+                          :style="
+                            MgaConsolidated.present_on_masterfile_with_uom ==
+                            false
+                              ? 'color:red;'
+                              : ''
+                          "
+                        >
+                          {{ MgaConsolidated.uom }}
+                        </td>
                         <td>{{ MgaConsolidated.qty }}</td>
                         <td style="text-align: right">
                           {{
@@ -201,7 +201,8 @@
                     <div class="col-md-12">
                       <div class="col-md-6">
                         Showing {{ consolidated.from }} to
-                        {{ consolidated.to }} of {{ consolidated.total }} entries
+                        {{ consolidated.to }} of
+                        {{ consolidated.total }} entries
                       </div>
                       <div class="col-md-6">
                         <div class="text-right">
@@ -219,6 +220,10 @@
                 </div>
               </div>
             </div>
+
+            <div id="demo-lft-tab-2" class="tab-pane fade in">
+              <ManuallyAddedItems :id="Date.now()"></ManuallyAddedItems>
+            </div>
           </div>
         </div>
       </div>
@@ -232,7 +237,7 @@
       tabindex="-1"
       role="dialog"
       data-backdrop="static"
-      data-keyboard="false"
+      data-keyboard="true"
       aria-hidden="true"
     >
       <div class="modal-dialog modal-lg" role="document">
@@ -931,15 +936,16 @@
       </div>
     </div>
 
-    <!-------------------------Modal Form 2--------------------------------->
-
+    <!-- ******************************************************************************* -->
+    <!------------------------- Consolidated Item Details --------------------------------->
+    <!-- ******************************************************************************* -->
     <div
       class="modal fade"
       id="setupMdl2"
       tabindex="-1"
       role="dialog"
       data-backdrop="static"
-      data-keyboard="false"
+      data-keyboard="true"
       aria-hidden="true"
     >
       <div class="modal-dialog modal-lg" role="document">
@@ -1229,11 +1235,7 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
-              >
+              <button type="button" class="btn btn-danger" data-dismiss="modal">
                 Close
               </button>
               <!-- <button type="submit" class="btn btn-primary" id="submitformreupload"></button> -->
@@ -1242,6 +1244,9 @@
         </div>
       </div>
     </div>
+    <!-- ******************************************************************************* -->
+    <!------------------------- /Consolidated Item Details --------------------------------->
+    <!-- ******************************************************************************* -->
   </div>
 </template>
 
@@ -1414,11 +1419,12 @@ export default {
       searchItemsFlowrack: null,
       searchItemsBCOM: null,
       category: null,
-      searchKey: '',
+      searchKey: "",
     };
   },
   components: {
     datetime: Datetime,
+    ManuallyAddedItems: () => import("./ManuallyAddedItems.vue"),
   },
   watch: {
     date() {
@@ -1427,7 +1433,7 @@ export default {
 
     searchKey: _.debounce(function() {
       this.getResultsConsolidated();
-    },250),
+    }, 250),
   },
   methods: {
     searchC() {
@@ -1466,11 +1472,12 @@ export default {
     }, 500),
 
     getResultsConsolidated(page = 1) {
-      let url = `/consolidated/getConsolidated/?date=${btoa(this.date)}&searchKey=${this.searchKey}&page=`;
-      axios.get(url + page)
-        .then((response) => {
-          this.consolidated = response.data;
-        });
+      let url = `/consolidated/getConsolidated/?date=${btoa(
+        this.date
+      )}&searchKey=${this.searchKey}&is_manual=false&page=`;
+      axios.get(url + page).then((response) => {
+        this.consolidated = response.data;
+      });
     },
 
     getResults(page = 1) {
@@ -1608,6 +1615,8 @@ export default {
           console.log("check error: ", this.error);
         });
     },
+
+    // view item details
     details1(MgaConsolidated) {
       $("#setupMdl2").modal("show");
       $("#MdlTitle2").html("Consolidated Item Details");
@@ -1640,16 +1649,20 @@ export default {
       this.form2.price = formatter.format(MgaConsolidated.unit_price);
       this.form2.price_w_vat = MgaConsolidated.price_w_vat;
       this.form2.tot_amt = formatter.format(MgaConsolidated.total_amt);
-      this.form2.image = "storage/" + MgaConsolidated.image;
-      this.form2.noimage = "storage/items/no_image.jpg";
-
-      if (MgaConsolidated.sstatus === 1) {
+      // this.form2.image = "storage/" + MgaConsolidated.image;
+      // this.form2.noimage = "storage/items/no_image.jpg";
+      this.form2.image = MgaConsolidated.image;
+      this.form2.noimage = MgaConsolidated.image;
+      this.form2.status = MgaConsolidated.sstatus;
+      if (MgaConsolidated.sstatus == 1) {
         this.form2.status = "Active";
-      } else {
+      } else if (MgaConsolidated.sstatus == 0) {
         this.form2.status = "Inactive";
       }
     },
+
     details(MgaItems) {
+      alert("asdasd");
       $("#setupMdl").modal("show");
       $("#MdlTitle").html("Item Details");
       $("#submitformreupload").html("Set");
@@ -1678,13 +1691,13 @@ export default {
       this.form.conversion_uom = MgaItems.conversion_uom;
       this.form.image = "storage/" + MgaItems.image;
       this.form.noimage = "storage/items/no_image.jpg";
-
-      if (MgaItems.status === 1) {
+      if (MgaItems.status == 1) {
         this.form.status = "Active";
       } else {
         this.form.status = "Inactive";
       }
     },
+
     detailsLog(id) {
       axios
         .get(`/item/getItemDetailsLog/itemlogdetail/?id=${id}`)
@@ -1723,7 +1736,7 @@ export default {
             this.form1.image = "storage/" + item.image;
             this.form1.noimage = "storage/items/no_image.jpg";
             this.form1.change_price = formatter.format(item.price2);
-            if (item.status === 1) {
+            if (item.status == 1) {
               this.form1.status = "Active";
             } else {
               this.form1.status = "Inactive";
@@ -1731,6 +1744,7 @@ export default {
           });
         });
     },
+
     closeModal() {
       document.getElementById("close").click();
     },
@@ -1741,7 +1755,7 @@ export default {
         .submit("post", "/item/saved_item_image", {
           // Transform form data to FormData
           transformRequest: [
-            function (data, headers) {
+            function(data, headers) {
               return serialize(data);
             },
           ],

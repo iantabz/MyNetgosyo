@@ -3744,7 +3744,7 @@ export default {
         this.form.tran_stat = 'Submitted'
       } else {
         this.form.tran_stat = MgaTransaction.tran_stat
-      }
+    }
       this.form.sm_code = MgaTransaction.sm_code
       this.form.sm_name = MgaTransaction.first_name + ' ' + MgaTransaction.last_name
       // kaloy 2021-09-28
