@@ -438,6 +438,7 @@ class TransactionController extends Controller
         $dateTo = Carbon::parse(base64_decode(request()->dateTo));
         $dateActive = request()->dateActive;
 
+        $searchT = null;
 
         if ($dateFrom->isToday() === true && $dateTo->isToday() === true) {
             if ($dateActive === 'false') {
@@ -496,7 +497,6 @@ class TransactionController extends Controller
 
             // $getTotal = $this->getTotalAmount();
         }
-
         return response()->json($searchT);
     }
 

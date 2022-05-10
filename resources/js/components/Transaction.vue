@@ -8,7 +8,7 @@
       <div class="panel-body" style="padding:10px;">
         <div class="panel-heading">
           <h3 class="panel-title" style="font-weight: bold; font-size:20px;">
-            <i class="fa fa-shopping-cart"></i> Transaction Masterfiles
+            <i class="fa fa-shopping-cart"></i> Transactions
           </h3>
           
         </div>
@@ -25,12 +25,15 @@
                 <!-- <span class="badge badge-warning">{{ items.total }}</span> -->
               </a>
             </li>
+
+            <!-- Delivered Tab -->
             <li>
               <a data-toggle="tab" href="#demo-lft-tab-5">
                 Delivered
                 <!-- <span class="badge badge-success">{{ items1.total }}</span> -->
               </a>
             </li>
+
             <li>
               <a data-toggle="tab" href="#demo-lft-tab-6">
                 Returned
@@ -325,8 +328,11 @@
               </div>
             </div>
 
+            <!-- Delivered Tab Content -->
             <div id="demo-lft-tab-5" class="tab-pane fade">
               <div class="panel-body">
+
+                <!-- Date Filters -->
                 <div class="row" style="padding:10px;">
                   <div class="col-md-6">
                     <form action="order4" @submit.prevent="submitformorder4"
@@ -381,9 +387,10 @@
                             <th>Store Name</th>
                             <th>Ordered By</th>
                             <th>Date Ordered</th>
-                            <th>Total Amount</th>
-                            <th>Downloaded</th>
-                            <th>Status</th>
+                            <th>Date Delivered</th>
+                            <th>Amount</th>
+                            <!-- <th>Downloaded</th> -->
+                            <!-- <th>Status</th> -->
                             <th>Action</th>
                           </tr>
                         </thead>
@@ -414,84 +421,14 @@
                             <td>{{ MgaTransaction4.store_name }}</td>
                             <td>{{ MgaTransaction4.order_by }}</td>
                             <td>{{ MgaTransaction4.date_req }}</td>
+                            <td>{{ MgaTransaction4.date_del }}</td>
+                            
                             <td
-                              v-if="MgaTransaction4.tran_stat === 'On-Process'"
-                              style="text-align: right; font-weight: bold; color: #008000;"
-                            >
-                              {{ MgaTransaction4.tot_amt | toCurrency }}
-                            </td>
-                            <td
-                              v-if="MgaTransaction4.tran_stat === 'Approved'"
-                              style="text-align: right; font-weight: bold; color: #008000;"
-                            >
-                              {{ MgaTransaction4.tot_del_amt | toCurrency }}
-                            </td>
-                            <td
-                              v-if="MgaTransaction4.tran_stat === 'Delivered'"
                               style="text-align: right; font-weight: bold; color: #0000FF;"
                             >
                               {{ MgaTransaction4.tot_del_amt | toCurrency }}
                             </td>
-                            <td
-                              v-if="MgaTransaction4.tran_stat === 'Pending'"
-                              style="text-align: right; font-weight: bold; color: #ff4d00;"
-                            >
-                              {{ MgaTransaction4.tot_amt | toCurrency }}
-                            </td>
-                            <td
-                              v-if="MgaTransaction4.tran_stat === 'Returned'"
-                              style="text-align: right; font-weight: bold; color: #FF0000;"
-                            >
-                              {{ MgaTransaction4.tot_del_amt | toCurrency }}
-                            </td>
-                            <td
-                              v-if="MgaTransaction4.tran_stat === 'Cancelled'"
-                              style="text-align: right; font-weight: bold; color: #FF0000;"
-                            >
-                              {{ MgaTransaction4.tot_amt | toCurrency }}
-                            </td>
-                            <td v-if="MgaTransaction4.isExported === 1">
-                              <span>Yes</span>
-                            </td>
-                            <td v-if="MgaTransaction4.isExported === 0">
-                              <span>No</span>
-                            </td>
-                            <td
-                              v-if="MgaTransaction4.tran_stat === 'On-Process'"
-                              style="color: #008000;"
-                            >
-                              {{ MgaTransaction4.tran_stat }}
-                            </td>
-                            <td
-                              v-if="MgaTransaction4.tran_stat === 'Approved'"
-                              style="color: #008000;"
-                            >
-                              {{ MgaTransaction4.tran_stat }}
-                            </td>
-                            <td
-                              v-if="MgaTransaction4.tran_stat === 'Delivered'"
-                              style="color: #0066cc;"
-                            >
-                              {{ MgaTransaction4.tran_stat }}
-                            </td>
-                            <td
-                              v-if="MgaTransaction4.tran_stat === 'Pending'"
-                              style="color: #ff7400;"
-                            >
-                              <span>Submitted</span>
-                            </td>
-                            <td
-                              v-if="MgaTransaction4.tran_stat === 'Returned'"
-                              style="color: #ff3333;"
-                            >
-                              {{ MgaTransaction4.tran_stat }}
-                            </td>
-                            <td
-                              v-if="MgaTransaction4.tran_stat === 'Cancelled'"
-                              style="color: #ff3333;"
-                            >
-                              {{ MgaTransaction4.tran_stat }}
-                            </td>
+
                             <td>
                               &nbsp;
                               <button
@@ -567,6 +504,7 @@
                 </div> -->
               </div>
             </div>
+
             <div id="demo-lft-tab-6" class="tab-pane fade">
               <div class="panel-body">
                 <div class="row" style="padding:10px;">
@@ -1760,7 +1698,7 @@
       tabindex="-1"
       role="dialog"
       data-backdrop="static"
-      data-keyboard="false"
+      data-keyboard="true"
       aria-hidden="true"
     >
       <div class="modal-dialog modal-lg" role="document">
@@ -1830,7 +1768,7 @@
                 </table>
               </div>
               <br />
-              <div class="row" style="text-align: right;">
+              <!-- <div class="row" style="text-align: right;">
                 <div class="col-md-11">
                   <div class="col-lg-9">
                     <h4 style="color: green;">Total Amount:</h4>
@@ -1841,7 +1779,26 @@
                     </h4>
                   </div>
                 </div>
+              </div> -->
+
+              <div class="row">
+                <div class="col-md-4" style="text-align:right;">
+                  
+                </div>
+                <div class="col-md-4" style="text-align:right;">
+                  <h4>
+                    <span>Total Amount:</span>
+                    <span>{{ total_amt_line | toCurrency }}</span>
+                  </h4>
+                </div>
+                <div class="col-md-4" style="text-align:right;">
+                  <h4>
+                    <span>Total Amount Delivered:</span>
+                    <span>{{ total_amt_served | toCurrency }}</span>
+                  </h4>
+                </div>
               </div>
+              
             </div>
           </div>
         </div>
@@ -3425,8 +3382,10 @@ export default {
       // this.getResults()
     },
 
+    // delivered_item_details
     orderDetails4(tran_no) {
-      this.total_amt_line = 0
+      this.total_amt_line = 0;
+      this.total_amt_served = 0;
       axios
         .get(`/transaction/getOrderTransaction/order_detail/?id=${tran_no}`)
         .then(response => {
@@ -3435,8 +3394,11 @@ export default {
           this.order.forEach(datas => {
             // console.log(datas.downloaded)
             // this.downloaded = datas.downloaded
-            this.total_amt_line =
-              this.total_amt_line + parseFloat(datas['tot_amt'])
+            this.total_amt_line += parseFloat(datas['tot_amt'])
+
+            if(datas['itm_stat'] != '') {
+              this.total_amt_served += datas['tot_amt'];
+            }
           })
 
           if (Object.keys(this.order).length) {
@@ -3455,7 +3417,7 @@ export default {
           })
         })
 
-      this.getResults4()
+      // this.getResults4()
     },
 
     orderDetails5(tran_no) {
@@ -3493,7 +3455,8 @@ export default {
 },
 
     orderDetails6(tran_no) {
-      this.total_amt_line = 0
+      this.total_amt_line = 0;
+      // this.total_amt_served = 0;
       axios
         .get(`/transaction/getOrderTransaction/order_detail/?id=${tran_no}`)
         .then(response => {
@@ -3504,6 +3467,7 @@ export default {
             // this.downloaded = datas.downloaded
             this.total_amt_line =
               this.total_amt_line + parseFloat(datas['tot_amt'])
+
           })
 
           if (Object.keys(this.order).length) {
@@ -3786,7 +3750,7 @@ export default {
       // kaloy 2021-10-05
       this.form.export_date = MgaTransaction.export_date
       this.form.itm_del_count = MgaTransaction.itm_del_count
-      this.getResults4()
+      // this.getResults4()
     },
 
     details5(MgaTransaction) {
