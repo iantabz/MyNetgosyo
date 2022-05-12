@@ -248,7 +248,7 @@
                               </button>
                               &nbsp;
                               <button
-                                @click="orderDetails(MgaTransaction.tran_no)"
+                                @click="orderDetails(MgaTransaction.tran_no, MgaTransaction.tot_amt)"
                                 class="btn btn-info btn-xs"
                                 title="View Order Items"
                               >
@@ -1683,13 +1683,9 @@
               </div>
 
               <!-- Amount -->
+              <br />
               <div class="row" style="background-color:#f5f5f5;">
-                <div class="col-md-3" style="text-align:right;">
-                  
-                </div>
-                <div class="col-md-3" style="text-align:right;">
-                  
-                </div>
+                <div class="col-md-6" style="text-align:right;"></div>
                 <div class="col-md-3" style="text-align:right;">
                   <h4>
                     <span>Total Amount:</span>
@@ -3362,7 +3358,7 @@ export default {
       this.form1.itm_stat = ''
     },
 
-    orderDetails(tran_no) {
+    orderDetails(tran_no, amount_ordered) {
       this.total_amt_line = 0;
       this.total_amt_served = 0;
       axios
@@ -3370,15 +3366,18 @@ export default {
         .then(response => {
           this.order = response.data
 
+          this.total_amt_line = amount_ordered;
+
           this.order.forEach(datas => {
             // console.log(datas.downloaded)
             // this.downloaded = datas.downloaded
-            this.total_amt_line =
-              this.total_amt_line + parseFloat(datas['tot_amt']);
 
-              if(datas['itm_stat'] == 'Served' || datas['itm_stat'] == 'Lacking' || datas['itm_stat'] == 'Excess') {
-                this.total_amt_served = this.total_amt_served + parseFloat(datas['tot_amt']);
-              }
+            // this.total_amt_line =
+            //   this.total_amt_line + parseFloat(datas['tot_amt']);
+
+            if(datas['itm_stat'] == 'Served' || datas['itm_stat'] == 'Lacking' || datas['itm_stat'] == 'Excess') {
+              this.total_amt_served = this.total_amt_served + parseFloat(datas['tot_amt']);
+            }
           })
 
           if (Object.keys(this.order).length) {

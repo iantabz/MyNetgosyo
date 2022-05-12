@@ -923,17 +923,16 @@ class ConsolidatedTransactionController extends Controller
                     
                     DB::table('tb_tran_head')->where('tran_no', $item->reference_no)
                         ->update([
-                            'itm_count' => DB::raw('itm_count + '. $item->qty),
-                            'tot_amt' => DB::raw('tot_amt + '. $item->total_amt),
+                            // 'itm_count' => DB::raw('itm_count + '. $item->qty),
+                            // 'tot_amt' => DB::raw('tot_amt + '. $item->total_amt),
+                            'tot_del_amt' => DB::raw('tot_del_amt + '. $item->total_amt),
                         ]);
-
+                    
                     DB::table('consolidated_transactions')->where('reference_no', $item->reference_no)
                         ->where('itemcode', $item->itemcode)
                         ->where('uom', $item->uom)
-                        ->update([
-                            'is_manual_appended' => 1
-                        ]);
-
+                        ->update(['is_manual_appended' => 1]);
+ 
                     $affected+=1;
                 }
             }
