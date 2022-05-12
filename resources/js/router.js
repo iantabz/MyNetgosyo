@@ -119,7 +119,7 @@ const router = new VueRouter({
       path: '/upload',
       component: UploadDataFiles,
       meta: {
-        name: 'Consolidate Data'
+        name: 'Import Sales Invoice'
       }
     },
     {

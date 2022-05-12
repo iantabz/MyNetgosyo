@@ -212,7 +212,7 @@
             SO Picking List
         </div>
         <div class="title3">
-            (Flowrack)
+            (Oplan Delica-Various)
         </div>
     </header>
 
@@ -283,7 +283,7 @@
                         SO Picking List
                     </div>
                     <div class="title3">
-                        (Flowrack)
+                        (Oplan Delica-Various)
                     </div>
                 </header>
 

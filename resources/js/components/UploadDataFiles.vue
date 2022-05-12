@@ -21,7 +21,7 @@
             </li>
             <li class="">
               <a data-toggle="tab" href="#demo-lft-tab-2">
-                Manually Added Items
+                Manually Included Items
               </a>
             </li>
           </ul>

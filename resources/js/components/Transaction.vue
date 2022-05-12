@@ -57,6 +57,8 @@
           <div class="tab-content" 
             style="background-color:#ffffff; padding:0;"
           >
+
+            <!-- Ongoing Transactions Tab -->
             <div id="demo-lft-tab-1" class="tab-pane fade active in">
               <!-- style="background-color:#ffffff; padding:2px;" -->
               <div class="panel-body">
@@ -124,7 +126,7 @@
                       </div>
 
                       <table
-                        class="table table-hover table-bordered table-striped table-vcenter"
+                        class="table table-hover table-bordered table-striped table-vcenter tbl-transactions"
                         width="100%"
                         id="tbl-ongoing-trans"
                       >
@@ -151,7 +153,7 @@
 
                           <!-- kaloy 2021-09-29 -->
                           <tr v-if="isLoadingTextVisible === 1">
-                            <td colspan="8" class="text-center text-success">
+                            <td colspan="9" class="text-center text-success">
                               Fetching data from the server, please wait...
                               <spinner></spinner>
                             </td>
@@ -378,8 +380,9 @@
                   <div class="col-md-12">
                     <div class="table-responsive" style="padding">
                       <table
-                        class="table table-hover table-bordered table-striped table-vcenter"
+                        class="table table-hover table-bordered table-striped table-vcenter tbl-transactions"
                         width="100%"
+                        id="tbl-delivered"
                       >
                         <thead>
                           <tr>
@@ -504,7 +507,8 @@
                 </div> -->
               </div>
             </div>
-
+            
+            <!-- Returned Tab -->
             <div id="demo-lft-tab-6" class="tab-pane fade">
               <div class="panel-body">
                 <div class="row" style="padding:10px;">
@@ -556,7 +560,7 @@
                   <div class="col-md-12">
                     <div class="table-responsive">
                       <table
-                        class="table table-hover table-bordered table-striped table-vcenter"
+                        class="table table-hover table-bordered table-striped table-vcenter tbl-transactions"
                         width="100%"
                       >
                         <thead>
@@ -750,6 +754,8 @@
                 </div> -->
               </div>
             </div>
+
+            <!-- Cancelled Tab -->
             <div id="demo-lft-tab-7" class="tab-pane fade">
               <div class="panel-body">
                 <div class="row" style="padding:10px;">
@@ -801,7 +807,7 @@
                   <div class="col-md-12">
                     <div class="table-responsive">
                       <table
-                        class="table table-hover table-bordered table-striped table-vcenter"
+                        class="table table-hover table-bordered table-striped table-vcenter tbl-transactions"
                         width="100%"
                       >
                         <thead>
@@ -993,6 +999,8 @@
                 </div> -->
               </div>
             </div>
+
+            <!-- Advanced Order Tab -->
             <div id="demo-lft-tab-8" class="tab-pane fade">
               <div class="panel-body">
                 <div class="row" style="padding:10px;">
@@ -1044,8 +1052,9 @@
                   <div class="col-md-12">
                     <div class="table-responsive">
                       <table
-                        class="table table-hover table-bordered table-striped table-vcenter"
+                        class="table table-hover table-bordered table-striped table-vcenter tbl-transactions"
                         width="100%"
+                        id="tbl-advanced"
                       >
                         <thead>
                           <tr>
@@ -1236,6 +1245,7 @@
                 </div> -->
               </div>
             </div>
+
           </div>
         </div>
       </div>
@@ -1596,77 +1606,84 @@
       tabindex="-1"
       role="dialog"
       data-backdrop="false"
-      data-keyboard="true"
+      data-keyboard="false"
       aria-hidden="true"
     >
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
+      <div class="modal-dialog" role="document"
+        style="overflow-y:initial !important; width:100vw;"
+      >
+        <div class="modal-content" style="border:2px solid #f07335;">
           <div class="modal-header">
             <h5 class="modal-title" id="MdlTitle1">Modal title</h5>
-            <button type="button" class="close" @click="closeModal">
-              <span aria-hidden="true">&times;</span>
+            <button type="button" class="btn btn-danger close" @click="closeModal">
+              <!-- <span aria-hidden="true">&times;</span> -->
+              Close
             </button>
           </div>
           <div class="panel">
             <div class="panel-body">
-                <div class="table-responsive">
-                  <table
-                    id="OrderTable"
-                    class="table table-hover table-bordered table-striped table-vcenter"
-                    width="100%"
-                  >
-                    <thead>
-                      <tr>
-                        <th>Transaction No.</th>
-                        <th>Description</th>
-                        <th>Itemcode</th>
-                        <th>UOM</th>
-                        <th>ReqQty</th>
-                        <th>DelQty</th>
-                        <th>Disct</th>
-                        <th>Amount</th>
-                        <th>Total Amt</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="MgaOrder in order" :key="MgaOrder.doc_no">
-                        
-                        <!-- kaloy 09-22-21 -->
-                        <td @click="copyTextToClipboard($event)"
-                          style="cursor: copy;"
-                          title="Click to copy Transaction Number">
-                          {{ MgaOrder.tran_no }}</td>
-                        <td>{{ MgaOrder.item_desc }}</td>
-                        <td>{{ MgaOrder.itm_code }}</td>
-                        <td>{{ MgaOrder.uom }}</td>
-                        <td>{{ MgaOrder.req_qty }}</td>
-                        <td>{{ MgaOrder.del_qty }}</td>
-                        <td>
-                          {{ parseFloat(MgaOrder.discount).toFixed(2) }}&#37;
-                        </td>
-                        <td style="text-align: right;">
-                          {{ MgaOrder.amt | toCurrency }}
-                        </td>
-                        <td style="text-align: right;">
-                          {{ MgaOrder.tot_amt | toCurrency }}
-                        </td>
-                        <td>{{ MgaOrder.itm_stat }}</td>
-                        <td>
-                          <button
-                            @click="detailsOrder(MgaOrder.doc_no)"
-                            class="btn btn-info btn-xs"
-                          >
-                            <i class="fa fa-list-alt"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              <br />
-              <div class="row">
+              <!-- Table -->
+              <div class="table-responsive" style="height:75vh; overflow-y:auto;">
+                <table
+                  id="OrderTable"
+                  class="table table-hover table-bordered table-striped table-vcenter"
+                  width="100%"
+                >
+                  <thead>
+                    <tr>
+                      <th>Transaction No.</th>
+                      <th>Description</th>
+                      <th>Itemcode</th>
+                      <th>UOM</th>
+                      <th>ReqQty</th>
+                      <th>DelQty</th>
+                      <th>Disct</th>
+                      <th>Amount</th>
+                      <th>Total Amt</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="MgaOrder in order" :key="MgaOrder.doc_no"
+                      :style="MgaOrder.manually_included == 1 ? 'background-color:yellow;' : ''"
+                    >
+                      
+                      <!-- kaloy 09-22-21 -->
+                      <td @click="copyTextToClipboard($event)"
+                        style="cursor: copy;"
+                        title="Click to copy Transaction Number">
+                        {{ MgaOrder.tran_no }}</td>
+                      <td>{{ MgaOrder.item_desc }}</td>
+                      <td>{{ MgaOrder.itm_code }}</td>
+                      <td>{{ MgaOrder.uom }}</td>
+                      <td>{{ MgaOrder.req_qty }}</td>
+                      <td>{{ MgaOrder.del_qty }}</td>
+                      <td>
+                        {{ parseFloat(MgaOrder.discount).toFixed(2) }}&#37;
+                      </td>
+                      <td style="text-align: right;">
+                        {{ MgaOrder.amt | toCurrency }}
+                      </td>
+                      <td style="text-align: right;">
+                        {{ MgaOrder.tot_amt | toCurrency }}
+                      </td>
+                      <td>{{ MgaOrder.itm_stat }}</td>
+                      <td>
+                        <button
+                          @click="detailsOrder(MgaOrder.doc_no)"
+                          class="btn btn-info btn-xs"
+                        >
+                          <i class="fa fa-list-alt"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Amount -->
+              <div class="row" style="background-color:#f5f5f5;">
                 <div class="col-md-3" style="text-align:right;">
                   
                 </div>
@@ -1716,6 +1733,7 @@
                   id="OrderTable4"
                   class="table table-hover table-bordered table-striped table-vcenter"
                   width="100%"
+                  style="font-size:small;"
                 >
                   <thead>
                     <tr>
@@ -2258,7 +2276,7 @@
             <div class="modal-footer">
               <button
                 type="button"
-                class="btn btn-secondary"
+                class="btn btn-danger"
                 data-dismiss="modal"
               >
                 Close
@@ -3358,19 +3376,19 @@ export default {
             this.total_amt_line =
               this.total_amt_line + parseFloat(datas['tot_amt']);
 
-              if(datas['itm_stat'] == 'Served' || datas['itm_stat'] == 'Lacking') {
+              if(datas['itm_stat'] == 'Served' || datas['itm_stat'] == 'Lacking' || datas['itm_stat'] == 'Excess') {
                 this.total_amt_served = this.total_amt_served + parseFloat(datas['tot_amt']);
               }
           })
 
           if (Object.keys(this.order).length) {
             setTimeout(() => {
-              this.orderTable = $('#OrderTable').DataTable()
-            }, 500)
+              this.orderTable = $('#OrderTable').DataTable();
+            }, 500);
           }
 
           $('#setupMdl1').modal('show')
-          $('#MdlTitle1').html('Order')
+          $('#MdlTitle1').html('Order Items');
 
           const formatter = new Intl.NumberFormat('en-PH', {
             style: 'currency',
@@ -3408,7 +3426,7 @@ export default {
           }
 
           $('#setupMdl6').modal('show')
-          $('#MdlTitle6').html('Order')
+          $('#MdlTitle6').html('Order Items')
 
           const formatter = new Intl.NumberFormat('en-PH', {
             style: 'currency',
@@ -3441,7 +3459,7 @@ export default {
           }
 
           $('#setupMdl7').modal('show')
-          $('#MdlTitle7').html('Order')
+          $('#MdlTitle7').html('Order Items')
 
           const formatter = new Intl.NumberFormat('en-PH', {
             style: 'currency',
@@ -3477,7 +3495,7 @@ export default {
           }
 
           $('#setupMdl8').modal('show')
-          $('#MdlTitle8').html('Order')
+          $('#MdlTitle8').html('Order Items')
 
           const formatter = new Intl.NumberFormat('en-PH', {
             style: 'currency',
@@ -3510,7 +3528,7 @@ export default {
           }
 
           $('#setupMdl9').modal('show')
-          $('#MdlTitle9').html('Order')
+          $('#MdlTitle9').html('Order Items')
 
           const formatter = new Intl.NumberFormat('en-PH', {
             style: 'currency',
@@ -3913,14 +3931,29 @@ export default {
   },
 
   mounted() {
-    console.log('Transaction component mounted.')
+    console.log('Transaction component mounted.');
     this.$root.currentPage = this.$route.meta.name
     $('#container').css('position', 'relative')
+
+    // kaloy 2022-05-11 ******************************************
+    $('.tbl-transactions tbody').on( 'click', 'tr', function () {
+      $('.tbl-transactions tr.selected').removeClass('selected');
+      $(this).addClass('selected');
+    } );
+    // /kaloy 2022-05-11 ******************************************
+
+    // // kaloy 2022-05-11 ******************************************
+    // $('#setupMdl1').on('hidden.bs.modal', function () {
+    //     $('#setupMdl1').modal('hide');
+    //     this.clearData();
+    // });
+    // // /kaloy 2022-05-11 ******************************************
   },
 
-  created() { 
-    // code here
+  created() {
+    
   },
 
 }
+
 </script>

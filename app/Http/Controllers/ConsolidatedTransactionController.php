@@ -136,21 +136,20 @@ class ConsolidatedTransactionController extends Controller
                     ->first();
 
                 // =================================================================
-                $checkOnTranLine = DB::table('tb_tran_line')
-                    ->where('tran_no', $row1->reference_no)
-                    ->where('itm_code', $row1->itemcode)
-                    ->where('uom', $row1->uom)
-                    ->exists();
-                // $checkOnTranLine = true;
-                if($checkOnTranLine == false) {
-                    DB::table('consolidated_transactions')
-                        ->where('reference_no', $row1->reference_no)
-                        ->where('itemcode', $row1->itemcode)
-                        ->where('uom', $row1->uom)
-                        ->update([
-                            'is_manual' => 1
-                        ]);
-                }
+                // $checkOnTranLine = DB::table('tb_tran_line')
+                //     ->where('tran_no', $row1->reference_no)
+                //     ->where('itm_code', $row1->itemcode)
+                //     ->where('uom', $row1->uom)
+                //     ->exists();
+                // if($checkOnTranLine == false) {
+                //     DB::table('consolidated_transactions')
+                //         ->where('reference_no', $row1->reference_no)
+                //         ->where('itemcode', $row1->itemcode)
+                //         ->where('uom', $row1->uom)
+                //         ->update([
+                //             'is_manual' => 1
+                //         ]);
+                // }
                 // =================================================================
 
                 $item_no_uom = DB::table('item_masterfiles')
@@ -245,6 +244,7 @@ class ConsolidatedTransactionController extends Controller
             // kaloy 2022-04-07
             $transactionNumbers = [];
 
+            // Iterate through the lines *************************************************
             for ($i = 0; $i < $total_lines; $i++) {
                 if ($data_lines[$i] != NULL) {
                     $powdered = explode("|", $data_lines[$i]);
@@ -695,6 +695,8 @@ class ConsolidatedTransactionController extends Controller
                     }
                 }
             }
+            // /Iterate through the lines *************************************************
+
 
             // _lr
             $transactionNumbers = array_unique($transactionNumbers);
@@ -916,6 +918,7 @@ class ConsolidatedTransactionController extends Controller
                         'date_del' => null,
                         'lrate' => 0.00,
                         'rated' => null,
+                        'manually_included' => 1,
                     ]);
                     
                     DB::table('tb_tran_head')->where('tran_no', $item->reference_no)

@@ -146,7 +146,6 @@ class SalesExportFilesController extends Controller
             ->get();
 
         foreach ($gethead as $datahead) {
-
             $tot_qty = 0;
             $total_amt2 = 0;
             $tranline = [];
@@ -160,9 +159,7 @@ class SalesExportFilesController extends Controller
                 ->get();
 
             if ($getExport->count() > 0) {
-
                 foreach ($getExport as $export) {
-
                     $getUnserve = DB::table('tb_unserved_items')
                         ->where('tran_no', '=', $export->sef_no)
                         ->where('itm_code', '=', $export->product_code)
@@ -571,7 +568,8 @@ class SalesExportFilesController extends Controller
     {
         $date = Carbon::parse(base64_decode(request()->date))->toDateString();
 
-        $filename = "FLOWRACK_" . $date;
+        // $filename = "FLOWRACK_" . $date;
+        $filename = "OPLAN DELICA-VARIOUS_" . $date;
 
         $data = $this->export3();
         $pdf = PDF::loadView('reports.flowrack', ['datas' => $data]);

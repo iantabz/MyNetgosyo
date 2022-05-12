@@ -67,23 +67,23 @@
                 <div class="row">
                   <div class="col-md-12">
                     <div class="row">
-                      <div class="col-md-6 table-toolbar-left">
+                      <div class="col-md-8 table-toolbar-left">
                         <!-- kaloy 2021-10-14 -->
                         <div class="row" style="">
                           <!-- <br />
                           <br /> -->
-                          <div class="col-md-4">
+                          <div class="col-md-3">
                             <button
-                              v-if="dl_bcom === 0"
+                              
                               id="dl_bcom"
                               class="btn btn-primary btn-rounded btn-block"
                               @click="download1()"
                               style
-                              disabled="disabled"
+                              :disabled="dl_bcom === 0"
                             >
                               Download BCOM
                             </button>
-                            <button
+                            <!-- <button
                               v-if="dl_bcom === 1"
                               id="dl_bcom1"
                               class="btn btn-primary btn-rounded btn-block"
@@ -91,21 +91,21 @@
                               style
                             >
                               Download BCOM
-                            </button>
+                            </button> -->
                           </div>
 
-                          <div class="col-md-4">
+                          <div class="col-md-3">
                             <button
-                              v-if="dl_bulk === 0"
+                              
                               id="dl_bulk"
                               class="btn btn-primary btn-rounded btn-block"
                               @click="download2()"
                               style
-                              disabled="disabled"
+                              :disabled="dl_bulk === 0"
                             >
                               Download BULK
                             </button>
-                            <button
+                            <!-- <button
                               v-if="dl_bulk === 1"
                               id="dl_bulk1"
                               class="btn btn-primary btn-rounded btn-block"
@@ -113,21 +113,22 @@
                               style
                             >
                               Download BULK
-                            </button>
+                            </button> -->
                           </div>
 
-                          <div class="col-md-4">
+                          <div class="col-md-6">
                             <button
-                              v-if="dl_flowrack === 0"
+                              title="FLOWRACK"
                               id="dl_flowrack"
                               class="btn btn-primary btn-rounded btn-block"
                               @click="download3()"
                               style
-                              disabled="disabled"
+                              :disabled="dl_flowrack === 0"
                             >
-                              Download FLOWRACK
+                              <!-- Download FLOWRACK -->
+                              Download OPLAN DELICA-VARIOUS
                             </button>
-                            <button
+                            <!-- <button
                               v-if="dl_flowrack === 1"
                               id="dl_flowrack1"
                               class="btn btn-primary btn-rounded btn-block"
@@ -135,14 +136,14 @@
                               style
                             >
                               Download FLOWRACK
-                            </button>
+                            </button> -->
                           </div>
 
                         </div> <!-- /kaloy 2021-10-14 -->
                       </div>
 
                       <!-- SEARCH -->
-                      <div class="col-md-6 table-toolbar-right">
+                      <div class="col-md-4 table-toolbar-right">
                         <!--<form class="form-horizontal">-->
                         <!--  <div class="form-group">-->
                         <!--    <label class="col-md-6 control-label">Search:</label>-->
@@ -262,129 +263,105 @@
               <hr class="new-section-xs bord" />
               <!------------------------------------------------------------->
             </div>
+
+            <!-- //? *********************************************************** -->
+            <!-- //? Returned Transaction Files - Tab Content-->
+            <!-- //? *********************************************************** -->
             <div id="demo-lft-tab-2" class="tab-pane fade">
               <div class="panel-body">
                 <div class="row" style="margin: 0px 0px 10px 0px">
-                  <div class="col-lg-12"></div>
-                  <div class="row">
-                    <div class="col-md-12">
-                      <div class="table-responsive">
-                        <table
-                          id="unserved_dl_table"
-                          class="table table-bordered table-hover dt-responsive nowrap table-vcenter"
-                          width="100%"
+                  <div class="col-md-12">
+                    <!-- download section -->
+                    <div class="row" style="padding-bottom:10px;">
+                      <div class="col-md-12">
+                        <button
+                          v-if="dl_bcom1 === 0"
+                          class="btn btn-sm btn-primary btn-rounded"
+                          @click="downloadReturnedBCOM()"
+                          :disabled="dl_bcom1==0 ? true : false"
                         >
-                          <thead>
-                            <tr>
-                              <th>Sales Form #</th>
-                              <th>Account Name</th>
-                              <th>Product Code</th>
-                              <th>Product Name</th>
-                              <th>UOM</th>
-                              <th>Type</th>
-                              <th>Status</th>
-                              <th>Action</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <!-- kaloy 2021-09-29 -->
-                            <tr v-if="isLoadingTextVisible === 1">
-                              <td colspan="8" class="text-center text-success">
-                                Fetching data from the server, please wait...
-                                <spinner></spinner>
-                              </td>
-                            </tr>
-                            <tr
-                              v-for="(MgaUnserved, index) in unserved"
-                              :key="index"
-                            >
-                              <td>{{ MgaUnserved.sef_no }}</td>
-                              <td>{{ MgaUnserved.acct_name }}</td>
-                              <td>{{ MgaUnserved.product_code }}</td>
-                              <td>{{ MgaUnserved.product_name }}</td>
-                              <td>{{ MgaUnserved.product_uom }}</td>
-                              <td>{{ MgaUnserved.file_type }}</td>
-                              <td>{{ MgaUnserved.tag }}</td>
-                              <td class="text-center">
-                                <div class="btn-group">
-                                  <a
-                                    class="btn btn-sm btn-default btn-hover-success fa fa-list-ul add-tooltip"
-                                    href="#"
-                                    data-original-title="View User Details"
-                                    data-container="body"
-                                    title="View Details"
-                                  ></a>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                          Download BCOM
+                        </button>
+        
+                        &nbsp;&nbsp;&nbsp;
+
+                        <button
+                          id="dl_bulk2"
+                          class="btn btn-sm btn-primary btn-rounded"
+                          @click="downloadReturnedBULK()"
+                          :disabled="dl_bulk1==0 ? true : false"
+                        >
+                          Download BULK
+                        </button>
+
+                        &nbsp;&nbsp;&nbsp;
+
+                        <button
+                          id="dl_flowrack2"
+                          class="btn btn-sm btn-primary btn-rounded"
+                          @click="download31()"
+                          :disabled="dl_flowrack1==0 ? true : false"
+                        >
+                          Download FLOWRACK
+                        </button>
                       </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-12" style="text-align: center;">
-                      <br />
-                      <br />
-                      <button
-                        v-if="dl_bcom1 === 0"
-                        id="dl_bcom2"
-                        class="btn btn-lg btn-primary btn-rounded"
-                        @click="download11()"
-                        style
-                        disabled="disabled"
-                      >
-                        Download BCOM
-                      </button>
-                      <button
-                        v-if="dl_bcom1 === 1"
-                        id="dl_bcom3"
-                        class="btn btn-lg btn-primary btn-rounded"
-                        @click="download11()"
-                        style
-                      >
-                        Download BCOM
-                      </button>
-                      &nbsp;&nbsp;&nbsp;
-                      <button
-                        v-if="dl_bulk1 === 0"
-                        id="dl_bulk2"
-                        class="btn btn-lg btn-primary btn-rounded"
-                        @click="download21()"
-                        style
-                        disabled="disabled"
-                      >
-                        Download BULK
-                      </button>
-                      <button
-                        v-if="dl_bulk1 === 1"
-                        id="dl_bulk3"
-                        class="btn btn-lg btn-primary btn-rounded"
-                        @click="download21()"
-                        style
-                      >
-                        Download BULK
-                      </button>
-                      &nbsp;&nbsp;&nbsp;
-                      <button
-                        v-if="dl_flowrack1 === 0"
-                        id="dl_flowrack2"
-                        class="btn btn-lg btn-primary btn-rounded"
-                        @click="download31()"
-                        style
-                        disabled="disabled"
-                      >
-                        Download FLOWRACK
-                      </button>
-                      <button
-                        v-if="dl_flowrack1 === 1"
-                        id="dl_flowrack3"
-                        class="btn btn-lg btn-primary btn-rounded"
-                        @click="download31()"
-                        style
-                      >
-                        Download FLOWRACK
-                      </button>
+
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="table-responsive">
+                          <table
+                            id="unserved_dl_table"
+                            class="table table-bordered table-hover dt-responsive nowrap table-vcenter"
+                            width="100%"
+                          >
+                            <thead>
+                              <tr>
+                                <th>Sales Form #</th>
+                                <th>Account Name</th>
+                                <th>Product Code</th>
+                                <th>Product Name</th>
+                                <th>UOM</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <!-- kaloy 2021-09-29 -->
+                              <tr v-if="isLoadingTextVisible === 1">
+                                <td colspan="8" class="text-center text-success">
+                                  Fetching data from the server, please wait...
+                                  <spinner></spinner>
+                                </td>
+                              </tr>
+                              <tr
+                                v-for="(MgaUnserved, index) in unserved"
+                                :key="index"
+                              >
+                                <td>{{ MgaUnserved.sef_no }}</td>
+                                <td>{{ MgaUnserved.acct_name }}</td>
+                                <td>{{ MgaUnserved.product_code }}</td>
+                                <td>{{ MgaUnserved.product_name }}</td>
+                                <td>{{ MgaUnserved.product_uom }}</td>
+                                <td>{{ MgaUnserved.file_type }}</td>
+                                <td>{{ MgaUnserved.tag }}</td>
+                                <td class="text-center">
+                                  <div class="btn-group">
+                                    <a
+                                      class="btn btn-sm btn-default btn-hover-success fa fa-list-ul add-tooltip"
+                                      href="#"
+                                      data-original-title="View User Details"
+                                      data-container="body"
+                                      title="View Details"
+                                    ></a>
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -967,7 +944,10 @@ export default {
         })
     },
 
-    download11() {
+    /**
+     * Download returned BCOM
+     */
+    downloadReturnedBCOM() {
       const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
           confirmButton: 'btn btn-success',
@@ -1008,15 +988,15 @@ export default {
             /* Read more about handling dismissals below */
             result.dismiss === Swal.DismissReason.cancel
           ) {
-            swalWithBootstrapButtons.fire(
-              'Cancelled',
-              'Download has been cancelled! :)',
-              'error'
-            )
+            // swalWithBootstrapButtons.fire(
+            //   'Cancelled',
+            //   'Download has been cancelled! :)',
+            //   'error'
+            // )
           }
         })
     },
-    download21() {
+    downloadReturnedBULK() {
       const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
           confirmButton: 'btn btn-success',
@@ -1268,8 +1248,7 @@ export default {
 
   mounted() {
     console.log('Component mounted.')
-    this.$root.currentPage = this.$route.meta.name
-    
+    this.$root.currentPage = this.$route.meta.name;
   }
 }
 </script>

@@ -5,12 +5,11 @@
     <div class="panel">
       <div class="panel-body">
           <div class="row">
-
             <div class="col-md-3">
               <div class="panel panel-success" style="background-color:#f7f7f7;">
                 <div class="panel-heading">
                   <div class="panel-title">
-                    Average Orders Per Day
+                    Average Orders per Day
                   </div>
                 </div>
                 <div class="panel-body" style="padding:0 16px;">
@@ -18,15 +17,29 @@
                 </div>
               </div>
             </div>
-
-            
-
           </div>
+          <!-- <div class="row">
+            <div class="col-md-6">
+              <div class="panel panel-success" style="background-color:#f7f7f7;">
+                <div class="panel-heading">
+                  <div class="panel-title">
+                    Chart1
+                  </div>
+                </div>
+                <div class="panel-body" style="padding:0 16px;">
+                  <div id="chart1" width="400" height="100">
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> -->
       </div>
     </div>
 
   </div>
 </template>
+
 <style>
 /** @format */
 
@@ -64,7 +77,6 @@
 </style>
 
 <script>
-
 export default {
   async beforeCreate() {
     const { data } = await axios.get('/getAuthUser')
@@ -121,8 +133,17 @@ export default {
     this.initAverageTransactionsPerDay();
   },
   mounted() {
-    this.$root.currentPage = this.$route.meta.name
-    console.log('Dashboard Mounted')
+    this.$root.currentPage = this.$route.meta.name;
+    console.log('Dashboard Mounted');
+
+    // let chart1 = window.document.getElementById('chart1');
+    // let data1 = [
+    //   {
+    //     label: 'label1',
+    //     data: [[1,2],[3,4]]
+    //   }
+    // ];
+    // $.plot(chart1, data1);
   }
 }
 </script>
