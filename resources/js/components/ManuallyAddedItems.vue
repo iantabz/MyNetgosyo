@@ -70,6 +70,12 @@
             <tr
               v-for="(MgaConsolidated, index) in manually_added_items.data"
               :key="index"
+              :style="
+                MgaConsolidated.tran_no != null
+                && MgaConsolidated.present_on_masterfile == true
+                && MgaConsolidated.present_on_masterfile_with_uom == false
+                ? 'background-color:#ffdab8;' : ''
+              "
             >
               <td>{{ MgaConsolidated.transaction_type }}</td>
               <td>{{ MgaConsolidated.sales_invoice }}</td>

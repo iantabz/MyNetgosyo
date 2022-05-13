@@ -44,6 +44,40 @@
                     </p>
 
                     <div class="bord-top pad-ver">
+                      <!-- form was here -->
+                    </div>
+                    <div id="dz-previews">
+                      <div v-if="error.message" class="invalid-feedback"></div>
+                    </div>
+
+                    <!--===================================================-->
+                    <!--End Dropzonejs using Bootstrap theme-->
+                  </div>
+                </div>
+
+                <!------------------------------------------------------------->
+
+                <div class="table-responsive">
+                  <div class="row">
+                    <div class="col-md-9 table-toolbar-left">
+                      <!-- <form
+                        action="consolidate"
+                        @submit.prevent="submitformorder"
+                        method="post"
+                        enctype="multipart/form-data"
+                      >
+                        <div class="col-lg-3">
+                          <h5>Select a date :</h5>
+                        </div>
+                        <div class="col-lg-4">
+                          <datetime
+                            v-model="date"
+                            value-zone="Asia/Manila"
+                            zone="Asia/Manila"
+                            input-class="form-control"
+                          ></datetime>
+                        </div>
+                      </form> -->
                       <form id="myForm1" @submit.prevent="submitFiles1">
                         <div class="row">
                           <div class="col-md-6">
@@ -56,13 +90,14 @@
                                     btn btn-primary
                                     fileinput-button
                                     dz-clickable
+                                    btn-block
                                   "
                               @change="test()"
                             />
                           </div>
 
                           <div class="col-md-6">
-                            <div class="btn-group pull-right">
+                            <div class="btn-group">
                               <button
                                 :disabled="isSubmitting || !disabled"
                                 type="submit"
@@ -84,40 +119,6 @@
                         </div>
                       </form>
                     </div>
-                    <div id="dz-previews">
-                      <div v-if="error.message" class="invalid-feedback"></div>
-                    </div>
-
-                    <!--===================================================-->
-                    <!--End Dropzonejs using Bootstrap theme-->
-                  </div>
-                </div>
-
-                <!------------------------------------------------------------->
-
-                <div class="table-responsive">
-                  <div class="row">
-                    <div class="col-md-6 table-toolbar-left">
-                      <!-- <form
-                        action="consolidate"
-                        @submit.prevent="submitformorder"
-                        method="post"
-                        enctype="multipart/form-data"
-                      >
-                        <div class="col-lg-3">
-                          <h5>Select a date :</h5>
-                        </div>
-                        <div class="col-lg-4">
-                          <datetime
-                            v-model="date"
-                            value-zone="Asia/Manila"
-                            zone="Asia/Manila"
-                            input-class="form-control"
-                          ></datetime>
-                        </div>
-                      </form> -->
-                    </div>
-                    <div class="col-md-3"></div>
                     <div class="col-md-3 table-toolbar-right">
                       <input
                         type="search"
@@ -166,8 +167,14 @@
                       <tr
                         v-for="(MgaConsolidated, index) in consolidated.data"
                         :key="index"
-                        :style="MgaConsolidated.is_manual==1 ? 'color:#998f09;' : ''"
-                        :title="MgaConsolidated.is_manual==1 ? 'Manually included' : ''"
+                        :style="
+                          MgaConsolidated.is_manual == 1 ? 'color:#998f09;' : ''
+                        "
+                        :title="
+                          MgaConsolidated.is_manual == 1
+                            ? 'Manually included'
+                            : ''
+                        "
                       >
                         <td>{{ MgaConsolidated.transaction_type }}</td>
                         <td>{{ MgaConsolidated.sales_invoice }}</td>
