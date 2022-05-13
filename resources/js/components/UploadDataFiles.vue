@@ -45,36 +45,42 @@
 
                     <div class="bord-top pad-ver">
                       <form id="myForm1" @submit.prevent="submitFiles1">
-                        <input
-                          type="file"
-                          id="input-file-import"
-                          ref="text"
-                          accept=".txt"
-                          class="
-                                  btn btn-primary
-                                  fileinput-button
-                                  dz-clickable
-                                "
-                          
-                          @change="test()"
-                        />
-                        <div class="btn-group pull-right">
-                          <button
-                            :disabled="isSubmitting || !disabled"
-                            type="submit"
-                            id="submitform"
-                            class="btn btn-primary"
-                          >
-                            <i class="fa fa-cloud-upload"></i> Upload
-                          </button>
-                          <button
-                            id="dz-remove-btn"
-                            class="btn btn-danger cancel"
-                            type="reset"
-                            @click="clearData()"
-                          >
-                            <i class="demo-psi-trash"></i>
-                          </button>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <input
+                              type="file"
+                              id="input-file-import"
+                              ref="text"
+                              accept=".txt"
+                              class="
+                                    btn btn-primary
+                                    fileinput-button
+                                    dz-clickable
+                                  "
+                              @change="test()"
+                            />
+                          </div>
+
+                          <div class="col-md-6">
+                            <div class="btn-group pull-right">
+                              <button
+                                :disabled="isSubmitting || !disabled"
+                                type="submit"
+                                id="submitform"
+                                class="btn btn-primary"
+                              >
+                                <i class="fa fa-cloud-upload"></i> Upload
+                              </button>
+                              <button
+                                id="dz-remove-btn"
+                                class="btn btn-danger cancel"
+                                type="reset"
+                                @click="clearData()"
+                              >
+                                <i class="demo-psi-trash"></i>
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </form>
                     </div>
@@ -152,6 +158,7 @@
                         <th>Qty</th>
                         <th>Total Amt</th>
                         <th>Posting Date</th>
+                        <th>Uploaded</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -159,6 +166,8 @@
                       <tr
                         v-for="(MgaConsolidated, index) in consolidated.data"
                         :key="index"
+                        :style="MgaConsolidated.is_manual==1 ? 'color:#998f09;' : ''"
+                        :title="MgaConsolidated.is_manual==1 ? 'Manually included' : ''"
                       >
                         <td>{{ MgaConsolidated.transaction_type }}</td>
                         <td>{{ MgaConsolidated.sales_invoice }}</td>
@@ -186,6 +195,7 @@
                           }}
                         </td>
                         <td>{{ MgaConsolidated.posting_date }}</td>
+                        <td>{{ MgaConsolidated.date_uploaded }}</td>
                         <td>
                           <button
                             @click="details1(MgaConsolidated)"

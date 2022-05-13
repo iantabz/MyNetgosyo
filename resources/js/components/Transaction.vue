@@ -307,7 +307,7 @@
                         <h3
                           style="padding:0;margin:0;"
                         >
-                          <span class="label label-success">{{ total_amt_tran | toCurrency }}</span>
+                          <span class="label label-warning">{{ total_amt_tran | toCurrency }}</span>
                         </h3>
                       </div>
                     </div>
@@ -1646,7 +1646,7 @@
                   </thead>
                   <tbody>
                     <tr v-for="MgaOrder in order" :key="MgaOrder.doc_no"
-                      :style="MgaOrder.manually_included == 1 ? 'background-color:yellow;' : ''"
+                      :style="MgaOrder.manually_included == 1 ? 'color:#998f09;' : ''"
                     >
                       
                       <!-- kaloy 09-22-21 -->

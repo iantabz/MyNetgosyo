@@ -36,14 +36,42 @@ class ConsolidatedTransactionController extends Controller
         set_time_limit(0);
 
         $data_res = [];
+        // $date = Carbon::parse(base64_decode(request()->date))->toDateString();
+
+        // kaloy 2022-04-06
         $searchKey = $request->searchKey ?? '';
         $manuallyAddedOnly = $request->is_manual ?? 'false';
         $is_manual = $manuallyAddedOnly=='false' ? 0 : 1;
 
+        // return ConsolidatedTransaction::select('consolidated_transactions.*', 'item_masterfiles.description AS description', 'item_masterfiles.status AS sstatus', 'item_masterfiles.image AS image', 'customer_master_files.account_name AS account_name', 'salesman_lists.first_name AS first_name', 'salesman_lists.last_name AS last_name')
+        //     ->join('item_masterfiles', 'consolidated_transactions.itemcode', '=', 'item_masterfiles.itemcode')
+        //     ->join('customer_master_files', 'consolidated_transactions.customer_code', '=', 'customer_master_files.account_code')
+        //     ->join('salesman_lists', 'consolidated_transactions.salesman_code', '=', 'salesman_lists.user_code')
+        //     ->whereRaw('consolidated_transactions.uom = item_masterfiles.uom AND consolidated_transactions.customer_code = customer_master_files.account_code AND consolidated_transactions.salesman_code = salesman_lists.user_code')
+        //     ->whereDate('posting_date', $date)
+        //     ->paginate(10);
+
         $res1 = ConsolidatedTransaction::select(
             'consolidated_transactions.*',
+            // 'item_masterfiles.product_name AS product_name',
+            // 'item_masterfiles.keywords AS keywords',
+            // 'item_masterfiles.product_family AS product_family',
+            // 'item_masterfiles.description AS description',
+            // 'item_masterfiles.status AS sstatus',
+            // 'item_masterfiles.image AS image',
             'tb_tran_head.tran_no'
         )
+            // ->leftJoin(
+            //     'item_masterfiles',
+            //     'consolidated_transactions.itemcode',
+            //     '=',
+            //     'item_masterfiles.itemcode'
+            // )
+            // ->join('item_masterfiles', function($join) {
+            //     $join->on('item_masterfiles.itemcode','=', 'consolidated_transactions.itemcode')
+            //         ->whereRaw('item_masterfiles.uom = consolidated_transactions.uom')
+            //         ;
+            // })
             ->leftJoin(
                 'tb_tran_head',
                 'consolidated_transactions.reference_no',
@@ -51,6 +79,19 @@ class ConsolidatedTransactionController extends Controller
                 'tb_tran_head.tran_no'
             )
 
+            // ->leftJoin(
+            //     'tb_tran_line',
+            //     'consolidated_transactions.itemcode',
+            //     '=',
+            //     'tb_tran_line.itm_code'
+            // )
+            // ->whereRaw('tb_tran_line.tran_no = consolidated_transactions.reference_no')
+
+            // ->whereRaw('consolidated_transactions.uom = item_masterfiles.uom')
+            // ->where('consolidated_transactions.uom', 'item_masterfiles.uom')
+
+            // ->whereDate('posting_date', $date)
+            
             ->where(function ($query) use (&$searchKey) {
                 $query->where('consolidated_transactions.sales_invoice', 'like', '%' . $searchKey . '%')
                     ->orWhere('consolidated_transactions.reference_no', 'like', '%' . $searchKey . '%')
@@ -61,24 +102,22 @@ class ConsolidatedTransactionController extends Controller
                     ;
             })
 
-            // ? ========================================================================
+            // ========================================================================
             ->when($is_manual == 0, function($q) {
-                return $q->where(function($q){
-                    $q->where('consolidated_transactions.is_manual', 0)
-                        ->orWhere(function($q) {
-                            $q->where('consolidated_transactions.is_manual', 1)
-                                ->where('consolidated_transactions.is_manual_appended', 1)
-                                ;
-                        })
+                return $q->where('consolidated_transactions.is_manual', 0)
+                    ->orWhere(function($q) {
+                        $q->where('consolidated_transactions.is_manual', 1)
+                        ->where('consolidated_transactions.is_manual_appended', 1)
                         ;
-                });
+                    })
+                    ;
             })
             ->when($is_manual == 1, function($q) {
                 return $q->where('consolidated_transactions.is_manual', 1)
                     ->where('consolidated_transactions.is_manual_appended', 0)
                     ;
             })
-            // ? ========================================================================
+            // ========================================================================WE
             
             ->orderBy('consolidated_transactions.consolidated_id', 'DESC')
             ->paginate(10);
@@ -98,11 +137,8 @@ class ConsolidatedTransactionController extends Controller
                 $res3 = DB::table('salesman_lists')
                     ->where('user_code', $row1->salesman_code)
                     ->first();
-                
-                // ? =================================================================
-                /**
-                 * ? Don't delete this block for now...
-                 */
+
+                // =================================================================
                 // $checkOnTranLine = DB::table('tb_tran_line')
                 //     ->where('tran_no', $row1->reference_no)
                 //     ->where('itm_code', $row1->itemcode)
@@ -117,7 +153,7 @@ class ConsolidatedTransactionController extends Controller
                 //             'is_manual' => 1
                 //         ]);
                 // }
-                // ? =================================================================
+                // =================================================================
 
                 $item_no_uom = DB::table('item_masterfiles')
                     ->where('itemcode', $row1->itemcode)
@@ -826,8 +862,20 @@ class ConsolidatedTransactionController extends Controller
         if($mankey == '123') {
             $res = ConsolidatedTransaction::select(
                 'consolidated_transactions.*',
+                // 'item_masterfiles.uom AS uom',
+                // 'item_masterfiles.product_name AS product_name',
+                // 'item_masterfiles.keywords AS keywords',
+                // 'item_masterfiles.product_family AS product_family',
+                // 'item_masterfiles.description AS description',
+                // 'item_masterfiles.status AS sstatus',
+                // 'item_masterfiles.image AS image',
                 'tb_tran_head.tran_no'
             )
+                // ->join('item_masterfiles', function($join) {
+                //     $join->on('consolidated_transactions.itemcode','=', 'item_masterfiles.itemcode')
+                //         ->whereRaw('consolidated_transactions.uom = item_masterfiles.uom')
+                //         ;
+                // })
                 ->join(
                     'tb_tran_head',
                     'consolidated_transactions.reference_no',

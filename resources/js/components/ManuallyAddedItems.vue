@@ -62,6 +62,7 @@
               <th>Qty</th>
               <th>Total Amt</th>
               <th>Posting Date</th>
+              <th>Uploaded</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -109,6 +110,7 @@
                 {{ parseFloat(MgaConsolidated.total_amt) | toCurrency }}
               </td>
               <td>{{ MgaConsolidated.posting_date }}</td>
+              <td>{{ MgaConsolidated.date_uploaded }}</td>
               <td>
                 <button
                   @click="viewItemDetails(MgaConsolidated)"
@@ -457,7 +459,7 @@
         </div>
       </div>
     </div>
-    <!-- /Modal -->
+    <!-- /Modals -->
   </div>
 </template>
 <style></style>
