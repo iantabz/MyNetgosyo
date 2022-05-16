@@ -2,17 +2,16 @@
   <div class="panel-body">
     <!-- actions -->
     <div class="row" style="padding-bottom:10px;">
-      <div class="col-md-3">
+      <div class="col-md-9">
         <a
+          title="Append the highlighted items in the list into its respective transaction"
           href="javascript:void(0)"
-          class="btn btn-primary"
+          class="btn btn-success"
           @click="addItems()"
         >
           Append to Respective Transactions
         </a>
       </div>
-      <div class="col-md-3"></div>
-      <div class="col-md-3"></div>
       <div
         class="col-md-3"
         style="text-align:right;"
@@ -74,7 +73,7 @@
                 MgaConsolidated.tran_no != null
                 && MgaConsolidated.present_on_masterfile == true
                 && MgaConsolidated.present_on_masterfile_with_uom == false
-                ? 'background-color:#ffdab8;' : ''
+                ? 'background-color:#f0ffed;' : ''
               "
             >
               <td>{{ MgaConsolidated.transaction_type }}</td>

@@ -36,10 +36,10 @@
                     <!--Dropzonejs using Bootstrap theme-->
                     <!--===================================================-->
                     <p>
-                      Only Consolidated Files / Item Consolidated Files should
+                      Only Sales Invoice/TDS files should
                       be uploaded in this form.
                       <span style="color: red"
-                        >Note: ".csv" file format only.</span
+                        >Note: ".txt" file format only.</span
                       >
                     </p>
 
@@ -78,6 +78,8 @@
                           ></datetime>
                         </div>
                       </form> -->
+
+                      <!-- import_si -->
                       <form id="myForm1" @submit.prevent="submitFiles1">
                         <div class="row">
                           <div class="col-md-6">
@@ -86,13 +88,9 @@
                               id="input-file-import"
                               ref="text"
                               accept=".txt"
-                              class="
-                                    btn btn-primary
-                                    fileinput-button
-                                    dz-clickable
-                                    btn-block
-                                  "
+                              class="btn-block form-control"
                               @change="test()"
+                              multiple
                             />
                           </div>
 
@@ -102,15 +100,20 @@
                                 :disabled="isSubmitting || !disabled"
                                 type="submit"
                                 id="submitform"
-                                class="btn btn-primary"
+                                class="btn btn-success"
+                                title="Upload files"
                               >
-                                <i class="fa fa-cloud-upload"></i> Upload
+                                <em v-if="isSubmitting">Uploading, please wait...</em>
+                                <span v-else>
+                                    <i class="fa fa-cloud-upload"></i> Upload
+                                </span>
                               </button>
                               <button
                                 id="dz-remove-btn"
                                 class="btn btn-danger cancel"
                                 type="reset"
                                 @click="clearData()"
+                                title="Clear files"
                               >
                                 <i class="demo-psi-trash"></i>
                               </button>
@@ -1581,10 +1584,16 @@ export default {
           console.log("check error: ", this.error);
         });
     },
+
+    // import_si
     submitFiles1() {
       this.isSubmitting = true;
       let formData = new FormData();
-      formData.append("import_file1", this.$refs.text.files[0]);
+      let files = this.$refs.text.files;
+      for(let i=0;i<files.length;i++) {
+        formData.append("import_file1[" + i + "]", files[i]);
+      }
+      // formData.append("import_file1", this.$refs.text.files[0]);
       $("#loadMdl1").modal("show");
       axios
         .post("/import_consolidated_masterfile", formData, {

@@ -83,15 +83,6 @@
                             >
                               Download BCOM
                             </button>
-                            <!-- <button
-                              v-if="dl_bcom === 1"
-                              id="dl_bcom1"
-                              class="btn btn-primary btn-rounded btn-block"
-                              @click="download1()"
-                              style
-                            >
-                              Download BCOM
-                            </button> -->
                           </div>
 
                           <div class="col-md-3">
@@ -105,15 +96,6 @@
                             >
                               Download BULK
                             </button>
-                            <!-- <button
-                              v-if="dl_bulk === 1"
-                              id="dl_bulk1"
-                              class="btn btn-primary btn-rounded btn-block"
-                              @click="download2()"
-                              style
-                            >
-                              Download BULK
-                            </button> -->
                           </div>
 
                           <div class="col-md-6">
@@ -128,15 +110,6 @@
                               <!-- Download FLOWRACK -->
                               Download OPLAN DELICA-VARIOUS
                             </button>
-                            <!-- <button
-                              v-if="dl_flowrack === 1"
-                              id="dl_flowrack1"
-                              class="btn btn-primary btn-rounded btn-block"
-                              @click="download3()"
-                              style
-                            >
-                              Download FLOWRACK
-                            </button> -->
                           </div>
 
                         </div> <!-- /kaloy 2021-10-14 -->

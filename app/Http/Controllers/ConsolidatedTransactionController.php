@@ -38,7 +38,7 @@ class ConsolidatedTransactionController extends Controller
         $data_res = [];
         $searchKey = $request->searchKey ?? '';
         $manuallyAddedOnly = $request->is_manual ?? 'false';
-        $is_manual = $manuallyAddedOnly=='false' ? 0 : 1;
+        $is_manual = $manuallyAddedOnly == 'false' ? 0 : 1;
 
         $res1 = ConsolidatedTransaction::select(
             'consolidated_transactions.*',
@@ -58,31 +58,28 @@ class ConsolidatedTransactionController extends Controller
                     ->orWhere('consolidated_transactions.customer_code', 'like', '%' . $searchKey . '%')
                     // ->orWhere('consolidated_transactions.posting_date', 'like', '%' . $searchKey . '%')
                     // ->orWhere('consolidated_transactions.date_uploaded', 'like', '%' . $searchKey . '%')
-                    ;
+                ;
             })
 
             // ? ========================================================================
-            ->when($is_manual == 0, function($q) {
-                return $q->where(function($q){
+            ->when($is_manual == 0, function ($q) {
+                return $q->where(function ($q) {
                     $q->where('consolidated_transactions.is_manual', 0)
-                        ->orWhere(function($q) {
+                        ->orWhere(function ($q) {
                             $q->where('consolidated_transactions.is_manual', 1)
-                                ->where('consolidated_transactions.is_manual_appended', 1)
-                                ;
-                        })
-                        ;
+                                ->where('consolidated_transactions.is_manual_appended', 1);
+                        });
                 });
             })
-            ->when($is_manual == 1, function($q) {
+            ->when($is_manual == 1, function ($q) {
                 return $q->where('consolidated_transactions.is_manual', 1)
-                    ->where('consolidated_transactions.is_manual_appended', 0)
-                    ;
+                    ->where('consolidated_transactions.is_manual_appended', 0);
             })
             // ? ========================================================================
-            
+
             ->orderBy('consolidated_transactions.consolidated_id', 'DESC')
             ->paginate(10);
-            // ->paginate(5000);
+        // ->paginate(5000);
 
         // dd($res1);
 
@@ -98,7 +95,7 @@ class ConsolidatedTransactionController extends Controller
                 $res3 = DB::table('salesman_lists')
                     ->where('user_code', $row1->salesman_code)
                     ->first();
-                
+
                 // ? =================================================================
                 /**
                  * ? Don't delete this block for now...
@@ -132,43 +129,43 @@ class ConsolidatedTransactionController extends Controller
                 $checkOnMasterfile_with_UOM = $item != null ? true : false;
 
                 // if($checkOnTranLine == false) {
-                    $data_res[] = array(
-                        'consolidated_id'               =>  $row1->consolidated_id,
-                        // 'product_name'                  =>  $row1->product_name,
-                        'product_name'                  =>  $item_no_uom->product_name ?? 'NA',
-                        'transaction_type'              =>  $row1->transaction_type,
-                        // 'description'                   =>  $row1->description,
-                        'description'                   =>  $item_no_uom->description ?? 'NA',
-                        'sales_invoice'                 =>  $row1->sales_invoice,
-                        'reference_no'                  =>  $row1->reference_no,
-                        'posting_date'                  =>  $row1->posting_date,
-                        'account_name'                  =>  $res2->account_name ?? 'NA',
-                        'customer_code'                 =>  $row1->customer_code,
-                        'first_name'                    =>  $res3->first_name ?? 'NA',
-                        'last_name'                     =>  $res3->last_name ?? 'NA',
-                        'salesman_code'                 =>  $row1->salesman_code,
-                        'itemcode'                      =>  $row1->itemcode,
-                        'qty'                           =>  $row1->qty,
-                        'total_amt'                     =>  $row1->total_amt,
-                        // 'product_family'                =>  $row1->product_family,
-                        'product_family'                =>  $item_no_uom->product_family ?? 'NA',
-                        'keywords'                      =>  $row1->keywords,
-                        'uom'                           =>  $row1->uom,
-                        'unit_price'                    =>  $row1->unit_price,
-                        // 'unit_price'                    =>  $item->list_price_wouttax ?? 'NA',
-                        'price_w_vat'                   =>  $row1->price_w_vat,
-                        // 'price_w_vat'                   =>  $item->list_price_wtax ?? 'NA',
-                        // 'image'                         =>  $row1->image,
-                        'image'                         =>  $item_no_uom->image ?? 'NA',
-                        // 'sstatus'                       =>  $row1->sstatus,
-                        'sstatus'                       =>  $item->status ?? 'NA',
-                        'tran_no'                       => $row1->tran_no,
-                        // 'present_on_tranline'           => $checkOnTranLine,
-                        'present_on_masterfile'             => $checkOnMasterfile,
-                        'present_on_masterfile_with_uom'    => $checkOnMasterfile_with_UOM,
-                        'date_uploaded'                 => $row1->date_uploaded,
-                        'is_manual'                     => $row1->is_manual,
-                    );
+                $data_res[] = array(
+                    'consolidated_id'               =>  $row1->consolidated_id,
+                    // 'product_name'                  =>  $row1->product_name,
+                    'product_name'                  =>  $item_no_uom->product_name ?? 'NA',
+                    'transaction_type'              =>  $row1->transaction_type,
+                    // 'description'                   =>  $row1->description,
+                    'description'                   =>  $item_no_uom->description ?? 'NA',
+                    'sales_invoice'                 =>  $row1->sales_invoice,
+                    'reference_no'                  =>  $row1->reference_no,
+                    'posting_date'                  =>  $row1->posting_date,
+                    'account_name'                  =>  $res2->account_name ?? 'NA',
+                    'customer_code'                 =>  $row1->customer_code,
+                    'first_name'                    =>  $res3->first_name ?? 'NA',
+                    'last_name'                     =>  $res3->last_name ?? 'NA',
+                    'salesman_code'                 =>  $row1->salesman_code,
+                    'itemcode'                      =>  $row1->itemcode,
+                    'qty'                           =>  $row1->qty,
+                    'total_amt'                     =>  $row1->total_amt,
+                    // 'product_family'                =>  $row1->product_family,
+                    'product_family'                =>  $item_no_uom->product_family ?? 'NA',
+                    'keywords'                      =>  $row1->keywords,
+                    'uom'                           =>  $row1->uom,
+                    'unit_price'                    =>  $row1->unit_price,
+                    // 'unit_price'                    =>  $item->list_price_wouttax ?? 'NA',
+                    'price_w_vat'                   =>  $row1->price_w_vat,
+                    // 'price_w_vat'                   =>  $item->list_price_wtax ?? 'NA',
+                    // 'image'                         =>  $row1->image,
+                    'image'                         =>  $item_no_uom->image ?? 'NA',
+                    // 'sstatus'                       =>  $row1->sstatus,
+                    'sstatus'                       =>  $item->status ?? 'NA',
+                    'tran_no'                       => $row1->tran_no,
+                    // 'present_on_tranline'           => $checkOnTranLine,
+                    'present_on_masterfile'             => $checkOnMasterfile,
+                    'present_on_masterfile_with_uom'    => $checkOnMasterfile_with_UOM,
+                    'date_uploaded'                 => $row1->date_uploaded,
+                    'is_manual'                     => $row1->is_manual,
+                );
                 // }
             }
         }
@@ -198,171 +195,255 @@ class ConsolidatedTransactionController extends Controller
         DB::transaction(function () use ($request, $date_request) {
             $date = Carbon::parse(base64_decode(request()->date))->toDateString();
 
-            $request->validate([
-                'import_file1' => 'required|file|mimes:xls,xlsx,csv,txt'
-            ]);
+            // $request->validate([
+            //     'import_file1' => 'required|file|mimes:xls,xlsx,csv,txt'
+            // ]);
 
-            $path = $request->file('import_file1')->getRealPath();
-            // kaloy 2022-04-11
-            $data = utf8_encode(file_get_contents($path));
-            
-            // dump($data);
-            $data_lines = explode("\r\n", $data);
-            $total_lines = count($data_lines);
+            $files = $request->file('import_file1');
 
-            // kaloy 2022-04-07
-            $transactionNumbers = [];
-
-            // Iterate through the lines *************************************************
-            for ($i = 0; $i < $total_lines; $i++) {
-                if ($data_lines[$i] != NULL) {
-                    $powdered = explode("|", $data_lines[$i]);
-
-                    $t_type = trim($powdered[0]);
-                    $inv_no = trim($powdered[1]);
-                    $cust_code = trim($powdered[2]);
-                    $posting_date = date('Y-m-d', strtotime(trim($powdered[3])));
-                    $itemcode = trim($powdered[4]);
-                    $qty = trim($powdered[5]);
-                    $price = trim($powdered[6]);
-                    $total_amt = trim($powdered[7]);
-                    $price_w_vat = trim($powdered[8]);
-                    $salesman = trim($powdered[9]);
-                    $uom = trim($powdered[10]);
-                    $ref_no = trim($powdered[11]);
-
-                    $transactionNumbers[] = $ref_no;
-
-                    $date_request = Carbon::parse($posting_date);
-
-                    // kaloy 2021-10-27
-                    $currTime = date('H:i:s');
-                    $datetime_request = Carbon::parse("$posting_date $currTime");
-
-                    // kaloy 2022-05-02
-                    $isItemManuallyAdded = DB::table('tb_tran_line')
-                        ->where('tran_no', $ref_no)
-                        ->where('itm_code', $itemcode)
-                        ->where('uom', $uom)
-                        ->exists() == false;
-
-                    $check1 = DB::table('customer_master_files')
-                        ->where('account_code', '=', $cust_code)
-                        ->get();
-                    // dump($check1);
-                    foreach ($check1 as $data1) {
-                        $cust_id = $data1->customer_id;
-
-                        $check2 = DB::table('tbl_discounts')
-                            ->where('cus_id', '=', $cust_id)
-                            ->get();
-
-                        if ($check2->count() > 0) {
-
-                            foreach ($check2 as $data2) {
-                                $discount = $data2->discount;
-                                $principal_id = $data2->principal_id;
-
-                                $check3 = DB::table('tbl_principals')
-                                    ->where('id', '=', $principal_id)
+            // loop through uploaded files
+            foreach($files as $file) {
+                $path = $file->getRealPath();
+                // $path = $request->file('import_file1')->getRealPath();
+                // kaloy 2022-04-11
+                $data = utf8_encode(file_get_contents($path));
+    
+                // dump($data);
+                $data_lines = explode("\r\n", $data);
+                $total_lines = count($data_lines);
+    
+                // kaloy 2022-04-07
+                $transactionNumbers = [];
+    
+                // Iterate through the lines *************************************************
+                for ($i = 0; $i < $total_lines; $i++) {
+                    if ($data_lines[$i] != NULL) {
+                        $powdered = explode("|", $data_lines[$i]);
+                        $t_type = trim($powdered[0]);
+                        if (strcasecmp($t_type,'invoice')==0) {
+                            $inv_no = trim($powdered[1]);
+                            $cust_code = trim($powdered[2]);
+                            $posting_date = date('Y-m-d', strtotime(trim($powdered[3])));
+                            $itemcode = trim($powdered[4]);
+                            $qty = trim($powdered[5]);
+                            $price = trim($powdered[6]);
+                            $total_amt = trim($powdered[7]);
+                            $price_w_vat = trim($powdered[8]);
+                            $salesman = trim($powdered[9]);
+                            $uom = trim($powdered[10]);
+                            $ref_no = trim($powdered[11]);
+    
+                            $transactionNumbers[] = $ref_no;
+    
+                            $date_request = Carbon::parse($posting_date);
+    
+                            // kaloy 2021-10-27
+                            $currTime = date('H:i:s');
+                            $datetime_request = Carbon::parse("$posting_date $currTime");
+    
+                            // kaloy 2022-05-02
+                            $isItemManuallyAdded = DB::table('tb_tran_line')
+                                ->where('tran_no', $ref_no)
+                                ->where('itm_code', $itemcode)
+                                ->where('uom', $uom)
+                                ->exists() == false;
+    
+                            $check1 = DB::table('customer_master_files')
+                                ->where('account_code', '=', $cust_code)
+                                ->get();
+                            // dump($check1);
+                            foreach ($check1 as $data1) {
+                                $cust_id = $data1->customer_id;
+    
+                                $check2 = DB::table('tbl_discounts')
+                                    ->where('cus_id', '=', $cust_id)
                                     ->get();
-
-                                if ($check3->count() > 0) {
-
-                                    foreach ($check3 as $data3) {
-                                        $principal_name = $data3->principal_name;
-
-                                        $check4 = DB::table('item_masterfiles')
-                                            ->where('principal', '=', $principal_name)
-                                            ->where('itemcode', '=', $itemcode)
-                                            ->where('uom', '=', $uom)
-                                            ->exists();
-
-                                        // If it exists in item_masterfiles
-                                        if ($check4 === true) {
-
-                                            $check = ConsolidatedTransaction::where(
-                                                'transaction_type',
-                                                '=',
-                                                $t_type
-                                            )
-                                                ->where('sales_invoice', '=', $inv_no)
-                                                ->where('customer_code', '=', $cust_code)
-                                                ->where('posting_date', '=', $posting_date)
-                                                ->where('itemcode', '=', $itemcode)
-                                                ->where('qty', '=', $qty)
-                                                ->where('unit_price', '=', $price)
-                                                ->where('total_amt', '=', $total_amt)
-                                                ->where('price_w_vat', '=', $price_w_vat)
-                                                ->where('salesman_code', '=', $salesman)
-                                                ->where('uom', '=', $uom)
-                                                ->where('reference_no', '=', $ref_no)
-                                                ->exists();
-
-                                            // If it does not exist in consolidated_transactions
-                                            if ($check === false) {
-                                                $consolidate = new ConsolidatedTransaction;
-
-                                                $consolidate->transaction_type = $t_type;
-                                                $consolidate->sales_invoice = $inv_no;
-                                                $consolidate->customer_code = $cust_code;
-                                                $consolidate->posting_date = $posting_date;
-                                                $consolidate->itemcode = $itemcode;
-                                                $consolidate->qty = $qty;
-                                                $consolidate->unit_price = $price;
-                                                $consolidate->total_amt = $total_amt;
-                                                $consolidate->price_w_vat = $price_w_vat;
-                                                $consolidate->salesman_code = $salesman;
-                                                $consolidate->uom = $uom;
-                                                $consolidate->reference_no = $ref_no;
-                                                $consolidate->status = '';
-                                                $consolidate->date_uploaded = $date;
-                                                $consolidate->flag = 0;
-                                                $consolidate->is_manual = $isItemManuallyAdded;
-                                                $consolidate->save();
-
-                                                // $date_request = Carbon::parse($posting_date)->toDateString();
-                                                //calculation
-                                                $disct = $discount / 100;
-                                                $discounted_line_amt = $disct * $total_amt;
-
-
-                                                DB::table('tb_tran_head')
-                                                    ->where('tran_no', '=', $ref_no)
-                                                    // tran_head_date_req
-                                                    // ->whereDate('date_req', $date_request)
-                                                    // ->update(['tran_stat' => 'Approved', 'date_app' => $date_request, 'date_transit' => $date_request]);
-                                                    ->update([
-                                                        'tran_stat' => 'Approved',
-                                                        'date_app' => $datetime_request,
-                                                        'date_transit' => $date_request
-                                                    ]);
-
-                                                DB::table('tb_tran_line')
-                                                    ->where('tran_no', '=', $ref_no)
-                                                    ->where('itm_code', '=', $itemcode)
+    
+                                if ($check2->count() > 0) {
+    
+                                    foreach ($check2 as $data2) {
+                                        $discount = $data2->discount;
+                                        $principal_id = $data2->principal_id;
+    
+                                        $check3 = DB::table('tbl_principals')
+                                            ->where('id', '=', $principal_id)
+                                            ->get();
+    
+                                        if ($check3->count() > 0) {
+    
+                                            foreach ($check3 as $data3) {
+                                                $principal_name = $data3->principal_name;
+    
+                                                $check4 = DB::table('item_masterfiles')
+                                                    ->where('principal', '=', $principal_name)
+                                                    ->where('itemcode', '=', $itemcode)
                                                     ->where('uom', '=', $uom)
-                                                    ->update([
-                                                        'nav_invoice_no' => $inv_no,
-                                                        'del_qty' => $qty,
-                                                        'amt' => $price,
-                                                        'discount' => $discount,
-                                                        'discounted_amount' => $discounted_line_amt,
-                                                        'itm_stat' => 'Served',
-                                                        'tot_amt' => $total_amt,
-                                                        'flag' => 1
-                                                    ]);
-
-                                                $check_unserved = DB::table('tb_unserved_items')
-                                                    ->where('tran_no', '=', $ref_no)
-                                                    ->where('itm_code', '=', $itemcode)
-                                                    ->where('uom', '=', $uom)
-                                                    ->where('itm_stat', '=', 'Unserved')
-                                                    ->delete();
+                                                    ->exists();
+    
+                                                // If it exists in item_masterfiles
+                                                if ($check4 === true) {
+    
+                                                    $check = ConsolidatedTransaction::where(
+                                                        'transaction_type',
+                                                        '=',
+                                                        $t_type
+                                                    )
+                                                        ->where('sales_invoice', '=', $inv_no)
+                                                        ->where('customer_code', '=', $cust_code)
+                                                        ->where('posting_date', '=', $posting_date)
+                                                        ->where('itemcode', '=', $itemcode)
+                                                        ->where('qty', '=', $qty)
+                                                        ->where('unit_price', '=', $price)
+                                                        ->where('total_amt', '=', $total_amt)
+                                                        ->where('price_w_vat', '=', $price_w_vat)
+                                                        ->where('salesman_code', '=', $salesman)
+                                                        ->where('uom', '=', $uom)
+                                                        ->where('reference_no', '=', $ref_no)
+                                                        ->exists();
+    
+                                                    // If it does not exist in consolidated_transactions
+                                                    if ($check === false) {
+                                                        $consolidate = new ConsolidatedTransaction;
+    
+                                                        $consolidate->transaction_type = $t_type;
+                                                        $consolidate->sales_invoice = $inv_no;
+                                                        $consolidate->customer_code = $cust_code;
+                                                        $consolidate->posting_date = $posting_date;
+                                                        $consolidate->itemcode = $itemcode;
+                                                        $consolidate->qty = $qty;
+                                                        $consolidate->unit_price = $price;
+                                                        $consolidate->total_amt = $total_amt;
+                                                        $consolidate->price_w_vat = $price_w_vat;
+                                                        $consolidate->salesman_code = $salesman;
+                                                        $consolidate->uom = $uom;
+                                                        $consolidate->reference_no = $ref_no;
+                                                        $consolidate->status = '';
+                                                        $consolidate->date_uploaded = $date;
+                                                        $consolidate->flag = 0;
+                                                        $consolidate->is_manual = $isItemManuallyAdded;
+                                                        $consolidate->save();
+    
+                                                        // $date_request = Carbon::parse($posting_date)->toDateString();
+                                                        //calculation
+                                                        $disct = $discount / 100;
+                                                        $discounted_line_amt = $disct * $total_amt;
+    
+    
+                                                        DB::table('tb_tran_head')
+                                                            ->where('tran_no', '=', $ref_no)
+                                                            // tran_head_date_req
+                                                            // ->whereDate('date_req', $date_request)
+                                                            // ->update(['tran_stat' => 'Approved', 'date_app' => $date_request, 'date_transit' => $date_request]);
+                                                            ->update([
+                                                                'tran_stat' => 'Approved',
+                                                                'date_app' => $datetime_request,
+                                                                'date_transit' => $date_request
+                                                            ]);
+    
+                                                        DB::table('tb_tran_line')
+                                                            ->where('tran_no', '=', $ref_no)
+                                                            ->where('itm_code', '=', $itemcode)
+                                                            ->where('uom', '=', $uom)
+                                                            ->update([
+                                                                'nav_invoice_no' => $inv_no,
+                                                                'del_qty' => $qty,
+                                                                'amt' => $price,
+                                                                'discount' => $discount,
+                                                                'discounted_amount' => $discounted_line_amt,
+                                                                'itm_stat' => 'Served',
+                                                                'tot_amt' => $total_amt,
+                                                                'flag' => 1
+                                                            ]);
+    
+                                                        $check_unserved = DB::table('tb_unserved_items')
+                                                            ->where('tran_no', '=', $ref_no)
+                                                            ->where('itm_code', '=', $itemcode)
+                                                            ->where('uom', '=', $uom)
+                                                            ->where('itm_stat', '=', 'Unserved')
+                                                            ->delete();
+                                                    }
+    
+                                                    // If it  DOESN'T exists in item_masterfiles
+                                                } else {
+                                                    $check = ConsolidatedTransaction::where(
+                                                        'transaction_type',
+                                                        '=',
+                                                        $t_type
+                                                    )
+                                                        ->where('sales_invoice', '=', $inv_no)
+                                                        ->where('customer_code', '=', $cust_code)
+                                                        ->where('posting_date', '=', $posting_date)
+                                                        ->where('itemcode', '=', $itemcode)
+                                                        ->where('qty', '=', $qty)
+                                                        ->where('unit_price', '=', $price)
+                                                        ->where('total_amt', '=', $total_amt)
+                                                        ->where('price_w_vat', '=', $price_w_vat)
+                                                        ->where('salesman_code', '=', $salesman)
+                                                        ->where('uom', '=', $uom)
+                                                        ->where('reference_no', '=', $ref_no)
+                                                        ->exists();
+    
+                                                    if ($check === false) {
+                                                        $consolidate = new ConsolidatedTransaction;
+    
+                                                        $consolidate->transaction_type = $t_type;
+                                                        $consolidate->sales_invoice = $inv_no;
+                                                        $consolidate->customer_code = $cust_code;
+                                                        $consolidate->posting_date = $posting_date;
+                                                        $consolidate->itemcode = $itemcode;
+                                                        $consolidate->qty = $qty;
+                                                        $consolidate->unit_price = $price;
+                                                        $consolidate->total_amt = $total_amt;
+                                                        $consolidate->price_w_vat = $price_w_vat;
+                                                        $consolidate->salesman_code = $salesman;
+                                                        $consolidate->uom = $uom;
+                                                        $consolidate->reference_no = $ref_no;
+                                                        $consolidate->status = '';
+                                                        $consolidate->date_uploaded = $date;
+                                                        $consolidate->flag = 0;
+                                                        $consolidate->is_manual = $isItemManuallyAdded;
+                                                        $consolidate->save();
+    
+                                                        // $date_request = Carbon::parse($posting_date)->toDateString();
+    
+                                                        //calculation
+    
+    
+                                                        DB::table('tb_tran_head')
+                                                            ->where('tran_no', '=', $ref_no)
+                                                            // tran_head_date_req
+                                                            // ->whereDate('date_req', $date_request)
+                                                            // ->update(['tran_stat' => 'Approved', 'date_app' => $date_request, 'date_transit' => $date_request]);
+                                                            ->update([
+                                                                'tran_stat' => 'Approved',
+                                                                'date_app' => $datetime_request,
+                                                                'date_transit' => $date_request
+                                                            ]);
+    
+                                                        DB::table('tb_tran_line')
+                                                            ->where('tran_no', '=', $ref_no)
+                                                            ->where('itm_code', '=', $itemcode)
+                                                            ->where('uom', '=', $uom)
+                                                            ->update([
+                                                                'nav_invoice_no' => $inv_no,
+                                                                'del_qty' => $qty,
+                                                                'amt' => $price,
+                                                                'itm_stat' => 'Served',
+                                                                'tot_amt' => $total_amt,
+                                                                'flag' => 0
+                                                            ]);
+    
+                                                        $check_unserved = DB::table('tb_unserved_items')
+                                                            ->where('tran_no', '=', $ref_no)
+                                                            ->where('itm_code', '=', $itemcode)
+                                                            ->where('uom', '=', $uom)
+                                                            ->where('itm_stat', '=', 'Unserved')
+                                                            ->delete();
+                                                    }
+                                                }
                                             }
-
-                                            // If it  DOESN'T exists in item_masterfiles
                                         } else {
+    
                                             $check = ConsolidatedTransaction::where(
                                                 'transaction_type',
                                                 '=',
@@ -380,10 +461,10 @@ class ConsolidatedTransactionController extends Controller
                                                 ->where('uom', '=', $uom)
                                                 ->where('reference_no', '=', $ref_no)
                                                 ->exists();
-
+    
                                             if ($check === false) {
                                                 $consolidate = new ConsolidatedTransaction;
-
+    
                                                 $consolidate->transaction_type = $t_type;
                                                 $consolidate->sales_invoice = $inv_no;
                                                 $consolidate->customer_code = $cust_code;
@@ -401,12 +482,12 @@ class ConsolidatedTransactionController extends Controller
                                                 $consolidate->flag = 0;
                                                 $consolidate->is_manual = $isItemManuallyAdded;
                                                 $consolidate->save();
-
+    
                                                 // $date_request = Carbon::parse($posting_date)->toDateString();
-
+    
                                                 //calculation
-
-
+    
+    
                                                 DB::table('tb_tran_head')
                                                     ->where('tran_no', '=', $ref_no)
                                                     // tran_head_date_req
@@ -417,7 +498,7 @@ class ConsolidatedTransactionController extends Controller
                                                         'date_app' => $datetime_request,
                                                         'date_transit' => $date_request
                                                     ]);
-
+    
                                                 DB::table('tb_tran_line')
                                                     ->where('tran_no', '=', $ref_no)
                                                     ->where('itm_code', '=', $itemcode)
@@ -430,7 +511,7 @@ class ConsolidatedTransactionController extends Controller
                                                         'tot_amt' => $total_amt,
                                                         'flag' => 0
                                                     ]);
-
+    
                                                 $check_unserved = DB::table('tb_unserved_items')
                                                     ->where('tran_no', '=', $ref_no)
                                                     ->where('itm_code', '=', $itemcode)
@@ -441,7 +522,7 @@ class ConsolidatedTransactionController extends Controller
                                         }
                                     }
                                 } else {
-
+    
                                     $check = ConsolidatedTransaction::where(
                                         'transaction_type',
                                         '=',
@@ -459,10 +540,10 @@ class ConsolidatedTransactionController extends Controller
                                         ->where('uom', '=', $uom)
                                         ->where('reference_no', '=', $ref_no)
                                         ->exists();
-
+    
                                     if ($check === false) {
                                         $consolidate = new ConsolidatedTransaction;
-
+    
                                         $consolidate->transaction_type = $t_type;
                                         $consolidate->sales_invoice = $inv_no;
                                         $consolidate->customer_code = $cust_code;
@@ -480,12 +561,17 @@ class ConsolidatedTransactionController extends Controller
                                         $consolidate->flag = 0;
                                         $consolidate->is_manual = $isItemManuallyAdded;
                                         $consolidate->save();
-
+    
                                         // $date_request = Carbon::parse($posting_date)->toDateString();
-
+    
                                         //calculation
-
-
+    
+                                        // dd('annyeong!');
+    
+                                        // 2021-09-28
+                                        // "PISTING YAWA HAHAHA"
+                                        // -kaloy
+    
                                         DB::table('tb_tran_head')
                                             ->where('tran_no', '=', $ref_no)
                                             // tran_head_date_req
@@ -496,7 +582,7 @@ class ConsolidatedTransactionController extends Controller
                                                 'date_app' => $datetime_request,
                                                 'date_transit' => $date_request
                                             ]);
-
+    
                                         DB::table('tb_tran_line')
                                             ->where('tran_no', '=', $ref_no)
                                             ->where('itm_code', '=', $itemcode)
@@ -509,7 +595,7 @@ class ConsolidatedTransactionController extends Controller
                                                 'tot_amt' => $total_amt,
                                                 'flag' => 0
                                             ]);
-
+    
                                         $check_unserved = DB::table('tb_unserved_items')
                                             ->where('tran_no', '=', $ref_no)
                                             ->where('itm_code', '=', $itemcode)
@@ -518,297 +604,216 @@ class ConsolidatedTransactionController extends Controller
                                             ->delete();
                                     }
                                 }
-                            }
-                        } else {
-
-                            $check = ConsolidatedTransaction::where(
-                                'transaction_type',
-                                '=',
-                                $t_type
-                            )
-                                ->where('sales_invoice', '=', $inv_no)
-                                ->where('customer_code', '=', $cust_code)
-                                ->where('posting_date', '=', $posting_date)
-                                ->where('itemcode', '=', $itemcode)
-                                ->where('qty', '=', $qty)
-                                ->where('unit_price', '=', $price)
-                                ->where('total_amt', '=', $total_amt)
-                                ->where('price_w_vat', '=', $price_w_vat)
-                                ->where('salesman_code', '=', $salesman)
-                                ->where('uom', '=', $uom)
-                                ->where('reference_no', '=', $ref_no)
-                                ->exists();
-
-                            if ($check === false) {
-                                $consolidate = new ConsolidatedTransaction;
-
-                                $consolidate->transaction_type = $t_type;
-                                $consolidate->sales_invoice = $inv_no;
-                                $consolidate->customer_code = $cust_code;
-                                $consolidate->posting_date = $posting_date;
-                                $consolidate->itemcode = $itemcode;
-                                $consolidate->qty = $qty;
-                                $consolidate->unit_price = $price;
-                                $consolidate->total_amt = $total_amt;
-                                $consolidate->price_w_vat = $price_w_vat;
-                                $consolidate->salesman_code = $salesman;
-                                $consolidate->uom = $uom;
-                                $consolidate->reference_no = $ref_no;
-                                $consolidate->status = '';
-                                $consolidate->date_uploaded = $date;
-                                $consolidate->flag = 0;
-                                $consolidate->is_manual = $isItemManuallyAdded;
-                                $consolidate->save();
-
-                                // $date_request = Carbon::parse($posting_date)->toDateString();
-
-                                //calculation
-
-                                // dd('annyeong!');
-
-                                // 2021-09-28
-                                // "PISTING YAWA HAHAHA"
-                                // -kaloy
-
-                                DB::table('tb_tran_head')
-                                    ->where('tran_no', '=', $ref_no)
-                                    // tran_head_date_req
-                                    // ->whereDate('date_req', $date_request)
-                                    // ->update(['tran_stat' => 'Approved', 'date_app' => $date_request, 'date_transit' => $date_request]);
-                                    ->update([
-                                        'tran_stat' => 'Approved',
-                                        'date_app' => $datetime_request,
-                                        'date_transit' => $date_request
-                                    ]);
-
-                                DB::table('tb_tran_line')
-                                    ->where('tran_no', '=', $ref_no)
-                                    ->where('itm_code', '=', $itemcode)
+    
+                                $check5 = DB::table('item_masterfiles')
+                                    ->where('itemcode', '=', $itemcode)
                                     ->where('uom', '=', $uom)
-                                    ->update([
-                                        'nav_invoice_no' => $inv_no,
-                                        'del_qty' => $qty,
-                                        'amt' => $price,
-                                        'itm_stat' => 'Served',
-                                        'tot_amt' => $total_amt,
-                                        'flag' => 0
-                                    ]);
-
-                                $check_unserved = DB::table('tb_unserved_items')
-                                    ->where('tran_no', '=', $ref_no)
-                                    ->where('itm_code', '=', $itemcode)
-                                    ->where('uom', '=', $uom)
-                                    ->where('itm_stat', '=', 'Unserved')
-                                    ->delete();
+                                    ->get();
+    
+                                foreach ($check5 as $data5) {
+    
+                                    $check6 = DB::table('tbl_item_discounts')
+                                        ->where('item_id', '=', $data5->item_masterfiles_id)
+                                        ->get();
+    
+                                    if ($check6->count() > 0) {
+    
+                                        foreach ($check6 as $data6) {
+                                            $discountm = $data6->discount;
+    
+                                            //computation
+                                            $total_disct = $discountm * $qty;
+                                            $total_amount = $price * $qty;
+    
+                                            $calc1 = ($total_disct / $total_amount);
+                                            $calc = $calc1 * 100;
+    
+                                            DB::table('tb_tran_head')
+                                                ->where('tran_no', '=', $ref_no)
+                                                // tran_head_date_req
+                                                // ->whereDate('date_req', $date_request)
+                                                // ->update(['tran_stat' => 'Approved', 'date_app' => $date_request, 'date_transit' => $date_request]);
+                                                ->update([
+                                                    'tran_stat' => 'Approved',
+                                                    'date_app' => $datetime_request,
+                                                    'date_transit' => $date_request
+                                                ]);
+    
+                                            DB::table('tb_tran_line')
+                                                ->where('tran_no', '=', $ref_no)
+                                                ->where('itm_code', '=', $itemcode)
+                                                ->where('uom', '=', $uom)
+                                                ->update([
+                                                    'nav_invoice_no' => $inv_no,
+                                                    'del_qty' => $qty,
+                                                    'amt' => $price,
+                                                    'tot_amt' => $total_amt,
+                                                    'itm_stat' => 'Served',
+                                                    'discount' => $calc,
+                                                    'discounted_amount' => $total_disct,
+                                                    'flag' => 1
+                                                ]);
+    
+                                            $check_unserved = DB::table('tb_unserved_items')
+                                                ->where('tran_no', '=', $ref_no)
+                                                ->where('itm_code', '=', $itemcode)
+                                                ->where('uom', '=', $uom)
+                                                ->where('itm_stat', '=', 'Unserved')
+                                                ->delete();
+                                        }
+                                    }
+                                }
                             }
                         }
-
-                        $check5 = DB::table('item_masterfiles')
-                            ->where('itemcode', '=', $itemcode)
-                            ->where('uom', '=', $uom)
-                            ->get();
-
-                        foreach ($check5 as $data5) {
-
-                            $check6 = DB::table('tbl_item_discounts')
-                                ->where('item_id', '=', $data5->item_masterfiles_id)
-                                ->get();
-
-                            if ($check6->count() > 0) {
-
-                                foreach ($check6 as $data6) {
-                                    $discountm = $data6->discount;
-
-                                    //computation
-                                    $total_disct = $discountm * $qty;
-                                    $total_amount = $price * $qty;
-
-                                    $calc1 = ($total_disct / $total_amount);
-                                    $calc = $calc1 * 100;
-
-                                    DB::table('tb_tran_head')
-                                        ->where('tran_no', '=', $ref_no)
-                                        // tran_head_date_req
-                                        // ->whereDate('date_req', $date_request)
-                                        // ->update(['tran_stat' => 'Approved', 'date_app' => $date_request, 'date_transit' => $date_request]);
-                                        ->update([
-                                            'tran_stat' => 'Approved',
-                                            'date_app' => $datetime_request,
-                                            'date_transit' => $date_request
-                                        ]);
-
-                                    DB::table('tb_tran_line')
-                                        ->where('tran_no', '=', $ref_no)
-                                        ->where('itm_code', '=', $itemcode)
-                                        ->where('uom', '=', $uom)
-                                        ->update([
-                                            'nav_invoice_no' => $inv_no,
-                                            'del_qty' => $qty,
-                                            'amt' => $price,
-                                            'tot_amt' => $total_amt,
-                                            'itm_stat' => 'Served',
-                                            'discount' => $calc,
-                                            'discounted_amount' => $total_disct,
-                                            'flag' => 1
-                                        ]);
-
-                                    $check_unserved = DB::table('tb_unserved_items')
-                                        ->where('tran_no', '=', $ref_no)
-                                        ->where('itm_code', '=', $itemcode)
-                                        ->where('uom', '=', $uom)
-                                        ->where('itm_stat', '=', 'Unserved')
-                                        ->delete();
+                    }
+                }
+                // /Iterate through the lines *************************************************
+    
+                // _lr
+                $transactionNumbers = array_unique($transactionNumbers);
+    
+                // foreach ($get_tran as $data_tran) {
+                foreach ($transactionNumbers as $transactionNumber) {
+    
+                    $total = 0;
+                    $tot_amt = 0;
+                    $tot_disct_amt = 0;
+    
+                    $res = DB::table('tb_tran_line')
+                        ->where('tran_no', '=', $transactionNumber)
+                        ->where('itm_stat', '!=', '')
+                        ->get();
+    
+                    foreach ($res as $data_res) {
+                        $tot_amt += (float) $data_res->tot_amt;
+                        $tot_disct_amt += (float) $data_res->discounted_amount;
+                    }
+    
+                    $total = $tot_amt - $tot_disct_amt;
+    
+                    // dump($tot_amt);
+    
+                    DB::table('tb_tran_head')
+                        ->where('tran_no', '=', $transactionNumber)
+                        ->where('tran_stat', '=', 'Approved')
+                        // tran_head_date_req
+                        // ->whereDate('date_req', $date_request)
+                        ->update(['tot_del_amt' => $total]);
+    
+                    $ress = DB::table('tb_tran_line')
+                        ->where('tran_no', '=', $transactionNumber)
+                        ->where('tb_tran_line.req_qty', '<>', 'tb_tran_line.del_qty')
+                        ->where('del_qty', '<>', 0)
+                        ->get();
+    
+                    $date_now = Carbon::now();
+    
+                    if ($ress->count() > 0) {
+    
+                        // dd($ress);
+    
+                        foreach ($ress as $data_ress) {
+    
+                            $qty1 = $data_ress->req_qty;
+                            $qty2 = $data_ress->del_qty;
+                            $amt1 = $data_ress->amt;
+                            $tot_qty = $qty1 - $qty2;
+    
+                            $totall_amt = $tot_qty * $amt1;
+    
+                            // $total2 = $total - $totall_amt;
+    
+                            // DB::table('tb_tran_head')
+                            //     ->where('tran_no', '=', $data_tran->tran_no)
+                            //     ->whereDate('date_req', $date_request)
+                            //     ->update(['tot_del_amt' => $total2]);
+    
+                            if ($data_ress->req_qty > $data_ress->del_qty) {
+                                // kaloy 2022-03-31
+                                DB::table('tb_tran_line')
+                                    ->where('tran_no', '=', $transactionNumber)
+                                    ->where('itm_code', '=', $data_ress->itm_code)
+                                    ->where('uom', '=', $data_ress->uom)
+                                    ->update(['itm_stat' => 'Lacking']);
+    
+                                $check_unserved = DB::table('tb_unserved_items')
+                                    ->where('tran_no', '=', $data_ress->tran_no)
+                                    // ->whereDate('date', '=', $date_now)
+                                    ->where('itm_code', '=', $data_ress->itm_code)
+                                    // ->where('item_desc', '=', $data_ress->itm_code)
+                                    ->where('qty', '=', $tot_qty)
+                                    ->where('uom', '=', $data_ress->uom)
+                                    // ->where('amt', '=', $data_ress->amt)
+                                    // ->where('tot_amt', '=', $totall_amt)
+                                    // ->where('itm_cat', '=', $data_ress->itm_cat)
+                                    ->where('itm_stat', '=', 'Unserved')
+                                    // ->where('flag', '=', 0)
+                                    ->exists();
+    
+                                if ($check_unserved === false) {
+                                    DB::table('tb_unserved_items')->insert(
+                                        [
+                                            'tran_no' => $data_ress->tran_no,
+                                            'date' => $date_now,
+                                            'itm_code' => $data_ress->itm_code,
+                                            'item_desc' => $data_ress->item_desc,
+                                            'qty' => $tot_qty,
+                                            'uom' => $data_ress->uom,
+                                            'amt' => $data_ress->amt,
+                                            'tot_amt' => $totall_amt,
+                                            'itm_cat' => $data_ress->itm_cat,
+                                            'itm_stat' => 'Unserved',
+                                            'flag' => 0,
+                                        ]
+                                    );
+                                }
+                            } else if ($data_ress->req_qty < $data_ress->del_qty) {
+    
+                                // kaloy 2022-03-31
+                                DB::table('tb_tran_line')
+                                    ->where('tran_no', '=', $transactionNumber)
+                                    ->where('itm_code', '=', $data_ress->itm_code)
+                                    ->where('uom', '=', $data_ress->uom)
+                                    ->update(['itm_stat' => 'Excess']);
+    
+                                $check_unserved = DB::table('tb_unserved_items')
+                                    ->where('tran_no', '=', $data_ress->tran_no)
+                                    ->where('date', '=', $date_now)
+                                    ->where('itm_code', '=', $data_ress->itm_code)
+                                    ->where('item_desc', '=', $data_ress->itm_code)
+                                    ->where('qty', '=', $tot_qty)
+                                    ->where('uom', '=', $data_ress->uom)
+                                    ->where('amt', '=', $data_ress->amt)
+                                    ->where('tot_amt', '=', $totall_amt)
+                                    ->where('itm_cat', '=', $data_ress->itm_cat)
+                                    ->where('itm_stat', '=', 'Unserved')
+                                    ->where('flag', '=', 0)
+                                    ->exists();
+    
+                                if ($check_unserved === false) {
+                                    DB::table('tb_unserved_items')->insert(
+                                        [
+                                            'tran_no' => $data_ress->tran_no,
+                                            'date' => $date_now,
+                                            'itm_code' => $data_ress->itm_code,
+                                            'item_desc' => $data_ress->item_desc,
+                                            'qty' => $tot_qty,
+                                            'uom' => $data_ress->uom,
+                                            'amt' => $data_ress->amt,
+                                            'tot_amt' => $totall_amt,
+                                            'itm_cat' => $data_ress->itm_cat,
+                                            'itm_stat' => 'Unserved',
+                                            'flag' => 0
+                                        ]
+                                    );
                                 }
                             }
                         }
                     }
                 }
             }
-            // /Iterate through the lines *************************************************
+            // /loop through uploaded files
 
-
-            // _lr
-            $transactionNumbers = array_unique($transactionNumbers);
-
-            // foreach ($get_tran as $data_tran) {
-            foreach ($transactionNumbers as $transactionNumber) {
-
-                $total = 0;
-                $tot_amt = 0;
-                $tot_disct_amt = 0;
-
-                $res = DB::table('tb_tran_line')
-                    ->where('tran_no', '=', $transactionNumber)
-                    ->where('itm_stat', '!=', '')
-                    ->get();
-
-                foreach ($res as $data_res) {
-                    $tot_amt += (float) $data_res->tot_amt;
-                    $tot_disct_amt += (float) $data_res->discounted_amount;
-                }
-
-                $total = $tot_amt - $tot_disct_amt;
-
-                // dump($tot_amt);
-
-                DB::table('tb_tran_head')
-                    ->where('tran_no', '=', $transactionNumber)
-                    ->where('tran_stat', '=', 'Approved')
-                    // tran_head_date_req
-                    // ->whereDate('date_req', $date_request)
-                    ->update(['tot_del_amt' => $total]);
-
-                $ress = DB::table('tb_tran_line')
-                    ->where('tran_no', '=', $transactionNumber)
-                    ->where('tb_tran_line.req_qty', '<>', 'tb_tran_line.del_qty')
-                    ->where('del_qty', '<>', 0)
-                    ->get();
-
-                $date_now = Carbon::now();
-
-                if ($ress->count() > 0) {
-
-                    // dd($ress);
-
-                    foreach ($ress as $data_ress) {
-
-                        $qty1 = $data_ress->req_qty;
-                        $qty2 = $data_ress->del_qty;
-                        $amt1 = $data_ress->amt;
-                        $tot_qty = $qty1 - $qty2;
-
-                        $totall_amt = $tot_qty * $amt1;
-
-                        // $total2 = $total - $totall_amt;
-
-                        // DB::table('tb_tran_head')
-                        //     ->where('tran_no', '=', $data_tran->tran_no)
-                        //     ->whereDate('date_req', $date_request)
-                        //     ->update(['tot_del_amt' => $total2]);
-
-                        if ($data_ress->req_qty > $data_ress->del_qty) {
-                            // kaloy 2022-03-31
-                            DB::table('tb_tran_line')
-                                ->where('tran_no', '=', $transactionNumber)
-                                ->where('itm_code', '=', $data_ress->itm_code)
-                                ->where('uom', '=', $data_ress->uom)
-                                ->update(['itm_stat' => 'Lacking']);
-
-                            $check_unserved = DB::table('tb_unserved_items')
-                                ->where('tran_no', '=', $data_ress->tran_no)
-                                // ->whereDate('date', '=', $date_now)
-                                ->where('itm_code', '=', $data_ress->itm_code)
-                                // ->where('item_desc', '=', $data_ress->itm_code)
-                                ->where('qty', '=', $tot_qty)
-                                ->where('uom', '=', $data_ress->uom)
-                                // ->where('amt', '=', $data_ress->amt)
-                                // ->where('tot_amt', '=', $totall_amt)
-                                // ->where('itm_cat', '=', $data_ress->itm_cat)
-                                ->where('itm_stat', '=', 'Unserved')
-                                // ->where('flag', '=', 0)
-                                ->exists();
-
-                            if ($check_unserved === false) {
-                                DB::table('tb_unserved_items')->insert(
-                                    [
-                                        'tran_no' => $data_ress->tran_no,
-                                        'date' => $date_now,
-                                        'itm_code' => $data_ress->itm_code,
-                                        'item_desc' => $data_ress->item_desc,
-                                        'qty' => $tot_qty,
-                                        'uom' => $data_ress->uom,
-                                        'amt' => $data_ress->amt,
-                                        'tot_amt' => $totall_amt,
-                                        'itm_cat' => $data_ress->itm_cat,
-                                        'itm_stat' => 'Unserved',
-                                        'flag' => 0,
-                                    ]
-                                );
-                            }
-                        } else if ($data_ress->req_qty < $data_ress->del_qty) {
-
-                            // kaloy 2022-03-31
-                            DB::table('tb_tran_line')
-                                ->where('tran_no', '=', $transactionNumber)
-                                ->where('itm_code', '=', $data_ress->itm_code)
-                                ->where('uom', '=', $data_ress->uom)
-                                ->update(['itm_stat' => 'Excess']);
-
-                            $check_unserved = DB::table('tb_unserved_items')
-                                ->where('tran_no', '=', $data_ress->tran_no)
-                                ->where('date', '=', $date_now)
-                                ->where('itm_code', '=', $data_ress->itm_code)
-                                ->where('item_desc', '=', $data_ress->itm_code)
-                                ->where('qty', '=', $tot_qty)
-                                ->where('uom', '=', $data_ress->uom)
-                                ->where('amt', '=', $data_ress->amt)
-                                ->where('tot_amt', '=', $totall_amt)
-                                ->where('itm_cat', '=', $data_ress->itm_cat)
-                                ->where('itm_stat', '=', 'Unserved')
-                                ->where('flag', '=', 0)
-                                ->exists();
-
-                            if ($check_unserved === false) {
-                                DB::table('tb_unserved_items')->insert(
-                                    [
-                                        'tran_no' => $data_ress->tran_no,
-                                        'date' => $date_now,
-                                        'itm_code' => $data_ress->itm_code,
-                                        'item_desc' => $data_ress->item_desc,
-                                        'qty' => $tot_qty,
-                                        'uom' => $data_ress->uom,
-                                        'amt' => $data_ress->amt,
-                                        'tot_amt' => $totall_amt,
-                                        'itm_cat' => $data_ress->itm_cat,
-                                        'itm_stat' => 'Unserved',
-                                        'flag' => 0
-                                    ]
-                                );
-                            }
-                        }
-                    }
-                }
-            }
         });
 
         // DB::rollBack();
@@ -818,12 +823,13 @@ class ConsolidatedTransactionController extends Controller
     }
 
 
-    public function addIsManualItems(Request $request) {
+    public function addIsManualItems(Request $request)
+    {
         set_time_limit(0);
 
         $mankey = $request->manager_key;
 
-        if($mankey == '123') {
+        if ($mankey == '123') {
             $res = ConsolidatedTransaction::select(
                 'consolidated_transactions.*',
                 'tb_tran_head.tran_no'
@@ -837,21 +843,21 @@ class ConsolidatedTransactionController extends Controller
                 ->where('consolidated_transactions.is_manual', 1)
                 ->where('consolidated_transactions.is_manual_appended', 0)
                 ->get();
-            
+
             // dd($res);
 
-            foreach($res as $item) {
+            foreach ($res as $item) {
                 // dd($item);
                 $affected = 0;
                 $tempItem = DB::table('item_masterfiles')
-                    ->select('description','product_family')
-                    ->where('itemcode',$item->itemcode)
+                    ->select('description', 'product_family')
+                    ->where('itemcode', $item->itemcode)
                     // ->where('uom', $item->uom)
                     ->first();
 
                 // dd($tempItem);
-                
-                if($tempItem != null) {
+
+                if ($tempItem != null) {
                     DB::table('tb_tran_line')->insert([
                         'tran_no' => $item->reference_no,
                         'nav_invoice_no' => $item->sales_invoice,
@@ -877,20 +883,20 @@ class ConsolidatedTransactionController extends Controller
                         'rated' => null,
                         'manually_included' => 1,
                     ]);
-                    
+
                     DB::table('tb_tran_head')->where('tran_no', $item->reference_no)
                         ->update([
                             // 'itm_count' => DB::raw('itm_count + '. $item->qty),
                             // 'tot_amt' => DB::raw('tot_amt + '. $item->total_amt),
-                            'tot_del_amt' => DB::raw('tot_del_amt + '. $item->total_amt),
+                            'tot_del_amt' => DB::raw('tot_del_amt + ' . $item->total_amt),
                         ]);
-                    
+
                     DB::table('consolidated_transactions')->where('reference_no', $item->reference_no)
                         ->where('itemcode', $item->itemcode)
                         ->where('uom', $item->uom)
                         ->update(['is_manual_appended' => 1]);
- 
-                    $affected+=1;
+
+                    $affected += 1;
                 }
             }
 

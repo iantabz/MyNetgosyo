@@ -1647,6 +1647,7 @@
                   <tbody>
                     <tr v-for="MgaOrder in order" :key="MgaOrder.doc_no"
                       :style="MgaOrder.manually_included == 1 ? 'color:#998f09;' : ''"
+                      :title="MgaOrder.manually_included == 1 ? 'Manually included item' : ''"
                     >
                       
                       <!-- kaloy 09-22-21 -->
@@ -1705,13 +1706,14 @@
       </div>
     </div>
 
+    <!-- delivered_order_items -->
     <div
       class="modal fade"
       id="setupMdl6"
       tabindex="-1"
       role="dialog"
       data-backdrop="static"
-      data-keyboard="true"
+      data-keyboard="false"
       aria-hidden="true"
     >
       <div class="modal-dialog modal-lg" role="document">
