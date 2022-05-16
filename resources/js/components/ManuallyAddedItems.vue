@@ -72,10 +72,11 @@
               :style="
                 MgaConsolidated.tran_no != null
                 && MgaConsolidated.present_on_masterfile == true
-                && MgaConsolidated.present_on_masterfile_with_uom == false
+                
                 ? 'background-color:#f0ffed;' : ''
               "
             >
+            <!-- && MgaConsolidated.present_on_masterfile_with_uom == false -->
               <td>{{ MgaConsolidated.transaction_type }}</td>
               <td>{{ MgaConsolidated.sales_invoice }}</td>
               <td
