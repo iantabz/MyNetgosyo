@@ -9,6 +9,7 @@
     <style media="screen">
         body {
             font-family: 'Segoe UI', 'Microsoft Sans Serif', sans-serif;
+            font-size: 12px;
         }
 
         /*
@@ -107,7 +108,7 @@
         .body1 {
             margin-top: 30px;
             width: 100%;
-            font-size: 11px;
+            font-size: 12px;
             text-align: center;
         }
 
@@ -116,7 +117,7 @@
             border-bottom: 1px solid #000;
             padding: 5px 0px 5px 0px;
             text-align: center;
-            font-size: 11px;
+            font-size: 12px;
             background-color: #d8d8d873;
         }
 
@@ -127,12 +128,12 @@
             border-top-style: dashed;
             /* border-bottom: 1px solid rgba(0, 0, 0, 0.227);
             border-bottom-style: dashed; */
-            font-size: 10px;
+            font-size: 11px;
         }
 
         .body2 td {
             padding: 3px;
-            font-size: 10px;
+            font-size: 12px;
         }
 
         .fromtocontent {
@@ -184,9 +185,8 @@
                 E-DISTRIBUTION
             </div> --}}
         <div class="title2">
-            {{-- Sales Report --}}
+                MyNetGosyo Sales Report 
         </div>
-
     </header>
     <?php
         $sum_del_amt = 0;

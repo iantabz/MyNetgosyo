@@ -21,6 +21,7 @@ class SalesReportController extends Controller
             'salesman_lists.last_name',
             'salesman_lists.user_code as salesman_code'
         )
+            ->where('status', 1)
             ->orderBy('user_code')
             ->get();
 
@@ -45,14 +46,26 @@ class SalesReportController extends Controller
             // return $gethead;
         } else {
 
+            // $gethead = DB::table('tb_tran_head')
+            //     ->selectRaw('DISTINCT(customer_master_files.account_name), customer_master_files.account_code, tbl_customer_salesman.salesman_code, salesman_lists.first_name, salesman_lists.last_name')
+            //     ->join('customer_master_files', 'customer_master_files.account_code', '=', 'tb_tran_head.account_code')
+            //     ->join('tbl_customer_salesman', 'tbl_customer_salesman.cus_customer_code', '=', 'tb_tran_head.account_code')
+            //     ->join('salesman_lists', 'salesman_lists.user_code', '=', 'tbl_customer_salesman.salesman_code')
+            //     ->where([
+            //         ['tb_tran_head.tran_stat', '=', 'Delivered'],
+            //         ['tbl_customer_salesman.salesman_code', '=', $code]
+            //     ])
+            //     ->get();
+
+            // return $gethead;
             $gethead = DB::table('tb_tran_head')
-                ->selectRaw('DISTINCT(customer_master_files.account_name), customer_master_files.account_code, tbl_customer_salesman.salesman_code, salesman_lists.first_name, salesman_lists.last_name')
+                ->selectRaw('DISTINCT(customer_master_files.account_name), customer_master_files.account_code, salesman_lists.first_name, salesman_lists.last_name')
                 ->join('customer_master_files', 'customer_master_files.account_code', '=', 'tb_tran_head.account_code')
-                ->join('tbl_customer_salesman', 'tbl_customer_salesman.cus_customer_code', '=', 'tb_tran_head.account_code')
-                ->join('salesman_lists', 'salesman_lists.user_code', '=', 'tbl_customer_salesman.salesman_code')
+                // ->join('tbl_customer_salesman', 'tbl_customer_salesman.cus_customer_code', '=', 'tb_tran_head.account_code')
+                ->join('salesman_lists', 'salesman_lists.user_code', '=', 'tb_tran_head.sm_code')
                 ->where([
                     ['tb_tran_head.tran_stat', '=', 'Delivered'],
-                    ['tbl_customer_salesman.salesman_code', '=', $code]
+                    ['sm_code', '=', $code]
                 ])
                 ->get();
 
@@ -83,19 +96,20 @@ class SalesReportController extends Controller
 
         if ($code == 'All') {
             return  DB::table('tb_tran_head')
-                ->join('tbl_customer_salesman', 'tbl_customer_salesman.cus_customer_code', '=', 'tb_tran_head.account_code')
+                // ->join('tbl_customer_salesman', 'tbl_customer_salesman.cus_customer_code', '=', 'tb_tran_head.account_code')
                 ->where([
-                    ['tb_tran_head.tran_stat', '=', 'On-Process']
+                    ['tb_tran_head.tran_stat', '=', 'Delivered']
                 ])
                 ->whereBetween('date_req', [$date, $date2])
                 ->orderBy('date_req')
                 ->paginate(10);
         } else {
             $result =  DB::table('tb_tran_head')
-                ->join('tbl_customer_salesman', 'tbl_customer_salesman.cus_customer_code', '=', 'tb_tran_head.account_code')
+                // ->join('tbl_customer_salesman', 'tbl_customer_salesman.cus_customer_code', '=', 'tb_tran_head.account_code')
                 ->where([
-                    ['tbl_customer_salesman.salesman_code', '=', $code],
-                    ['tb_tran_head.tran_stat', '=', 'On-Process']
+                    // ['tbl_customer_salesman.salesman_code', '=', $code],
+                    ['sm_code', '=', $code],
+                    ['tb_tran_head.tran_stat', '=', 'Delivered']
                 ])
                 ->whereBetween('date_req', [$date, $date2])
                 ->orderBy('date_req')
@@ -144,7 +158,7 @@ class SalesReportController extends Controller
         $date2 = Carbon::parse(base64_decode(request()->date2))->toDateString();
 
         $pdf = PDF::loadView('reports.sales_report', ['datas' => $data]);
-        return $pdf->download('SalesReport-Detailed (' . $date . ' - ' . $date2 . ').pdf');
+        return $pdf->setPaper('legal', 'landscape')->download('SalesReport-Detailed (' . $date . ' - ' . $date2 . ').pdf');
     }
 
     public function printReport2()
@@ -155,7 +169,7 @@ class SalesReportController extends Controller
         $date2 = Carbon::parse(base64_decode(request()->date2))->toDateString();
 
         $pdf2 = PDF::loadView('reports.sales_report2', ['datas' => $data]);
-        return $pdf2->download('SalesReport-Summary (' . $date . ' - ' . $date . ').pdf');
+        return $pdf2->setPaper('legal', 'landscape')->download('SalesReport-Summary (' . $date . ' - ' . $date . ').pdf');
     }
 
     public function data_res()
@@ -495,7 +509,7 @@ class SalesReportController extends Controller
         set_time_limit(0);
 
         $pdf = PDF::loadView('reports.sales_report_jepe', compact('data'));
-        return $pdf->download('Sales Report per Jepe de Viaje (' . $date . ' - ' . $finaldate2 . ').pdf');
+        return $pdf->setPaper('legal', 'landscape')->download('Sales Report per Jepe de Viaje (' . $date . ' - ' . $finaldate2 . ').pdf');
     }
 
     public function data_printSummary($date, $date2, $finaldate2, $code)
