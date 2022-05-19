@@ -75,7 +75,7 @@
         }
 
         .head1 {
-            padding-top: 20px;
+            /* padding-top: 10px; */
             width: 100%;
             font-size: 11px;
         }
@@ -106,7 +106,6 @@
         }
 
         .body1 {
-            margin-top: 15px;
             width: 100%;
             font-size: 11px;
             text-align: center;
@@ -115,9 +114,9 @@
         .body1 th {
             /* border-top: 1px solid #000; */
             border-bottom: 1px solid #000;
-            padding: 5px 0px 5px 0px;
+            /* padding: 5px 0px 5px 0px; */
             text-align: center;
-            font-size: 11px;
+            font-size: 12px;
         }
 
         .body1 td {
@@ -125,12 +124,12 @@
             line-height: 1.42857143;
             border-top: 1px solid rgba(0, 0, 0, 0.227);
             border-top-style: dashed;
-            font-size: 10px;
+            font-size: 11px;
         }
 
         .body2 td {
             padding: 2px;
-            font-size: 10px;
+            font-size: 11px;
         }
 
         .fromtocontent {
@@ -194,13 +193,11 @@
                 E-DISTRIBUTION
             </div> --}}
         <div class="title2">
-            Sales Report
+            MyNetGosyo Sales Report (Detailed)
         </div>
 
     </header>
-
     <table class="head1">
-
         <tr>
             <th width="17%">Transaction No :</th>
             <td width="50%">{{ $data['tran_no'] }}</td>
@@ -213,144 +210,125 @@
             <th width="20%">Delivered Date :</th>
             <td width="25%" style="text-align: right;">{{ $data['date_del'] }} </td>
         </tr>
-        <tr>
-            <td colspan="4">
-                <table class="body1" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Item Code</th>
-                            <th width="28%">Description</th>
-                            <th>AMT</th>
-                            <th>UOM</th>
-                            <th>QTY</th>
-                            <th>UNS QTY</th>
-                            <th>RET QTY</th>
-                            <th>DEL QTY</th>
-                            <th>Total</th>
-                            <th>Discount</th>
-                            <th>Total w/ Discount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($data['datas'] as $item)
-
-                        <tr>
-                            <td style="text-align: left;">{{ $item['itm_code'] }}</td>
-                            <td style="text-align: left;">{{ $item['item_desc'] }}</td>
-                            <td style="text-align: right">P {{ number_format($item['amt'],2) }} </td>
-                            <td>{{ $item['uom'] }}</td>
-                            <td style="text-align: center;">{{ $item['req_qty'] }}</td>
-                            <td style="text-align: center;">{{ $item['unserved'] }}</td>\
-
-                            @if($item['retQty'] == 0)
-                            <td style="text-align: center;">0</td>
-                            @else
-                            <td style="text-align: center;">{{ $item['retQty'] }}</td>
-                            @endif
-
-                            <td style="text-align: center;">{{ $item['del_qty'] }}</td>
-                            <td style="text-align: right">P
-                                {{ number_format($item['total_gross'],2) }}
-                            </td>
-                            @if($item['discount'] == 0)
-                            <td> - </td>
-                            @else
-                            <td>{{ round($item['discount'], 2) }}%</td>
-                            @endif
-                            <td style="text-align: right">P {{ number_format($item['totaltotal'],2) }}</td>
-                        </tr>
-                        <?php 
-                                $sum_qty += $item['req_qty'];
-                                $sum_uns_qty += $item['unserved'];
-                                $sum_ret_qty += $item['retQty'];
-                                $sum_del_qty += $item['del_qty'];
-                                $sum_total_ret_amt += $item['total_ret_amt'];
-                                $sum_total += $item['total_gross'];
-                                $sum_total_gross += $item['totaltotal'];
-                                $sum_total_discount += $item['total_amt_discount'];
-                            ?>
-                        @endforeach
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="4">
-                {{-- <table class="endt">
-                        <tr>
-                            <td>***Nothing Follow***</td>
-                        </tr>
-                    </table> --}}
-                <table class="body2">
-                    <tr>
-                        <td width="15%" style="font-weight: bold; text-align: right;">Total Qty >>></td>
-                        <td width="10%" style="text-align: right;">
-                            {{ $sum_qty }}
-                        </td>
-                        <td width="15%" style="font-weight: bold;"></td>
-                        <td width="15%" style="font-weight: bold; text-align: right;">
-                            Gross Total Amt >>></td>
-                        <td width="15%" style="text-align: right; text-align: right;">
-                            P
-                            {{ number_format($sum_total,2) }}
-                        </td>
-                        <td width="5%" style="font-weight: bold;"></td>
-                        {{-- <td width="20%" style="font-weight: bold; text-align: right"></td> --}}
-                    </tr>
-
-                    <tr>
-                        <td width="15%" style="font-weight: bold; text-align: right;">Total Returned Qty >>></td>
-                        <td width="10%" style="text-align: right;">
-                            {{ $sum_ret_qty }}
-                        </td>
-                        <td width="15%" style="font-weight: bold;"></td>
-                        <td width="15%" style="font-weight: bold; text-align: right;">
-                            Total Discount >>>
-                        </td>
-                        <td width="15%" style="font-weight: bold; text-align: right;">
-                            P {{ number_format($sum_total_discount,2) }}
-                        </td>
-                        <td width="5%" style="font-weight: bold;"></td>
-                        {{-- <td width="20%" style="text-align: right"></td> --}}
-                    </tr>
-
-                    <tr>
-                        <td width="15%" style="font-weight: bold; text-align: right;">
-                            Total Unserved Qty >>>
-                        </td>
-                        <td width="10%" style="text-align: right;">
-                            {{ $sum_uns_qty }}
-                        </td>
-                        <td width="15%" style="font-weight: bold;"></td>
-                        <td width="15%" style="font-weight: bold; text-align: right;">
-                            Net Total Amt >>>
-                        </td>
-                        <td width="15%" style="font-weight: bold; text-align: right;">
-                            P {{ number_format($sum_total_gross,2) }}
-                        </td>
-                        <td width="5%" style="font-weight: bold;"></td>
-                        {{-- <td width="20%" style="text-align: right"></td> --}}
-                    </tr>
-
-                    <tr>
-                        <td width="15%" style="font-weight: bold; text-align: right;">
-                            Total Delivered Qty >>>
-                        </td>
-                        <td width="10%" style="text-align: right;">
-                            {{ $sum_del_qty }}
-                        </td>
-                        <td width="15%" style="font-weight: bold;"></td>
-                        <td width="15%" style="font-weight: bold; text-align: right;"></td>
-                        <td width="15%" style="font-weight: bold; text-align: right"></td>
-                        <td width="5%" style="font-weight: bold;"></td>
-                        {{-- <td width="20%" style="text-align: right"></td> --}}
-                    </tr>
-                </table>
-            </td>
-        </tr>
-
-
     </table>
+    <table class="body1">
+        <thead>
+            <tr>
+                <th>Item Code</th>
+                <th width="28%">Description</th>
+                <th>AMT</th>
+                <th>UOM</th>
+                <th>QTY</th>
+                <th>UNS QTY</th>
+                <th>RET QTY</th>
+                <th>DEL QTY</th>
+                <th>Total</th>
+                <th>Discount</th>
+                <th>Total w/ Discount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($data['datas'] as $item)
+
+            <tr>
+                <td style="text-align: left;">{{ $item['itm_code'] }}</td>
+                <td style="text-align: left;">{{ $item['item_desc'] }}</td>
+                <td style="text-align: right">P {{ number_format($item['amt'],2) }} </td>
+                <td>{{ $item['uom'] }}</td>
+                <td style="text-align: center;">{{ $item['req_qty'] }}</td>
+                <td style="text-align: center;">{{ $item['unserved'] }}</td>\
+
+                @if($item['retQty'] == 0)
+                <td style="text-align: center;">0</td>
+                @else
+                <td style="text-align: center;">{{ $item['retQty'] }}</td>
+                @endif
+
+                <td style="text-align: center;">{{ $item['del_qty'] }}</td>
+                <td style="text-align: right">P
+                    {{ number_format($item['total_gross'],2) }}
+                </td>
+                @if($item['discount'] == 0)
+                <td> - </td>
+                @else
+                <td>{{ round($item['discount'], 2) }}%</td>
+                @endif
+                <td style="text-align: right">P {{ number_format($item['totaltotal'],2) }}</td>
+            </tr>
+            <?php 
+                    $sum_qty += $item['req_qty'];
+                    $sum_uns_qty += $item['unserved'];
+                    $sum_ret_qty += $item['retQty'];
+                    $sum_del_qty += $item['del_qty'];
+                    $sum_total_ret_amt += $item['total_ret_amt'];
+                    $sum_total += $item['total_gross'];
+                    $sum_total_gross += $item['totaltotal'];
+                    $sum_total_discount += $item['total_amt_discount'];
+                ?>
+            @endforeach
+        </tbody>
+    </table>
+            <table class="body2">
+                <tr>
+                    <td width="15%" style="font-weight: bold; text-align: right;">Total Qty >>></td>
+                    <td width="10%" style="text-align: right;">
+                        {{ $sum_qty }}
+                    </td>
+                    <td width="15%" style="font-weight: bold;"></td>
+                    <td width="15%" style="font-weight: bold; text-align: right;">
+                        Gross Total Amt >>></td>
+                    <td width="15%" style="text-align: right; text-align: right;">
+                        P
+                        {{ number_format($sum_total,2) }}
+                    </td>
+                    <td width="5%" style="font-weight: bold;"></td>
+                </tr>
+
+                <tr>
+                    <td width="15%" style="font-weight: bold; text-align: right;">Total Returned Qty >>></td>
+                    <td width="10%" style="text-align: right;">
+                        {{ $sum_ret_qty }}
+                    </td>
+                    <td width="15%" style="font-weight: bold;"></td>
+                    <td width="15%" style="font-weight: bold; text-align: right;">
+                        Total Discount >>>
+                    </td>
+                    <td width="15%" style="font-weight: bold; text-align: right;">
+                        P {{ number_format($sum_total_discount,2) }}
+                    </td>
+                    <td width="5%" style="font-weight: bold;"></td>
+                </tr>
+
+                <tr>
+                    <td width="15%" style="font-weight: bold; text-align: right;">
+                        Total Unserved Qty >>>
+                    </td>
+                    <td width="10%" style="text-align: right;">
+                        {{ $sum_uns_qty }}
+                    </td>
+                    <td width="15%" style="font-weight: bold;"></td>
+                    <td width="15%" style="font-weight: bold; text-align: right;">
+                        Net Total Amt >>>
+                    </td>
+                    <td width="15%" style="font-weight: bold; text-align: right;">
+                        P {{ number_format($sum_total_gross,2) }}
+                    </td>
+                    <td width="5%" style="font-weight: bold;"></td>
+                </tr>
+
+                <tr>
+                    <td width="15%" style="font-weight: bold; text-align: right;">
+                        Total Delivered Qty >>>
+                    </td>
+                    <td width="10%" style="text-align: right;">
+                        {{ $sum_del_qty }}
+                    </td>
+                    <td width="15%" style="font-weight: bold;"></td>
+                    <td width="15%" style="font-weight: bold; text-align: right;"></td>
+                    <td width="15%" style="font-weight: bold; text-align: right"></td>
+                    <td width="5%" style="font-weight: bold;"></td>
+                </tr>
+            </table>
     <div class="page-break"></div>
     @endforeach
 
