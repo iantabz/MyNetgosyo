@@ -425,10 +425,14 @@ class TopReports extends Controller
         $salesman_amount_total = 0;
         $customer_order_count_total = 0;
         $customer_amount_total = 0;
+        $backend_order_count_total = 0;
+        $backend_amount_total = 0;
+
         $res->map(
             function($row) 
             use (&$salesman_order_count_total, &$salesman_amount_total, 
                 &$customer_order_count_total, &$customer_amount_total,
+                &$backend_order_count_total, &$backend_amount_total,
                 &$dateFrom, &$dateTo) 
         {
             $row->salesman_order_count = 
@@ -466,12 +470,32 @@ class TopReports extends Controller
                 ->whereDate('date_req','<=', $dateTo)
                 ->sum('tot_amt');
             $customer_amount_total += $row->customer_amount;
+
+            $row->backend_order_count = 
+                DB::table('tb_tran_head')
+                    ->where('account_code',$row->account_code)
+                    ->where('order_by','Backend')
+                    ->whereDate('date_req','>=', $dateFrom)
+                    ->whereDate('date_req','<=', $dateTo)
+                    ->count('order_by');
+            $backend_order_count_total += $row->backend_order_count;
+
+            $row->backend_amount = 
+                DB::table('tb_tran_head')
+                ->where('account_code',$row->account_code)
+                ->where('order_by','Backend')
+                ->whereDate('date_req','>=', $dateFrom)
+                ->whereDate('date_req','<=', $dateTo)
+                ->sum('tot_amt');
+            $backend_amount_total += $row->backend_amount;
         });
         $data['data'] = $res;
         $data['salesman_order_count_total'] = $salesman_order_count_total;
         $data['salesman_amount_total'] = $salesman_amount_total;
         $data['customer_order_count_total'] = $customer_order_count_total;
         $data['customer_amount_total'] = $customer_amount_total;
+        $data['backend_order_count_total'] = $backend_order_count_total;
+        $data['backend_amount_total'] = $backend_amount_total;
         return $data;
     }
     // ============================== /2022-03-10 ================================================

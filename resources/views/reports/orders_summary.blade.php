@@ -86,10 +86,15 @@
                 Customer App
             </th>
             <th colspan="2">
+                Backend
+            </th>
+            <th colspan="2">
                 TOTAL
             </th>
         </tr>
         <tr>
+            <th>Order Count</th>
+            <th>Amount</th>
             <th>Order Count</th>
             <th>Amount</th>
             <th>Order Count</th>
@@ -102,6 +107,8 @@
             $salesman_total_amount = 0;
             $customer_total_order_count = 0;
             $customer_total_amount = 0;
+            $backend_total_order_count = 0;
+            $backend_total_amount = 0;
         @endphp
         @foreach ($data as $row)
             @php
@@ -109,6 +116,8 @@
                 $salesman_total_amount += $row->salesman_amount;
                 $customer_total_order_count += $row->customer_order_count;
                 $customer_total_amount += $row->customer_amount;
+                $backend_total_order_count += $row->backend_order_count;
+                $backend_total_amount += $row->backend_amount;
             @endphp
             <tr>
                 <td>
@@ -127,10 +136,20 @@
                     {{ number_format($row->customer_amount, 2) }}
                 </td>
                 <td>
-                    {{ $row->salesman_order_count + $row->customer_order_count }}
+                    {{ $row->backend_order_count }}
                 </td>
                 <td style="text-align: right;">
-                    {{ number_format($row->salesman_amount + $row->customer_amount, 2) }}
+                    {{ number_format($row->backend_amount, 2) }}
+                </td>
+                <td>
+                    {{ $row->salesman_order_count 
+                    + $row->customer_order_count
+                    + $row->backend_order_count }}
+                </td>
+                <td style="text-align: right;">
+                    {{ number_format($row->salesman_amount 
+                    + $row->customer_amount
+                    + $row->backend_amount, 2) }}
                 </td>
             </tr>
         @endforeach
@@ -156,10 +175,20 @@
                 {{ number_format($customer_total_amount, 2) }}
             </th>
             <th>
-                {{ $salesman_total_order_count +  $customer_total_order_count}}
+                {{ $backend_total_order_count }}
             </th>
             <th style="text-align: right;">
-                {{ number_format($salesman_total_amount +  $customer_total_amount, 2) }}
+                {{ number_format($backend_total_amount, 2) }}
+            </th>
+            <th>
+                {{ $salesman_total_order_count 
+                +  $customer_total_order_count
+                +  $backend_total_order_count}}
+            </th>
+            <th style="text-align: right;">
+                {{ number_format($salesman_total_amount 
+                    +  $customer_total_amount 
+                    +  $backend_total_amount, 2) }}
             </th>
         </tr>
     </table>

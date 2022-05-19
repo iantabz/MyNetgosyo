@@ -93,10 +93,15 @@
                           Customer App
                       </th>
                       <th colspan="2" style="text-align:center;">
+                          Backend
+                      </th>
+                      <th colspan="2" style="text-align:center;">
                           TOTAL
                       </th>
                   </tr>
                   <tr>
+                      <th style="text-align:center;">Order Count</th>
+                      <th style="text-align:center;">Amount</th>
                       <th style="text-align:center;">Order Count</th>
                       <th style="text-align:center;">Amount</th>
                       <th style="text-align:center;">Order Count</th>
@@ -107,7 +112,7 @@
                 </thead>
                 <tbody>
                   <tr v-if="!customer.data.data.length">
-                    <td colspan="7" style="text-align: center">
+                    <td colspan="9" style="text-align: center">
                       No data available.
                     </td>
                   </tr>
@@ -116,33 +121,59 @@
                     :key="index"
                   >
                     <td>{{ Mgacustomer.store_name }}</td>
+
+                    <!-- salesman -->
                     <td>
                       {{ Mgacustomer.salesman_order_count }}
                     </td>
                     <td style="text-align:right">
                       {{ Mgacustomer.salesman_amount | toCurrency }}
                     </td>
+
+                    <!-- customer -->
                     <td>
                       {{ Mgacustomer.customer_order_count }}
                     </td>
                     <td style="text-align:right">
                       {{ Mgacustomer.customer_amount | toCurrency }}
                     </td>
+
+                    <!-- backend -->
                     <td>
-                      {{ Mgacustomer.salesman_order_count + Mgacustomer.customer_order_count }}
+                      {{ Mgacustomer.backend_order_count }}
                     </td>
                     <td style="text-align:right">
-                      {{ (Mgacustomer.salesman_amount + Mgacustomer.customer_amount) | toCurrency }}
+                      {{ Mgacustomer.backend_amount | toCurrency }}
+                    </td>
+
+                    <td>
+                      {{ Mgacustomer.salesman_order_count 
+                      + Mgacustomer.customer_order_count
+                      + Mgacustomer.backend_order_count }}
+                    </td>
+                    <td style="text-align:right">
+                      {{ (Mgacustomer.salesman_amount 
+                      + Mgacustomer.customer_amount
+                      + Mgacustomer.backend_amount) | toCurrency }}
                     </td>
                   </tr>
                   <tr>
                     <th>Total</th>
                     <th>{{ customer.data.salesman_order_count_total }}</th>
                     <th style="text-align: right;">{{ customer.data.salesman_amount_total | toCurrency }}</th>
+                    
                     <th>{{ customer.data.customer_order_count_total }}</th>
                     <th style="text-align: right;">{{ customer.data.customer_amount_total | toCurrency }}</th>
-                    <th>{{ (customer.data.salesman_order_count_total + customer.data.customer_order_count_total) }}</th>
-                    <th style="text-align: right;">{{ (customer.data.salesman_amount_total + customer.data.customer_amount_total) | toCurrency }}</th>
+                    
+                    <th>{{ customer.data.backend_order_count_total }}</th>
+                    <th style="text-align: right;">{{ customer.data.backend_amount_total | toCurrency }}</th>
+                    
+                    <th>{{ (customer.data.salesman_order_count_total 
+                      + customer.data.customer_order_count_total
+                      + customer.data.backend_order_count_total) }}</th>
+                    <th style="text-align: right;">{{ (customer.data.salesman_amount_total 
+                      + customer.data.customer_amount_total
+                      + customer.data.backend_amount_total) | toCurrency }}</th>
                   </tr>
                 </tbody>
               </table>
