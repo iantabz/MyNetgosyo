@@ -1251,8 +1251,19 @@
       </div>
     </div>
 
+
+
+    <!-- ************************************************************************************* -->
+    <!-- ************************************************************************************* -->
+    <!-- ************************************************************************************* -->
+    <!-- ************************************************************************************* -->
+    <!-- *****************************************   MODALS   ******************************** -->
+    <!-- ************************************************************************************* -->
+    <!-- ************************************************************************************* -->
+    <!-- ************************************************************************************* -->
     <!----------------------------------Form Modal------------------------------------------->
     
+    <!-- #setupMdl () -->
     <div
       class="modal fade"
       id="setupMdl"
@@ -1609,8 +1620,8 @@
       data-keyboard="false"
       aria-hidden="true"
     >
-      <div class="modal-dialog" role="document"
-        style="overflow-y:initial !important; width:100vw;"
+      <div class="modal-dialog" role="dialog"
+        style="overflow-y:initial !important; width:90vw;"
       >
         <div class="modal-content" style="border:2px solid #f07335;">
           <div class="modal-header">
@@ -1623,7 +1634,7 @@
           <div class="panel">
             <div class="panel-body">
               <!-- Table -->
-              <div class="table-responsive" style="height:75vh; overflow-y:auto;">
+              <div class="table-responsive" style="height:65vh; overflow-y:auto;">
                 <table
                   id="OrderTable"
                   class="table table-hover table-bordered table-striped table-vcenter"
@@ -1649,7 +1660,6 @@
                       :style="MgaOrder.manually_included == 1 ? 'color:#998f09;' : ''"
                       :title="MgaOrder.manually_included == 1 ? 'Manually included item' : ''"
                     >
-                      
                       <!-- kaloy 09-22-21 -->
                       <td @click="copyTextToClipboard($event)"
                         style="cursor: copy;"
@@ -1670,6 +1680,7 @@
                         {{ MgaOrder.tot_amt | toCurrency }}
                       </td>
                       <td>{{ MgaOrder.itm_stat }}</td>
+                      <!-- actions -->
                       <td>
                         <button
                           @click="detailsOrder(MgaOrder.doc_no)"
@@ -1677,7 +1688,27 @@
                         >
                           <i class="fa fa-list-alt"></i>
                         </button>
+
+                        <a
+                          href="javascript:void(0)"
+                          data-toggle="modal"
+                          data-target="#mdl_qty_adjustment"
+                          v-if="MgaOrder.tran_stat=='Pending' && MgaOrder.order_by=='Backend'"
+                          class="btn btn-info btn-xs"
+                          @click="
+                                qty_adjustment.tran_no = MgaOrder.tran_no; 
+                                qty_adjustment.item_code = MgaOrder.itm_code;
+                                qty_adjustment.uom = MgaOrder.uom;
+                                qty_adjustment.amount = MgaOrder.amt;
+                                qty_adjustment.prev_qty = MgaOrder.req_qty;
+                                qty_adjustment.new_qty = null;
+                                qty_adjustment.mankey = '';
+                            "
+                        >
+                          <i class="fa fa-edit"></i>
+                        </a>
                       </td>
+                      <!-- /actions -->
                     </tr>
                   </tbody>
                 </table>
@@ -1821,6 +1852,7 @@
       </div>
     </div>
 
+    <!-- #setupMdl7 () -->
     <div
       class="modal fade"
       id="setupMdl7"
@@ -1914,6 +1946,7 @@
       </div>
     </div>
 
+    <!-- #setupMdl8 () -->
     <div
       class="modal fade"
       id="setupMdl8"
@@ -2007,6 +2040,7 @@
       </div>
     </div>
 
+    <!-- #setupMdl9 () -->
     <div
       class="modal fade"
       id="setupMdl9"
@@ -2102,6 +2136,7 @@
 
     <!----------------------------------Form Modal 2------------------------------------------->
 
+    <!-- #setupMdl2 () -->
     <div
       class="modal fade"
       id="setupMdl2"
@@ -2124,6 +2159,9 @@
             >
               <span aria-hidden="true">&times;</span>
             </button>
+          </div>
+          <div>
+            
           </div>
           <form
             action="reupload"
@@ -2286,8 +2324,89 @@
       </div>
     </div>
 
+    <!-- #mdl_qty_adjustment -->
+    <div
+      class="modal fade"
+      id="mdl_qty_adjustment"
+      tabindex="-1"
+      role="dialog"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-sm" role="dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Quantity Adjustment</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+              id="close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div>
+                <div class="row">
+                    <div class="col-md-6">
+                        Transaction #:
+                    </div>
+                    <div class="col-md-6">
+                        <strong>{{ qty_adjustment.tran_no }}</strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        Item Code:
+                    </div>
+                    <div class="col-md-6">
+                        <strong>{{ qty_adjustment.item_code }}</strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        UOM:
+                    </div>
+                    <div class="col-md-6">
+                        <strong>{{ qty_adjustment.uom }}</strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        Prev Quantity:
+                    </div>
+                    <div class="col-md-6">
+                        <strong>{{ qty_adjustment.prev_qty }}</strong>
+                    </div>
+                </div>
+            </div><br>
+            <div>
+                <span>New Quantity</span><br/>
+                <input type="number" class="form-control" 
+                    min="1" v-model="qty_adjustment.new_qty">
+            </div>
+            <hr>
+            <div>
+                <span>Manager's Key</span><br/>
+                <input type="password" class="form-control" 
+                    v-model="qty_adjustment.mankey">
+            </div><br>
+            <button
+              class="btn btn-success btn-block"
+              @click="submitQtyAdjustment()"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
+
+
 
 <style scoped>
 /** @format */
@@ -2362,7 +2481,10 @@
 .nav-tabs li.active {
   border-bottom: 3px solid #ff5722;
 }
+
 </style>
+
+
 
 <script>
 /** @format */
@@ -2532,6 +2654,16 @@ export default {
       // },
       isFirstTimePageEntry: true,
       
+      // kaloy 2022-05-27
+      qty_adjustment: {
+        tran_no: '',
+        item_code: '',
+        uom: '',
+        amount: 0.00,
+        prev_qty: 0,
+        new_qty: null,
+        mankey: '',
+      },
     }
   },
   components: {
@@ -3567,6 +3699,9 @@ export default {
             this.form1.tot_amt2 = formatter.format(order_d.tot_amt)
             this.form1.itm_cat = order_d.itm_cat
             this.form1.itm_stat = order_d.itm_stat
+            // kaloy 2022-05-25
+            this.form1.order_by = order_d.order_by
+            this.form1.tran_stat = order_d.tran_stat
           })
         })
 
@@ -3898,7 +4033,28 @@ export default {
 
     ...mapActions('transactions', [
       'ongoingPendingCount','advancedOrdersCount'
-    ])
+    ]),
+
+    // kaloy 2022-05-27
+    submitQtyAdjustment() {
+        const new_qty = parseInt(this.qty_adjustment.new_qty);
+        if(!isNaN(new_qty) && new_qty > 0 && this.qty_adjustment.mankey != null) {
+            const url = `/transaction/qty-adjustment`;
+            axios.post(url, this.qty_adjustment)
+            .then(response => {
+                if(response.data.success==true) {
+                    Swal.fire('Success!', response.data.message, 'success');
+                    window.location.reload();
+                } else {
+                    console.log(response.data);
+                    Swal.fire('Oops!', response.data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        }
+    }
 },
 
   computed: {

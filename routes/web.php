@@ -44,6 +44,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('get_month', 'HomeController@getMonth');
         Route::get('get_year', 'HomeController@getYear');
+
+        // kaloy 2022-05-27
+        Route::post('/change-password', 'HomeController@changePassword');
     });
 
     Route::prefix('consolidated')->group(function () {
@@ -178,6 +181,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('revert-transaction', 'TransactionController@revertTransaction');
         // delete transaction util 2021-11-11
         Route::post('delete-transaction', 'TransactionController@deleteTransaction');
+        
+        // kaloy 2022-05-27
+        Route::post('qty-adjustment', 'TransactionController@qtyAdjustment');
     });
 
     Route::prefix('export')->group(function () {

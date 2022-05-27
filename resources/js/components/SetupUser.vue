@@ -90,6 +90,7 @@
 
     <!----------------------------------Form Modal------------------------------------------->
 
+    <!-- view account - modal -->
     <div
       class="modal fade"
       id="view_account"
@@ -115,51 +116,86 @@
           </div>
           <form @submit.prevent="resetpassword">
             <div class="modal-body">
-              <div class="form-group">
-                <label for="name">Name:</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="name"
-                  v-model="form1.name"
-                  placeholder="Enter user full name"
-                />
-                <!-- <has-error :form="dataForm" field="group_code"></has-error> -->
+              <div class="tab-base">
+                <ul class="nav nav-tabs">
+                  <li class="active">
+                    <a data-toggle="tab" href="#tab_user_details"
+                      >User Details</a
+                    >
+                  </li>
+                  <li>
+                    <a data-toggle="tab" href="#tab_changepw"
+                      >Change Password</a
+                    >
+                  </li>
+                </ul>
               </div>
-              <div class="form-group">
-                <label for="email">Email: &#40;Optional&#41;</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="email"
-                  v-model="form1.email"
-                  placeholder="Enter email address"
-                />
-                <!-- <has-error :form="dataForm" field="group_code"></has-error> -->
-              </div>
-              <div class="form-group">
-                <label for="username">Username:</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="username"
-                  v-model="form1.username"
-                  placeholder="Enter username"
-                />
-                <!-- <has-error :form="dataForm" field="group_code"></has-error> -->
-              </div>
+              <div class="tab-content">
+                <div id="tab_user_details" class="tab-pane fade active in">
+                  <div>
+                    <div class="form-group">
+                      <label for="name">Name:</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        v-model="form1.name"
+                        placeholder="Enter user full name"
+                      />
+                      <!-- <has-error :form="dataForm" field="group_code"></has-error> -->
+                    </div>
+                    <div class="form-group">
+                      <label for="email">Email: &#40;Optional&#41;</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="email"
+                        v-model="form1.email"
+                        placeholder="Enter email address"
+                      />
+                      <!-- <has-error :form="dataForm" field="group_code"></has-error> -->
+                    </div>
+                    <div class="form-group">
+                      <label for="username">Username:</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="username"
+                        v-model="form1.username"
+                        placeholder="Enter username"
+                      />
+                      <!-- <has-error :form="dataForm" field="group_code"></has-error> -->
+                    </div>
 
-              <div class="form-group">
-                <label for="type">Type:</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="type"
-                  v-model="form1.type"
-                />
-                <input type="hidden" id="id" name="id" v-model="form1.id" />
+                    <div class="form-group">
+                      <label for="type">Type:</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="type"
+                        v-model="form1.type"
+                      />
+                      <input
+                        type="hidden"
+                        id="id"
+                        name="id"
+                        v-model="form1.id"
+                      />
 
-                <!-- <has-error :form="dataForm" field="group_code"></has-error> -->
+                      <!-- <has-error :form="dataForm" field="group_code"></has-error> -->
+                    </div>
+                  </div>
+                </div>
+                <div id="tab_changepw" class="tab-pane fade in">
+                  <SetupUserChangePassword :username="form1.username"></SetupUserChangePassword>
+                  <!-- <button
+                    type="button"
+                    class="btn btn-success"
+                    @click="resetpassword()"
+                  >
+                    Reset Password
+                  </button> -->
+                </div>
               </div>
             </div>
             <div class="modal-footer">
@@ -171,19 +207,13 @@
               >
                 Close
               </button>
-              <button
-                type="button"
-                class="btn btn-success"
-                @click="resetpassword()"
-              >
-                Reset Password
-              </button>
             </div>
           </form>
         </div>
       </div>
     </div>
 
+    <!-- new account - modal -->
     <div
       class="modal fade"
       id="add_new_account"
@@ -301,6 +331,7 @@
         </div>
       </div>
     </div>
+
   </div>
 </template>
 <style>
@@ -347,44 +378,45 @@
 
 <script>
 /** @format */
-import Vue from 'vue'
-import Swal from 'sweetalert2'
-import { Form, HasError, AlertError } from 'vform'
-import { serialize } from 'object-to-formdata'
-import _ from 'lodash'
-import { Datetime } from 'vue-datetime'
+import Vue from "vue";
+import Swal from "sweetalert2";
+import { Form, HasError, AlertError } from "vform";
+import { serialize } from "object-to-formdata";
+import _ from "lodash";
+import { Datetime } from "vue-datetime";
 // You need a specific loader for CSS files
-import 'vue-datetime/dist/vue-datetime.css'
+import "vue-datetime/dist/vue-datetime.css";
 // import moment from 'moment'
-import { DateTime } from 'luxon'
-import vSelect from 'vue-select'
-import 'vue-select/dist/vue-select.css'
-import 'vue-select/src/scss/vue-select.scss'
+import { DateTime } from "luxon";
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
+import "vue-select/src/scss/vue-select.scss";
 
-Vue.component('v-select', vSelect)
+Vue.component("v-select", vSelect);
 
-Vue.use(require('vue-moment'))
-Vue.component('pagination', require('laravel-vue-pagination'))
-Vue.component(HasError.name, HasError)
-Vue.component(AlertError.name, AlertError)
+Vue.use(require("vue-moment"));
+Vue.component("pagination", require("laravel-vue-pagination"));
+Vue.component(HasError.name, HasError);
+Vue.component(AlertError.name, AlertError);
 
-Vue.filter('toCurrency', function(value) {
-  if (typeof value !== 'number') {
-    return value
+Vue.filter("toCurrency", function(value) {
+  if (typeof value !== "number") {
+    return value;
   }
-  var formatter = new Intl.NumberFormat('en-PH', {
-    style: 'currency',
-    currency: 'PHP',
-    minimumFractionDigits: 2
-  })
-  return formatter.format(value)
-})
+  var formatter = new Intl.NumberFormat("en-PH", {
+    style: "currency",
+    currency: "PHP",
+    minimumFractionDigits: 2,
+  });
+  return formatter.format(value);
+});
 
 export default {
+
   async beforeCreate() {
-    const { data } = await axios.get('/getAuthUser')
-    if (data.type !== 'Admin') {
-      location.replace('/dashboard1')
+    const { data } = await axios.get("/getAuthUser");
+    if (data.type !== "Admin") {
+      location.replace("/dashboard1");
     }
   },
   data() {
@@ -392,163 +424,164 @@ export default {
       userAcct: [],
       usersAcctTable: {},
       form: new Form({
-        name: '',
-        email: '',
-        username: '',
-        password: '',
-        cpassword: '',
-        type: ''
+        name: "",
+        email: "",
+        username: "",
+        password: "",
+        cpassword: "",
+        type: "",
       }),
       form1: this.newForm(),
-      date: DateTime.local().toString()
-    }
+      date: DateTime.local().toString(),
+    };
   },
   components: {
-    datetime: Datetime
+    datetime: Datetime,
+    SetupUserChangePassword: () => import('./SetupUserChangePassword.vue')
   },
   methods: {
     newForm() {
       return new Form({
-        id: '',
-        name: '',
-        email: '',
-        username: '',
-        type: ''
-      })
+        id: "",
+        name: "",
+        email: "",
+        username: "",
+        type: "",
+      });
     },
     add_new() {
-      $('#add_new_account').modal('show')
-      $('.modal-title').html('<i class="fa fa-plus-circle"></i> New Account')
+      $("#add_new_account").modal("show");
+      $(".modal-title").html('<i class="fa fa-plus-circle"></i> New Account');
     },
     view_account(MgaItems) {
-      $('#view_account').modal('show')
-      $('.modal-title1').html('<i class="fa fa-eye"></i> View Account')
+      $("#view_account").modal("show");
+      $(".modal-title1").html('<i class="fa fa-eye"></i> View Account');
 
-      this.form1.id = MgaItems.id
-      this.form1.name = MgaItems.name
-      this.form1.email = MgaItems.email
-      this.form1.username = MgaItems.username
-      this.form1.type = MgaItems.type
+      this.form1.id = MgaItems.id;
+      this.form1.name = MgaItems.name;
+      this.form1.email = MgaItems.email;
+      this.form1.username = MgaItems.username;
+      this.form1.type = MgaItems.type;
     },
     resetpassword() {
       this.form1
         .put(`/user/reset_password/${this.form1.id}`)
         .then(({ data }) => {
           $.niftyNoty({
-            type: 'success',
-            icon: 'fa fa-exclamation-triangle',
+            type: "success",
+            icon: "fa fa-exclamation-triangle",
             message: data.message,
-            container: 'floating',
-            timer: 5000
-          })
+            container: "floating",
+            timer: 5000,
+          });
         })
-        .catch(error => console.error(error.response))
+        .catch((error) => console.error(error.response));
     },
     submit() {
       this.form
-        .post('/user/add_new_user')
+        .post("/user/add_new_user")
         .then(({ data, status }) => {
-          if (data == 'Success') {
-            $('#add_new_account').modal('hide')
+          if (data == "Success") {
+            $("#add_new_account").modal("hide");
             Swal.fire({
-              title: 'Success!',
-              text: 'User has been',
-              icon: 'success',
-              allowOutsideClick: false
-            }).then(result => {
+              title: "Success!",
+              text: "User has been",
+              icon: "success",
+              allowOutsideClick: false,
+            }).then((result) => {
               if (result.value) {
                 setTimeout(() => {
-                  window.location.href = '/setup_user'
-                }, 500)
+                  window.location.href = "/setup_user";
+                }, 500);
               }
-            })
-          } else if (data == 'Error') {
+            });
+          } else if (data == "Error") {
             $.niftyNoty({
-              type: 'danger',
-              icon: 'pli-cross icon-2x',
+              type: "danger",
+              icon: "pli-cross icon-2x",
               message:
                 "<i class='fa fa-exclamation-circle'></i> Please fill the blank!.",
-              container: 'floating',
-              timer: 5000
-            })
-          } else if (data == 'Unmatched') {
+              container: "floating",
+              timer: 5000,
+            });
+          } else if (data == "Unmatched") {
             $.niftyNoty({
-              type: 'danger',
-              icon: 'pli-cross icon-2x',
+              type: "danger",
+              icon: "pli-cross icon-2x",
               message:
                 "<i class='fa fa-exclamation-circle'></i> Password did not match!.",
-              container: 'floating',
-              timer: 5000
-            })
-          } else if (data == 'Exists') {
+              container: "floating",
+              timer: 5000,
+            });
+          } else if (data == "Exists") {
             $.niftyNoty({
-              type: 'danger',
-              icon: 'pli-cross icon-2x',
+              type: "danger",
+              icon: "pli-cross icon-2x",
               message:
-                "<i class='fa fa-exclamation-circle'></i> Account is already exists!.",
-              container: 'floating',
-              timer: 5000
-            })
+                "<i class='fa fa-exclamation-circle'></i> Account already exists!.",
+              container: "floating",
+              timer: 5000,
+            });
           }
         })
-        .catch(error => {
+        .catch((error) => {
           $.niftyNoty({
-            type: 'danger',
-            icon: 'fa fa-exclamation-triangle',
-            message: 'Input fields are required.',
-            container: 'floating',
-            timer: 5000
-          })
-        })
+            type: "danger",
+            icon: "fa fa-exclamation-triangle",
+            message: "Input fields are required.",
+            container: "floating",
+            timer: 5000,
+          });
+        });
     },
 
     searchAcct() {
-      this.searchForUserAcct(this.searchAcct, this)
+      this.searchForUserAcct(this.searchAcct, this);
     },
 
     searchForUserAcct: _.debounce((searchAcct, vm) => {
       axios
         .get(`/user/getUserAcct/usersAcct/?name=${searchAcct}&page=1`)
-        .then(response => {
-          vm.userAcct = response.data
-        })
+        .then((response) => {
+          vm.userAcct = response.data;
+        });
     }, 500),
 
     getResultsAcct(page = 1) {
-      let url = null
+      let url = null;
       if (!this.searchUserAcct) {
-        url = '/user/getUserAcct/?page='
+        url = "/user/getUserAcct/?page=";
       } else {
-        url = `/user/getUserAcct/usersAcct/?name=${this.searchUserAcct}&page=`
+        url = `/user/getUserAcct/usersAcct/?name=${this.searchUserAcct}&page=`;
       }
-      axios.get(url + page).then(response => {
-        this.userAcct = response.data
+      axios.get(url + page).then((response) => {
+        this.userAcct = response.data;
 
         setTimeout(() => {
-          this.usersAcctTable = $('#acct_users').DataTable()
-        }, 500)
-      })
+          this.usersAcctTable = $("#acct_users").DataTable();
+        }, 500);
+      });
     },
 
     closeModal() {
-      $('#add_new_account').modal('hide')
-      this.form.name = ''
-      this.form.email = ''
-      this.form.username = ''
-      this.form.password = ''
-      this.form.cpassword = ''
-      this.form.type = ''
+      $("#add_new_account").modal("hide");
+      this.form.name = "";
+      this.form.email = "";
+      this.form.username = "";
+      this.form.password = "";
+      this.form.cpassword = "";
+      this.form.type = "";
     },
     closeModal1() {
-      $('#view_account').modal('hide')
-      this.form1.reset()
-    }
+      $("#view_account").modal("hide");
+      this.form1.reset();
+    },
   },
   mounted() {
-    setTimeout(this.getResultsAcct(), 500)
+    setTimeout(this.getResultsAcct(), 500);
 
-    this.$root.currentPage = this.$route.meta.name
-    console.log('Component Mounted')
-  }
-}
+    this.$root.currentPage = this.$route.meta.name;
+    console.log("Component Mounted");
+  },
+};
 </script>

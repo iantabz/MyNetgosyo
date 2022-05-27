@@ -222,6 +222,11 @@ class ConsolidatedTransactionController extends Controller
                         $t_type = trim($powdered[0]);
                         if (strcasecmp($t_type,'invoice')==0) {
                             $inv_no = trim($powdered[1]);
+
+                            // // kaloy 2022-05-27 (halt)
+                            // $inv_no = substr($inv_no,0,17);
+                            // dd($inv_no);
+
                             $cust_code = trim($powdered[2]);
                             $posting_date = date('Y-m-d', strtotime(trim($powdered[3])));
                             $itemcode = trim($powdered[4]);

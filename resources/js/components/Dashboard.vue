@@ -74,6 +74,12 @@
     color: #ffffff;
   }
 }
+
+/* kaloy 2022-05-27 */
+.swal2-container {
+  z-index: 99999999 !important;
+}
+
 </style>
 
 <script>

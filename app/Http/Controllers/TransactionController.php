@@ -186,7 +186,15 @@ class TransactionController extends Controller
     {
         $tran_no = request()->id;
 
-        $res = DB::table('tb_tran_line')->where('tran_no', '=', $tran_no)->orderBy('doc_no', 'DESC')->get();
+        // $res = DB::table('tb_tran_line')->where('tran_no', '=', $tran_no)->orderBy('doc_no', 'DESC')->get();
+        $res = DB::table('tb_tran_line')
+            ->leftJoin('tb_tran_head',
+                'tb_tran_head.tran_no',
+                'tb_tran_line.tran_no'
+            )
+            ->select('tb_tran_line.*', 'tb_tran_head.tran_stat', 'tb_tran_head.order_by')
+            ->where('tb_tran_line.tran_no', '=', $tran_no)
+            ->orderBy('doc_no', 'DESC')->get();
 
         return response()->json($res);
     }
@@ -207,7 +215,19 @@ class TransactionController extends Controller
     {
         $doc_no = request()->id;
 
-        $res = DB::table('tb_tran_line')->where('doc_no', '=', $doc_no)->get();
+        $res = DB::table('tb_tran_line')
+            ->join(
+                'tb_tran_head',
+                'tb_tran_line.tran_no',
+                'tb_tran_head.tran_no',
+            )
+            ->select(
+                'tb_tran_line.*',
+                'tb_tran_head.order_by',
+                'tb_tran_head.tran_stat'
+            )
+            ->where('tb_tran_line.doc_no', '=', $doc_no)
+            ->get();
 
         return response()->json($res);
     }
@@ -1771,6 +1791,55 @@ class TransactionController extends Controller
         });
 
         return response($res->count());
+    }
+
+    /**
+     * Quantity adjustment for backend-transactions
+     */
+    public function qtyAdjustment(Request $request){
+        try {
+            DB::beginTransaction();
+            if($request->mankey == '123') {
+                DB::table('tb_tran_line')->where('tran_no', $request->tran_no)
+                ->where('itm_code', $request->item_code)
+                ->where('uom', $request->uom)
+                ->update([
+                    'req_qty' => $request->new_qty,
+                    'tot_amt' => $request->new_qty * $request->amount
+                ])
+                ;
+
+                $itm_count = DB::table('tb_tran_line')->where('tran_no', $request->tran_no)
+                    ->where('itm_code', $request->item_code)
+                    ->where('uom', $request->uom)
+                    ->sum('req_qty');
+                $tot_amt = DB::table('tb_tran_line')->where('tran_no', $request->tran_no)
+                    ->where('itm_code', $request->item_code)
+                    ->where('uom', $request->uom)
+                    ->sum('tot_amt');
+                DB::table('tb_tran_head')->where('tran_no', $request->tran_no)
+                    ->update([
+                        'itm_count'=>$itm_count,
+                        'tot_amt'=>$tot_amt,
+                    ]);
+                DB::table('sales_export_files')->where('sef_no', $request->tran_no)->delete();
+
+                DB::commit();
+                $res['success'] = true;
+                $res['message'] = 'Success';
+            } else {
+                $res['success'] = false;
+                $res['message'] = 'Incorrect manager\'s key!';
+            }
+            return response()->json($res);
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollBack();
+            $res['success'] = false;
+            $res['message'] = $th->getMessage();
+            return response()->json($res, 500);
+        }
+        
     }
 
     // TODO: Test UTILS

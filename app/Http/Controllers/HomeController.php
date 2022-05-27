@@ -79,7 +79,9 @@ class HomeController extends Controller
             $users1[] = array(
                 'name'              =>  $row1->name,
                 'type'              =>  $row1->type,
-                'status'            =>  1
+                'status'            =>  1,
+                'username'            =>  $row1->username,
+                'email'            =>  $row1->email,
             );
         }
         return response()->json($users1);
@@ -252,5 +254,37 @@ class HomeController extends Controller
     public function getAuthUser()
     {
         return Auth::user();
+    }
+
+
+    // kaloy 2022-05-27
+    public function changePassword(Request $request) {
+        $this->validate($request, [
+            'username' => ['required','exists:users,username'],
+            'old_password' => function($attribute,$value,$fail) use($request) {
+                $old_password_hashed = DB::table('users')
+                    ->where('username', $request->username)
+                    ->first()->password;
+                if(! Hash::check($value, $old_password_hashed)) {
+                    $fail('Incorrect password');
+                }
+            },
+            'new_password' => ['required','min:5','confirmed'],
+        ]);
+
+        try {
+            DB::table('users')->where('username',$request->username)
+                ->update([
+                    'password' => Hash::make($request->new_password)
+                ]);
+            
+            $res['success']=true;
+            $res['message']='Password updated';
+            return response()->json($res);
+        } catch (\Throwable $th) {
+            $res['success']=false;
+            $res['message']=$th->getMessage();
+            return response()->json($res, 500);
+        }
     }
 }
