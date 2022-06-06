@@ -120,7 +120,7 @@
         /* kaloy 2022-05-11 */
         table tr.selected, tr:nth-child(even).selected {
             background-color: #e1f2ff !important;
-            color: #333333 !important;
+            /* color: #333333 !important; */
         }
 
     </style>
