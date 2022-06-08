@@ -184,6 +184,9 @@ Route::middleware(['auth'])->group(function () {
         
         // kaloy 2022-05-27
         Route::post('qty-adjustment', 'TransactionController@qtyAdjustment');
+
+        //kaloy 2022-06-08
+        Route::get('export-to-excel-delivered', 'TransactionController@exportToExcelDelivered');
     });
 
     Route::prefix('export')->group(function () {

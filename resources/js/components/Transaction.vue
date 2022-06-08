@@ -10,7 +10,6 @@
           <h3 class="panel-title" style="font-weight: bold; font-size:20px;">
             <i class="fa fa-shopping-cart"></i> Transactions
           </h3>
-          
         </div>
 
         <div class="tab-base">
@@ -21,7 +20,9 @@
             <li class="active">
               <a data-toggle="tab" href="#demo-lft-tab-1" class="pb-4">
                 Ongoing Transaction
-                <ongoing-transactions-pending-count class="pull-right"></ongoing-transactions-pending-count>
+                <ongoing-transactions-pending-count
+                  class="pull-right"
+                ></ongoing-transactions-pending-count>
                 <!-- <span class="badge badge-warning">{{ items.total }}</span> -->
               </a>
             </li>
@@ -50,79 +51,88 @@
               <a data-toggle="tab" href="#demo-lft-tab-8">
                 Advanced Order
                 <!-- <span class="badge badge-success">{{ items1.total }}</span> -->
-                <advanced-orders-count :key="subComponentsKey.advancedOrders" class="pull-right"></advanced-orders-count>
+                <advanced-orders-count
+                  :key="subComponentsKey.advancedOrders"
+                  class="pull-right"
+                ></advanced-orders-count>
               </a>
             </li>
           </ul>
-          <div class="tab-content" 
-            style="background-color:#ffffff; padding:0;"
-          >
-
+          <div class="tab-content" style="background-color:#ffffff; padding:0;">
             <!-- Ongoing Transactions Tab -->
             <div id="demo-lft-tab-1" class="tab-pane fade active in">
               <!-- style="background-color:#ffffff; padding:2px;" -->
               <div class="panel-body">
                 <div class="row">
                   <div class="col-md-12">
-                      <!-- ongoingtrans_table_filter -->
-                      <div class="row" style="padding:10px;">
-                        <div class="col-sm-6">
-                          <form
-                            action="order"
-                            @submit.prevent="submitformorder"
-                            method="post"
-                            enctype="multipart/form-data"
-                            class="form-horizontal"
-                          >
-                            <div class="col-sm-6">
-                              <label>Date From</label>
-                              <datetime input-class="form-control"
-                                class="theme-orange"
-                                v-model="dateFrom"
-                                value-zone="Asia/Manila"
-                                zone="Asia/Manila"
-                                id="dt-picker-from-1"
-                              ></datetime>
-                            </div>
-                            <div class="col-sm-6">
-                              <label>Date To</label>
-                              <datetime input-class="form-control"
-                                class="theme-orange"
-                                v-model="dateTo"
-                                value-zone="Asia/Manila"
-                                zone="Asia/Manila"
-                                id="dt-picker-to-1"
-                              ></datetime>
-                            </div>
-                          </form>
-                        </div>
-                        <div class="col-sm-6">
-                          <div class="col-md-6"></div>
-                          <div class="col-md-6">
-                            <label class="pull-left">Search</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              @keyup="searchT"
-                              v-model="searchTrans"
-                              placeholder="Search here"
-                            />
+                    <!-- ongoingtrans_table_filter -->
+                    <div class="row" style="padding:10px;">
+                      <div class="col-sm-6">
+                        <form
+                          action="order"
+                          @submit.prevent="submitformorder"
+                          method="post"
+                          enctype="multipart/form-data"
+                          class="form-horizontal"
+                        >
+                          <div class="col-sm-6">
+                            <label>Date From</label>
+                            <datetime
+                              input-class="form-control"
+                              class="theme-orange"
+                              v-model="dateFrom"
+                              value-zone="Asia/Manila"
+                              zone="Asia/Manila"
+                              id="dt-picker-from-1"
+                            ></datetime>
                           </div>
+                          <div class="col-sm-6">
+                            <label>Date To</label>
+                            <datetime
+                              input-class="form-control"
+                              class="theme-orange"
+                              v-model="dateTo"
+                              value-zone="Asia/Manila"
+                              zone="Asia/Manila"
+                              id="dt-picker-to-1"
+                            ></datetime>
+                          </div>
+                        </form>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-6">
+                          <label class="pull-left">Search</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            @keyup="searchT"
+                            v-model="searchTrans"
+                            placeholder="Search here"
+                          />
                         </div>
                       </div>
-                    
+                    </div>
+
                     <!-- /ongoingtrans_table_filter -->
                     <div class="table-responsive" style="padding:5px;">
-
                       <!-- kaloy 2021-10-11 -->
                       <!-- refresh_ongoing -->
-                      <div style="padding-top:2px; padding-bottom:2px;background-color:#eeeeee;"
-                        class="text-right">
-                        <a href="javascript:void(0)" 
-                          @click="searchTrans=null;getResults();"
+                      <div
+                        style="padding-top:2px; padding-bottom:2px;background-color:#eeeeee;"
+                        class="text-right"
+                      >
+                        <a
+                          href="javascript:void(0)"
+                          @click="
+                            searchTrans = null;
+                            getResults();
+                          "
                           class="text-info"
                           title="Click to refresh list"
-                          style="margin-right:7px;"><span class="fa fa-refresh"></span></a>
+                          style="margin-right:7px;"
+                          ><span class="fa fa-refresh"></span
+                        ></a>
                       </div>
 
                       <table
@@ -137,8 +147,8 @@
                             <th>Ordered By</th>
                             <th>Date Ordered</th>
                             <!--kaloy 2022-04-07-->
-                            <th>Total Amount <br>(Ordered)</th>
-                            <th>Total Amount <br>(Served)</th>
+                            <th>Total Amount <br />(Ordered)</th>
+                            <th>Total Amount <br />(Served)</th>
                             <th>%</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -162,26 +172,41 @@
                           <tr
                             v-for="MgaTransaction in transaction.data"
                             :key="MgaTransaction.id"
-                            :style="(MgaTransaction.tot_amt != parseFloat(MgaTransaction.lineTotal.toFixed(2))
-                                && (MgaTransaction.tran_stat != 'Approved')
-                              ) ? 'color:red;' : ''
+                            :style="
+                              MgaTransaction.tot_amt !=
+                                parseFloat(
+                                  MgaTransaction.lineTotal.toFixed(2)
+                                ) && MgaTransaction.tran_stat != 'Approved'
+                                ? 'color:red;'
+                                : ''
                             "
                           >
                             <!-- kaloy 09-22-21 -->
-                            <td @click="copyTextToClipboard($event)"
+                            <td
+                              @click="copyTextToClipboard($event)"
                               style="cursor: copy;"
-                              title="Click to copy Transaction Number">
-                              {{ MgaTransaction.tran_no }}</td>
+                              title="Click to copy Transaction Number"
+                            >
+                              {{ MgaTransaction.tran_no }}
+                            </td>
                             <td>{{ MgaTransaction.store_name }}</td>
                             <!-- kaloy 2021-09-28 -->
-                            <td :class="MgaTransaction.order_by==='Backend' ? '' : ''">
-                            <!-- <td><span class="badge badge-sm" :class="MgaTransaction.order_by==='Backend' ? 'badge-warning' : 'badge-primary'"> -->
-                              {{ MgaTransaction.order_by }}</td>
                             <td
-                              :title="humanizeDateDuration(MgaTransaction.date_req)"
+                              :class="
+                                MgaTransaction.order_by === 'Backend' ? '' : ''
+                              "
                             >
-                              {{ MgaTransaction.date_req }}</td>
-                              
+                              <!-- <td><span class="badge badge-sm" :class="MgaTransaction.order_by==='Backend' ? 'badge-warning' : 'badge-primary'"> -->
+                              {{ MgaTransaction.order_by }}
+                            </td>
+                            <td
+                              :title="
+                                humanizeDateDuration(MgaTransaction.date_req)
+                              "
+                            >
+                              {{ MgaTransaction.date_req }}
+                            </td>
+
                             <!--kaloy 2022-04-07-->
                             <td style="text-align:right;">
                               {{ MgaTransaction.tot_amt | toCurrency }}
@@ -192,17 +217,21 @@
 
                             <!-- kaloy 2022-04-19 -->
                             <td>
-                              {{ (MgaTransaction.tot_del_amt / MgaTransaction.tot_amt * 100).toFixed(1) }}%
+                              {{
+                                (
+                                  (MgaTransaction.tot_del_amt /
+                                    MgaTransaction.tot_amt) *
+                                  100
+                                ).toFixed(1)
+                              }}%
                             </td>
-                            
+
                             <!--***************** tran_stat *************-->
                             <td
                               v-if="MgaTransaction.tran_stat === 'On-Process'"
                               style="color: #36bf73;"
                             >
-                              <span class="badge badge-sm warning">
-
-                              </span>
+                              <span class="badge badge-sm warning"> </span>
                               {{ MgaTransaction.tran_stat }}
                             </td>
                             <td
@@ -248,7 +277,12 @@
                               </button>
                               &nbsp;
                               <button
-                                @click="orderDetails(MgaTransaction.tran_no, MgaTransaction.tot_amt)"
+                                @click="
+                                  orderDetails(
+                                    MgaTransaction.tran_no,
+                                    MgaTransaction.tot_amt
+                                  )
+                                "
                                 class="btn btn-info btn-xs"
                                 title="View Order Items"
                               >
@@ -257,7 +291,7 @@
                             </td>
                           </tr>
                         </tbody>
-                       <!-- <tfoot>
+                        <!-- <tfoot>
                          <tr>
                            <th colspan="8">
                             <h4>Partial Total: {{ ongoingTransCurrentDatasetTotal | toCurrency }}</h4>
@@ -290,76 +324,89 @@
                 </div>
                 <br />
                 <!-- <div class="row" style="text-align: right;"> -->
-                
+
                 <!-- //TODO: TOTAL_AMT_SECTION - Ongoing Transactions -->
                 <!-- total_amount -->
                 <div class="row">
-                  <div 
-                    class="col-md-12" 
+                  <div
+                    class="col-md-12"
                     style="text-align:right;display:flex;justify-content:right;"
                   >
-                    <div class="panel" 
+                    <div
+                      class="panel"
                       style="padding-bottom:0;margin-bottom:0;"
                     >
                       <div class="panel-body">
                         Total Amount (Ordered)
-                        <br>
-                        <h3
-                          style="padding:0;margin:0;"
-                        >
-                          <span class="label label-warning">{{ total_amt_tran | toCurrency }}</span>
+                        <br />
+                        <h3 style="padding:0;margin:0;">
+                          <span class="label label-warning">{{
+                            total_amt_tran | toCurrency
+                          }}</span>
                         </h3>
                       </div>
                     </div>
-                    <div class="panel" 
+                    <div
+                      class="panel"
                       style="padding-bottom:0;margin-bottom:0;"
                     >
                       <div class="panel-body">
                         Total Amount (Served)
-                        <br>
-                        <h3
-                          style="padding:0;margin:0;"
-                        >
-                          <span class="label label-success">{{ total_amt_approved | toCurrency }}</span>
+                        <br />
+                        <h3 style="padding:0;margin:0;">
+                          <span class="label label-success">{{
+                            total_amt_approved | toCurrency
+                          }}</span>
                         </h3>
                       </div>
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
 
             <!-- Delivered Tab Content -->
             <div id="demo-lft-tab-5" class="tab-pane fade">
               <div class="panel-body">
-
                 <!-- Date Filters -->
                 <div class="row" style="padding:10px;">
                   <div class="col-md-6">
-                    <form action="order4" @submit.prevent="submitformorder4"
-                      method="post" enctype="multipart/form-data">
-                        <div class="col-md-6">
-                          <label>Date From</label>
-                          <datetime
-                            v-model="dateFrom4"
-                            value-zone="Asia/Manila"
-                            zone="Asia/Manila"
-                            input-class="form-control"
-                            class="theme-orange"
-                          ></datetime>
-                        </div>
-                        <div class="col-md-6">
-                          <label>Date To</label>
-                          <datetime
-                            v-model="dateTo4"
-                            value-zone="Asia/Manila"
-                            zone="Asia/Manila"
-                            input-class="form-control"
-                            class="theme-orange"
-                          ></datetime>
-                        </div>
-                    </form>
+                    <div class="row">
+                      <div class="col-md-9">
+                        <form
+                          action="order4"
+                          @submit.prevent="submitformorder4"
+                          method="post"
+                          enctype="multipart/form-data"
+                        >
+                          <div class="col-md-6">
+                            <label>Date From</label>
+                            <datetime
+                              v-model="dateFrom4"
+                              value-zone="Asia/Manila"
+                              zone="Asia/Manila"
+                              input-class="form-control"
+                              class="theme-orange"
+                            ></datetime>
+                          </div>
+                          <div class="col-md-6">
+                            <label>Date To</label>
+                            <datetime
+                              v-model="dateTo4"
+                              value-zone="Asia/Manila"
+                              zone="Asia/Manila"
+                              input-class="form-control"
+                              class="theme-orange"
+                            ></datetime>
+                          </div>
+                        </form>
+                      </div>
+                      <div class="col-md-3">
+                        <button @click="exportToExcelDelivered()">
+                          Export to Excel
+                        </button>
+                      </div>
+                    </div>
                   </div>
                   <div class="col-md-6">
                     <div class="col-md-6"></div>
@@ -417,15 +464,18 @@
                             :key="MgaTransaction4.id"
                           >
                             <!-- kaloy 09-22-21 -->
-                            <td @click="copyTextToClipboard($event)"
+                            <td
+                              @click="copyTextToClipboard($event)"
                               style="cursor: copy;"
-                              title="Click to copy Transaction Number">
-                              {{ MgaTransaction4.tran_no }}</td>
+                              title="Click to copy Transaction Number"
+                            >
+                              {{ MgaTransaction4.tran_no }}
+                            </td>
                             <td>{{ MgaTransaction4.store_name }}</td>
                             <td>{{ MgaTransaction4.order_by }}</td>
                             <td>{{ MgaTransaction4.date_req }}</td>
                             <td>{{ MgaTransaction4.date_del }}</td>
-                            
+
                             <td
                               style="text-align: right; font-weight: bold; color: #0000FF;"
                             >
@@ -483,10 +533,14 @@
                   <div class="col-md-4">
                     <div class="btn-group btn-group-justified pull-right">
                       <div class="btn-group btn-group-lg">
-                        <button type="button" class="btn btn-secondary">Total Amount</button>
+                        <button type="button" class="btn btn-secondary">
+                          Total Amount
+                        </button>
                       </div>
                       <div class="btn-group btn-group-lg">
-                        <button type="button" class="btn btn-info">{{ total_amt_tran4 | toCurrency }}</button>
+                        <button type="button" class="btn btn-info">
+                          {{ total_amt_tran4 | toCurrency }}
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -507,7 +561,7 @@
                 </div> -->
               </div>
             </div>
-            
+
             <!-- Returned Tab -->
             <div id="demo-lft-tab-6" class="tab-pane fade">
               <div class="panel-body">
@@ -595,10 +649,13 @@
                             :key="MgaTransaction5.id"
                           >
                             <!-- kaloy 09-22-21 -->
-                            <td @click="copyTextToClipboard($event)"
+                            <td
+                              @click="copyTextToClipboard($event)"
                               style="cursor: copy;"
-                              title="Click to copy Transaction Number">
-                              {{ MgaTransaction5.tran_no }}</td>
+                              title="Click to copy Transaction Number"
+                            >
+                              {{ MgaTransaction5.tran_no }}
+                            </td>
                             <td>{{ MgaTransaction5.store_name }}</td>
                             <td>{{ MgaTransaction5.order_by }}</td>
                             <td>{{ MgaTransaction5.date_req }}</td>
@@ -731,10 +788,14 @@
                   <div class="col-md-4">
                     <div class="btn-group btn-group-justified pull-right">
                       <div class="btn-group btn-group-lg">
-                        <button type="button" class="btn btn-secondary">Total Amount</button>
+                        <button type="button" class="btn btn-secondary">
+                          Total Amount
+                        </button>
                       </div>
                       <div class="btn-group btn-group-lg">
-                        <button type="button" class="btn btn-info">{{ total_amt_tran5 | toCurrency }}</button>
+                        <button type="button" class="btn btn-info">
+                          {{ total_amt_tran5 | toCurrency }}
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -767,7 +828,7 @@
                       enctype="multipart/form-data"
                     >
                       <div class="col-md-6">
-                        <label>Date From</label>  
+                        <label>Date From</label>
                         <datetime
                           v-model="dateFrom6"
                           value-zone="Asia/Manila"
@@ -842,10 +903,13 @@
                             :key="MgaTransaction6.id"
                           >
                             <!-- kaloy 09-22-21 -->
-                            <td @click="copyTextToClipboard($event)"
+                            <td
+                              @click="copyTextToClipboard($event)"
                               style="cursor: copy;"
-                              title="Click to copy Transaction Number">
-                              {{ MgaTransaction6.tran_no }}</td>
+                              title="Click to copy Transaction Number"
+                            >
+                              {{ MgaTransaction6.tran_no }}
+                            </td>
                             <td>{{ MgaTransaction6.store_name }}</td>
                             <td>{{ MgaTransaction6.order_by }}</td>
                             <td>{{ MgaTransaction6.date_req }}</td>
@@ -977,10 +1041,14 @@
                   <div class="col-md-4">
                     <div class="btn-group btn-group-justified pull-right">
                       <div class="btn-group btn-group-lg">
-                        <button type="button" class="btn btn-secondary">Total Amount</button>
+                        <button type="button" class="btn btn-secondary">
+                          Total Amount
+                        </button>
                       </div>
                       <div class="btn-group btn-group-lg">
-                        <button type="button" class="btn btn-info">{{ total_amt_tran6 | toCurrency }}</button>
+                        <button type="button" class="btn btn-info">
+                          {{ total_amt_tran6 | toCurrency }}
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -1088,10 +1156,13 @@
                             :key="MgaTransaction7.id"
                           >
                             <!-- kaloy 09-22-21 -->
-                            <td @click="copyTextToClipboard($event)"
+                            <td
+                              @click="copyTextToClipboard($event)"
                               style="cursor: copy;"
-                              title="Click to copy Transaction Number">
-                              {{ MgaTransaction7.tran_no }}</td>
+                              title="Click to copy Transaction Number"
+                            >
+                              {{ MgaTransaction7.tran_no }}
+                            </td>
                             <td>{{ MgaTransaction7.store_name }}</td>
                             <td>{{ MgaTransaction7.order_by }}</td>
                             <td>{{ MgaTransaction7.date_req }}</td>
@@ -1223,10 +1294,14 @@
                   <div class="col-md-4">
                     <div class="btn-group btn-group-justified pull-right">
                       <div class="btn-group btn-group-lg">
-                        <button type="button" class="btn btn-secondary">Total Amount</button>
+                        <button type="button" class="btn btn-secondary">
+                          Total Amount
+                        </button>
                       </div>
                       <div class="btn-group btn-group-lg">
-                        <button type="button" class="btn btn-info">{{ total_amt_tran7 | toCurrency }}</button>
+                        <button type="button" class="btn btn-info">
+                          {{ total_amt_tran7 | toCurrency }}
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -1245,13 +1320,10 @@
                 </div> -->
               </div>
             </div>
-
           </div>
         </div>
       </div>
     </div>
-
-
 
     <!-- ************************************************************************************* -->
     <!-- ************************************************************************************* -->
@@ -1262,7 +1334,7 @@
     <!-- ************************************************************************************* -->
     <!-- ************************************************************************************* -->
     <!----------------------------------Form Modal------------------------------------------->
-    
+
     <!-- #setupMdl () -->
     <div
       class="modal fade"
@@ -1424,8 +1496,16 @@
                 </div>
                 <div class="col-md-2">
                   <div class="form-group">
-                    <label for="tot_del_amt" v-if="form.tran_stat==='Delivered'">Total Amount ({{ form.tran_stat }})</label>
-                    <label for="tot_del_amt" v-if="form.tran_stat!=='Delivered'">Total Amount (Approved)</label>
+                    <label
+                      for="tot_del_amt"
+                      v-if="form.tran_stat === 'Delivered'"
+                      >Total Amount ({{ form.tran_stat }})</label
+                    >
+                    <label
+                      for="tot_del_amt"
+                      v-if="form.tran_stat !== 'Delivered'"
+                      >Total Amount (Approved)</label
+                    >
                     <input
                       type="text"
                       class="form-control"
@@ -1508,17 +1588,19 @@
               </div>
               <!-- kaloy 2021-10-05 -->
               <!-- order_timeline -->
-              <br>
+              <br />
               <!-- ot_new -->
               <div class="row">
                 <div class="col-md-12 text-center">
                   <h5 class="text-dark">Order Timeframe (Test Only)</h5>
-                  <hr>
+                  <hr />
                 </div>
                 <div class="col-md-12">
                   <div class="col-md-2" style="margin-bottom:8px;">
                     <div class="bg-warningx">
-                      <h4 style="margin:0;padding:0;"><span class="badge badge-info rounded">1</span> Ordered</h4>
+                      <h4 style="margin:0;padding:0;">
+                        <span class="badge badge-info rounded">1</span> Ordered
+                      </h4>
                     </div>
                     <div style="padding:4px 4px 4px 26px;" class="bg-warningx">
                       <em>{{ form.date_req }}</em>
@@ -1526,39 +1608,66 @@
                   </div>
                   <div class="col-md-2" style="margin-bottom:8px;">
                     <div class="bg-warningx">
-                      <h4 style="margin:0;padding:0;"><span class="badge badge-info rounded">2</span> Processed</h4>
+                      <h4 style="margin:0;padding:0;">
+                        <span class="badge badge-info rounded">2</span>
+                        Processed
+                      </h4>
                     </div>
                     <div style="padding:4px 4px 4px 26px;" class="bg-warningx">
-                      <em>{{ form.export_date!=null?form.export_date:'Pending...' }}</em>
-                      <h6 class="text-info" style="padding:0;margin:0;">{{ timeframeUntilProcessing }}</h6>
+                      <em>{{
+                        form.export_date != null
+                          ? form.export_date
+                          : "Pending..."
+                      }}</em>
+                      <h6 class="text-info" style="padding:0;margin:0;">
+                        {{ timeframeUntilProcessing }}
+                      </h6>
                     </div>
                   </div>
                   <div class="col-md-2" style="margin-bottom:8px;">
                     <div class="bg-warningx">
-                      <h4 style="margin:0;padding:0;"><span class="badge badge-info rounded">3</span> Approved</h4>
+                      <h4 style="margin:0;padding:0;">
+                        <span class="badge badge-info rounded">3</span> Approved
+                      </h4>
                     </div>
                     <div style="padding:4px 4px 4px 26px;" class="bg-warningx">
-                      <em>{{ form.date_app!=null?form.date_app:'Pending...' }}</em>
-                      <h6 class="text-info" style="padding:0;margin:0;">{{ timeframeUntilApproval }}</h6>
+                      <em>{{
+                        form.date_app != null ? form.date_app : "Pending..."
+                      }}</em>
+                      <h6 class="text-info" style="padding:0;margin:0;">
+                        {{ timeframeUntilApproval }}
+                      </h6>
                     </div>
                   </div>
                   <div class="col-md-2" style="margin-bottom:8px;">
                     <div class="bg-warningx">
-                      <h4 style="margin:0;padding:0;"><span class="badge badge-info rounded">4</span> Delivered</h4>
+                      <h4 style="margin:0;padding:0;">
+                        <span class="badge badge-info rounded">4</span>
+                        Delivered
+                      </h4>
                     </div>
                     <div style="padding:4px 4px 4px 26px;" class="bg-warningx">
-                      <em>{{ form.date_del!=null?form.date_del:'Pending...' }}</em>
-                      <h6 class="text-info" style="padding:0;margin:0;">{{ timeframeUntilDelivery }}</h6>
+                      <em>{{
+                        form.date_del != null ? form.date_del : "Pending..."
+                      }}</em>
+                      <h6 class="text-info" style="padding:0;margin:0;">
+                        {{ timeframeUntilDelivery }}
+                      </h6>
                     </div>
                   </div>
                   <div class="col-md-4" style="margin-bottom:8px;">
                     <div class="bg-warningx">
                       <h4 style="margin:0;padding:0;">
-                        <span class="badge badge-success rounded">&nbsp;&nbsp;</span> Total Rendered Time
+                        <span class="badge badge-success rounded"
+                          >&nbsp;&nbsp;</span
+                        >
+                        Total Rendered Time
                       </h4>
                     </div>
                     <div style="padding:4px 4px 4px 26px;" class="bg-warningx">
-                      <h6 class="text-info" style="padding:0;margin:0;">{{ timeframeOrderFulfillment }}</h6>
+                      <h6 class="text-info" style="padding:0;margin:0;">
+                        {{ timeframeOrderFulfillment }}
+                      </h6>
                     </div>
                   </div>
                 </div>
@@ -1593,11 +1702,7 @@
             </div>
             <!-- /modal body -->
             <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-danger"
-                data-dismiss="modal"
-              >
+              <button type="button" class="btn btn-danger" data-dismiss="modal">
                 Close
               </button>
               <!-- <button type="submit" class="btn btn-primary" id="submitformreupload"></button> -->
@@ -1608,7 +1713,7 @@
     </div>
 
     <!----------------------------------Form Modal 1------------------------------------------->
-    
+
     <!-- //? Ongoing Transactions -->
     <!-- //? View Order Items Modal -->
     <div
@@ -1620,13 +1725,19 @@
       data-keyboard="false"
       aria-hidden="true"
     >
-      <div class="modal-dialog" role="dialog"
+      <div
+        class="modal-dialog"
+        role="dialog"
         style="overflow-y:initial !important; width:90vw;"
       >
         <div class="modal-content" style="border:2px solid #f07335;">
           <div class="modal-header">
             <h5 class="modal-title" id="MdlTitle1">Modal title</h5>
-            <button type="button" class="btn btn-danger close" @click="closeModal">
+            <button
+              type="button"
+              class="btn btn-danger close"
+              @click="closeModal"
+            >
               <!-- <span aria-hidden="true">&times;</span> -->
               Close
             </button>
@@ -1634,7 +1745,10 @@
           <div class="panel">
             <div class="panel-body">
               <!-- Table -->
-              <div class="table-responsive" style="height:65vh; overflow-y:auto;">
+              <div
+                class="table-responsive"
+                style="height:65vh; overflow-y:auto;"
+              >
                 <table
                   id="OrderTable"
                   class="table table-hover table-bordered table-striped table-vcenter"
@@ -1656,15 +1770,26 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="MgaOrder in order" :key="MgaOrder.doc_no"
-                      :style="MgaOrder.manually_included == 1 ? 'color:#998f09;' : ''"
-                      :title="MgaOrder.manually_included == 1 ? 'Manually included item' : ''"
+                    <tr
+                      v-for="MgaOrder in order"
+                      :key="MgaOrder.doc_no"
+                      :style="
+                        MgaOrder.manually_included == 1 ? 'color:#998f09;' : ''
+                      "
+                      :title="
+                        MgaOrder.manually_included == 1
+                          ? 'Manually included item'
+                          : ''
+                      "
                     >
                       <!-- kaloy 09-22-21 -->
-                      <td @click="copyTextToClipboard($event)"
+                      <td
+                        @click="copyTextToClipboard($event)"
                         style="cursor: copy;"
-                        title="Click to copy Transaction Number">
-                        {{ MgaOrder.tran_no }}</td>
+                        title="Click to copy Transaction Number"
+                      >
+                        {{ MgaOrder.tran_no }}
+                      </td>
                       <td>{{ MgaOrder.item_desc }}</td>
                       <td>{{ MgaOrder.itm_code }}</td>
                       <td>{{ MgaOrder.uom }}</td>
@@ -1693,17 +1818,20 @@
                           href="javascript:void(0)"
                           data-toggle="modal"
                           data-target="#mdl_qty_adjustment"
-                          v-if="MgaOrder.tran_stat=='Pending' && MgaOrder.order_by=='Backend'"
+                          v-if="
+                            MgaOrder.tran_stat == 'Pending' &&
+                              MgaOrder.order_by == 'Backend'
+                          "
                           class="btn btn-info btn-xs"
                           @click="
-                                qty_adjustment.tran_no = MgaOrder.tran_no; 
-                                qty_adjustment.item_code = MgaOrder.itm_code;
-                                qty_adjustment.uom = MgaOrder.uom;
-                                qty_adjustment.amount = MgaOrder.amt;
-                                qty_adjustment.prev_qty = MgaOrder.req_qty;
-                                qty_adjustment.new_qty = null;
-                                qty_adjustment.mankey = '';
-                            "
+                            qty_adjustment.tran_no = MgaOrder.tran_no;
+                            qty_adjustment.item_code = MgaOrder.itm_code;
+                            qty_adjustment.uom = MgaOrder.uom;
+                            qty_adjustment.amount = MgaOrder.amt;
+                            qty_adjustment.prev_qty = MgaOrder.req_qty;
+                            qty_adjustment.new_qty = null;
+                            qty_adjustment.mankey = '';
+                          "
                         >
                           <i class="fa fa-edit"></i>
                         </a>
@@ -1781,12 +1909,14 @@
                   </thead>
                   <tbody>
                     <tr v-for="MgaOrder in order" :key="MgaOrder.doc_no">
-
                       <!-- kaloy 09-22-21 -->
-                      <td @click="copyTextToClipboard($event)"
+                      <td
+                        @click="copyTextToClipboard($event)"
                         style="cursor: copy;"
-                        title="Click to copy Transaction Number">
-                        {{ MgaOrder.tran_no }}</td>
+                        title="Click to copy Transaction Number"
+                      >
+                        {{ MgaOrder.tran_no }}
+                      </td>
                       <td>{{ MgaOrder.item_desc }}</td>
                       <td>{{ MgaOrder.itm_code }}</td>
                       <td>{{ MgaOrder.uom }}</td>
@@ -1829,9 +1959,7 @@
               </div> -->
 
               <div class="row">
-                <div class="col-md-4" style="text-align:right;">
-                  
-                </div>
+                <div class="col-md-4" style="text-align:right;"></div>
                 <div class="col-md-4" style="text-align:right;">
                   <h4>
                     <span>Total Amount:</span>
@@ -1845,7 +1973,6 @@
                   </h4>
                 </div>
               </div>
-              
             </div>
           </div>
         </div>
@@ -1896,10 +2023,13 @@
                   <tbody>
                     <tr v-for="MgaOrder in order" :key="MgaOrder.doc_no">
                       <!-- kaloy 09-22-21 -->
-                      <td @click="copyTextToClipboard($event)"
+                      <td
+                        @click="copyTextToClipboard($event)"
                         style="cursor: copy;"
-                        title="Click to copy Transaction Number">
-                        {{ MgaOrder.tran_no }}</td>
+                        title="Click to copy Transaction Number"
+                      >
+                        {{ MgaOrder.tran_no }}
+                      </td>
                       <td>{{ MgaOrder.item_desc }}</td>
                       <td>{{ MgaOrder.itm_code }}</td>
                       <td>{{ MgaOrder.uom }}</td>
@@ -1990,10 +2120,13 @@
                   <tbody>
                     <tr v-for="MgaOrder in order" :key="MgaOrder.doc_no">
                       <!-- kaloy 09-22-21 -->
-                      <td @click="copyTextToClipboard($event)"
+                      <td
+                        @click="copyTextToClipboard($event)"
                         style="cursor: copy;"
-                        title="Click to copy Transaction Number">  
-                        {{ MgaOrder.tran_no }}</td>
+                        title="Click to copy Transaction Number"
+                      >
+                        {{ MgaOrder.tran_no }}
+                      </td>
                       <td>{{ MgaOrder.item_desc }}</td>
                       <td>{{ MgaOrder.itm_code }}</td>
                       <td>{{ MgaOrder.uom }}</td>
@@ -2084,10 +2217,13 @@
                   <tbody>
                     <tr v-for="MgaOrder in order" :key="MgaOrder.doc_no">
                       <!-- kaloy 09-22-21 -->
-                      <td @click="copyTextToClipboard($event)"
+                      <td
+                        @click="copyTextToClipboard($event)"
                         style="cursor: copy;"
-                        title="Click to copy Transaction Number">
-                        {{ MgaOrder.tran_no }}</td>
+                        title="Click to copy Transaction Number"
+                      >
+                        {{ MgaOrder.tran_no }}
+                      </td>
                       <td>{{ MgaOrder.item_desc }}</td>
                       <td>{{ MgaOrder.itm_code }}</td>
                       <td>{{ MgaOrder.uom }}</td>
@@ -2160,9 +2296,7 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <div>
-            
-          </div>
+          <div></div>
           <form
             action="reupload"
             @submit.prevent="submitformreupload"
@@ -2310,11 +2444,7 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-danger"
-                data-dismiss="modal"
-              >
+              <button type="button" class="btn btn-danger" data-dismiss="modal">
                 Close
               </button>
               <!-- <button type="submit" class="btn btn-primary" id="submitformreupload"></button> -->
@@ -2348,50 +2478,59 @@
           </div>
           <div class="modal-body">
             <div>
-                <div class="row">
-                    <div class="col-md-6">
-                        Transaction #:
-                    </div>
-                    <div class="col-md-6">
-                        <strong>{{ qty_adjustment.tran_no }}</strong>
-                    </div>
+              <div class="row">
+                <div class="col-md-6">
+                  Transaction #:
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        Item Code:
-                    </div>
-                    <div class="col-md-6">
-                        <strong>{{ qty_adjustment.item_code }}</strong>
-                    </div>
+                <div class="col-md-6">
+                  <strong>{{ qty_adjustment.tran_no }}</strong>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        UOM:
-                    </div>
-                    <div class="col-md-6">
-                        <strong>{{ qty_adjustment.uom }}</strong>
-                    </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  Item Code:
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        Prev Quantity:
-                    </div>
-                    <div class="col-md-6">
-                        <strong>{{ qty_adjustment.prev_qty }}</strong>
-                    </div>
+                <div class="col-md-6">
+                  <strong>{{ qty_adjustment.item_code }}</strong>
                 </div>
-            </div><br>
-            <div>
-                <span>New Quantity</span><br/>
-                <input type="number" class="form-control" 
-                    min="1" v-model="qty_adjustment.new_qty">
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  UOM:
+                </div>
+                <div class="col-md-6">
+                  <strong>{{ qty_adjustment.uom }}</strong>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  Prev Quantity:
+                </div>
+                <div class="col-md-6">
+                  <strong>{{ qty_adjustment.prev_qty }}</strong>
+                </div>
+              </div>
             </div>
-            <hr>
+            <br />
             <div>
-                <span>Manager's Key</span><br/>
-                <input type="password" class="form-control" 
-                    v-model="qty_adjustment.mankey">
-            </div><br>
+              <span>New Quantity</span><br />
+              <input
+                type="number"
+                class="form-control"
+                min="1"
+                v-model="qty_adjustment.new_qty"
+              />
+            </div>
+            <hr />
+            <div>
+              <span>Manager's Key</span><br />
+              <input
+                type="password"
+                class="form-control"
+                v-model="qty_adjustment.mankey"
+              />
+            </div>
+            <br />
             <button
               class="btn btn-success btn-block"
               @click="submitQtyAdjustment()"
@@ -2402,11 +2541,8 @@
         </div>
       </div>
     </div>
-
   </div>
 </template>
-
-
 
 <style scoped>
 /** @format */
@@ -2427,7 +2563,6 @@
   .close {
     color: #ffffff;
   }
-
 }
 @media screen and (max-width: 768px) {
   ul.nav-tabs > li {
@@ -2442,11 +2577,11 @@
   div.tab-content div.panel-body form.row {
     padding-top: 8px;
   }
-  
+
   /* kaloy 2021-09-30 */
   div#div-total-amt {
     display: block;
-    clear: both;;
+    clear: both;
     width: 100%;
   }
   div#div-total-amt h4 {
@@ -2455,8 +2590,8 @@
 
   /* kaloy 2021-10-08 */
   /* datepicker */
-  .theme-orange { 
-    padding-bottom:10px;
+  .theme-orange {
+    padding-bottom: 10px;
   }
 }
 @media screen and (min-width: 992px) {
@@ -2481,10 +2616,7 @@
 .nav-tabs li.active {
   border-bottom: 3px solid #ff5722;
 }
-
 </style>
-
-
 
 <script>
 /** @format */
@@ -2532,6 +2664,8 @@ export default {
         total: null,
         per_page: null
       },
+
+      // mao ni sa delivered transactions (inatay hahaha)
       transaction4: {
         image: '',
         data: [],
@@ -2541,6 +2675,7 @@ export default {
         total: null,
         per_page: null
       },
+
       transaction5: {
         image: '',
         data: [],
@@ -2634,7 +2769,7 @@ export default {
       //? total amount served (Ongoing Trans' View Order Items Modal)
       //? per transaction
       total_amt_served: 0,
-      
+
       orderTable: {},
       dateActive: false,
       dateActive4: false,
@@ -2653,7 +2788,7 @@ export default {
       //   getResults: 0
       // },
       isFirstTimePageEntry: true,
-      
+
       // kaloy 2022-05-27
       qty_adjustment: {
         tran_no: '',
@@ -2776,7 +2911,7 @@ export default {
 
             vm.getTotalAmount(vm.dateFrom, vm.dateTo, searchT, vm.dateActive)
           }
-          
+
         })
     }, 500),
 
@@ -3053,7 +3188,7 @@ export default {
         )}&name=${search}&dateActive=${dateActive}`
       )
 
-      
+
       this.total_amt_tran7 = data
     },
 
@@ -3176,15 +3311,16 @@ export default {
         //       responsive: true
         //     })
         // }, 500)
-        
+
       })
       // kaloy 2021-10-05
       // this.ongoingTransactionsPendingCount()
       this.ongoingPendingCount()
       // this.methodCallCount.getResults += 1
-      
+
     },
 
+    // delivered_transactions
     getResults4(page = 1) {
       if (this.dateFrom4 != this.dateTo4) {
         this.dateActive4 = true
@@ -3244,6 +3380,18 @@ export default {
           }
         }
       })
+    },
+
+    // export to excel (delivered)
+    exportToExcelDelivered() {
+      const url = `/transaction/export-to-excel-delivered?dateFrom=${btoa(
+          this.dateFrom4
+        )}&dateTo=${btoa(this.dateTo4)}&name=&dateActive=${this.dateActive4}`;
+
+      // axios.get(url).then(response=>{
+      //   console.log(response.data);
+      // })
+      location.href = url;
     },
 
     getResults5(page = 1) {
@@ -3479,7 +3627,7 @@ export default {
       // kaloy 2021-09-28
       this.form.export_date = ''
       this.form.itm_del_count = ''
-      
+
       this.form1.tran_no2 = ''
       this.form1.itm_code = ''
       this.form1.item_desc = ''
@@ -4062,7 +4210,7 @@ export default {
     ...mapGetters('transactions',[
       'getOngoingPendingCount','getAdvancedOrdersCount'
     ]),
-    
+
     // kaloy 2021-10-05
     timeframeUntilProcessing() {
       if (this.form.export_date === null) return 'Pending...';
@@ -4108,9 +4256,8 @@ export default {
   },
 
   created() {
-    
+
   },
 
 }
-
 </script>

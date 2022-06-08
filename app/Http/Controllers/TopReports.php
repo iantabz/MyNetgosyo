@@ -8,6 +8,8 @@ use App\TbTranLine;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\SourceOrderCountController;
 
 class TopReports extends Controller
 {
@@ -25,6 +27,7 @@ class TopReports extends Controller
             ->groupByRaw('item_desc, itm_cat, itm_code, uom, amt')
             ->paginate(10);
     }
+    
 
     public function printTopProducts()
     {
@@ -397,12 +400,24 @@ class TopReports extends Controller
         $dateTo = request()->dateTo;
         $storeName = request()->storeName;
         $data = $this->dataForsourceOrderCount($dateFrom, $dateTo, $storeName);
+        $type = request()->type;
 
         $dateFrom = substr($dateFrom,0,10);
         $dateTo = substr($dateTo,0,10);
-        $pdf = PDF::loadView('reports.orders_summary', 
-            ['data' => $data['data'], 'dateFrom' => $dateFrom, 'dateTo' => $dateTo]);
-        return $pdf->download("Customer Orders Summary_$dateFrom to $dateTo.pdf");
+
+        if($type=='pdf'){
+            $pdf = PDF::loadView(
+                'reports.orders_summary', 
+                ['data' => $data['data'], 'dateFrom' => $dateFrom, 'dateTo' => $dateTo, 'type'=>'pdf']
+            );
+            return $pdf->download("Customer Orders Summary_$dateFrom to $dateTo.pdf");
+        } 
+        else if($type=='excel') {
+            return Excel::download(
+                new SourceOrderCountController($data['data'], $dateFrom, $dateTo),
+                "Customer Orders Summary_$dateFrom to $dateTo.xlsx"
+            );
+        }
     }
 
     public function dataForsourceOrderCount($dateFrom, $dateTo, $storeName) {

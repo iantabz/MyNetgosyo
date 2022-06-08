@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ExportDeliveredController;
 use App\TbTranHead;
 use App\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TransactionController extends Controller
 {
@@ -458,6 +460,8 @@ class TransactionController extends Controller
         $dateTo = Carbon::parse(base64_decode(request()->dateTo));
         $dateActive = request()->dateActive;
 
+        $excel_export = request()->excel_export ?? 0;
+
         $searchT = null;
 
         if ($dateFrom->isToday() === true && $dateTo->isToday() === true) {
@@ -517,7 +521,102 @@ class TransactionController extends Controller
 
             // $getTotal = $this->getTotalAmount();
         }
+
         return response()->json($searchT);
+    }
+
+
+    // export to excel (DELIVERED)
+    public function exportToExcelDelivered()
+    {
+        $dateFrom = Carbon::parse(base64_decode(request()->dateFrom));
+        $dateTo = Carbon::parse(base64_decode(request()->dateTo));
+
+        $searchT = null;
+
+        // if ($dateFrom->isToday() === true && $dateTo->isToday() === true) {
+        //     if ($dateActive === 'false') {
+        //         $searchT = DB::table('tb_tran_head')
+        //             ->select('tb_tran_head.*', 'salesman_lists.first_name', 'salesman_lists.last_name')
+        //             ->join('salesman_lists', 'tb_tran_head.sm_code', '=', 'salesman_lists.user_code')
+        //             ->where(function ($query) {
+        //                 $search = request()->name;
+        //                 $query->where('tb_tran_head.store_name', 'LIKE', "%$search%")
+        //                     ->orWhere('tb_tran_head.tran_no', 'LIKE', "%$search%")
+        //                     ->orWhere('tb_tran_head.order_by', 'LIKE', "%$search%")
+        //                     ->orWhere('tb_tran_head.tot_amt', 'LIKE', "%$search%")
+        //                     ->orWhere('tb_tran_head.tran_stat', 'LIKE', "%$search%")
+        //                     ->orWhere('tb_tran_head.p_meth', 'LIKE', "%$search%");
+        //             })
+        //             ->whereIn('tb_tran_head.tran_stat', ['Delivered'])
+        //             ->orderBy('tb_tran_head.id', 'DESC')
+        //             ->get();
+        //     } else {
+        //         $searchT = DB::table('tb_tran_head')
+        //             ->select('tb_tran_head.*', 'salesman_lists.first_name', 'salesman_lists.last_name')
+        //             ->join('salesman_lists', 'tb_tran_head.sm_code', '=', 'salesman_lists.user_code')
+        //             ->where(function ($query) {
+        //                 $search = request()->name;
+        //                 $query->where('tb_tran_head.store_name', 'LIKE', "%$search%")
+        //                     ->orWhere('tb_tran_head.tran_no', 'LIKE', "%$search%")
+        //                     ->orWhere('tb_tran_head.order_by', 'LIKE', "%$search%")
+        //                     ->orWhere('tb_tran_head.tot_amt', 'LIKE', "%$search%")
+        //                     ->orWhere('tb_tran_head.tran_stat', 'LIKE', "%$search%")
+        //                     ->orWhere('tb_tran_head.p_meth', 'LIKE', "%$search%");
+        //             })
+        //             ->whereIn('tb_tran_head.tran_stat', ['Delivered'])
+        //             ->whereDate('tb_tran_head.date_req', '>=', $dateFrom->toDateString())
+        //             ->WhereDate('tb_tran_head.date_req', '<=', $dateTo->toDateString())
+        //             ->orderBy('tb_tran_head.id', 'DESC')
+        //             ->get();
+        //     }
+        // } else {
+        //     $searchT = DB::table('tb_tran_head')
+        //         ->select('tb_tran_head.*', 'salesman_lists.first_name', 'salesman_lists.last_name')
+        //         ->join('salesman_lists', 'tb_tran_head.sm_code', '=', 'salesman_lists.user_code')
+        //         ->where(function ($query) {
+        //             $search = request()->name;
+        //             $query->where('tb_tran_head.store_name', 'LIKE', "%$search%")
+        //                 ->orWhere('tb_tran_head.tran_no', 'LIKE', "%$search%")
+        //                 ->orWhere('tb_tran_head.order_by', 'LIKE', "%$search%")
+        //                 ->orWhere('tb_tran_head.tot_amt', 'LIKE', "%$search%")
+        //                 ->orWhere('tb_tran_head.tran_stat', 'LIKE', "%$search%")
+        //                 ->orWhere('tb_tran_head.p_meth', 'LIKE', "%$search%");
+        //         })
+        //         ->whereIn('tb_tran_head.tran_stat', ['Delivered'])
+        //         ->whereDate('tb_tran_head.date_req', '>=', $dateFrom->toDateString())
+        //         ->WhereDate('tb_tran_head.date_req', '<=', $dateTo->toDateString())
+        //         ->orderBy('tb_tran_head.id', 'DESC')
+        //         ->get();
+
+        //     // $getTotal = $this->getTotalAmount();
+        // }
+
+        // ============= 2022-096-08 ===================
+        $searchT = DB::table('tb_tran_head')
+            ->select('tb_tran_head.*', 'salesman_lists.first_name', 'salesman_lists.last_name')
+            ->join('salesman_lists', 'tb_tran_head.sm_code', '=', 'salesman_lists.user_code')
+            ->where(function ($query) {
+                $search = request()->name;
+                $query->where('tb_tran_head.store_name', 'LIKE', "%$search%")
+                    ->orWhere('tb_tran_head.tran_no', 'LIKE', "%$search%")
+                    ->orWhere('tb_tran_head.order_by', 'LIKE', "%$search%")
+                    ->orWhere('tb_tran_head.tot_amt', 'LIKE', "%$search%")
+                    ->orWhere('tb_tran_head.tran_stat', 'LIKE', "%$search%")
+                    ->orWhere('tb_tran_head.p_meth', 'LIKE', "%$search%");
+            })
+            ->whereIn('tb_tran_head.tran_stat', ['Delivered'])
+            ->whereDate('tb_tran_head.date_req', '>=', $dateFrom->toDateString())
+            ->WhereDate('tb_tran_head.date_req', '<=', $dateTo->toDateString())
+            ->orderBy('tb_tran_head.id', 'DESC')
+            ->get();
+        
+        // $data = json_encode($searchT);
+        // dd($data);
+        return Excel::download(
+            new ExportDeliveredController($searchT, $dateFrom, $dateTo),
+            "Delivered_$dateFrom-$dateTo.xlsx"
+        );
     }
 
     

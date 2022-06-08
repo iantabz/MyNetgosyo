@@ -19,6 +19,13 @@
             >
               <i class="fa fa-print"> </i> Print Report/s ({{ customer.data.data.length }})
             </button>
+            <button
+              class="btn btn-success btn-rounded shadow"
+              @click="printBtn('excel')"
+              :disabled="!customer.data.data.length"
+            >
+              <i class="fa fa-print"> </i> Export to Excel ({{ customer.data.data.length }})
+            </button>
           </div>
         </div>
         <div class="row">
@@ -277,9 +284,10 @@ export default {
     },
   },
   methods: {
-    printBtn() {
-      document.location.href = `/topReports/printsourceOrderCount?dateFrom=${this.date}&dateTo=${this.date2}&storeName=${this.searchcustomer}`
+    printBtn(type='pdf') {
+      document.location.href = `/topReports/printsourceOrderCount?dateFrom=${this.date}&dateTo=${this.date2}&storeName=${this.searchcustomer}&type=${type}`
     },
+
     getResults: _.debounce((vm, searchKey, page = 1) => {
       let url = null
 

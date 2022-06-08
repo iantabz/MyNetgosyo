@@ -61,7 +61,8 @@
 
 <body>
 
-<header>
+@if(isset($type) && $type=='pdf')
+<div>
     <div class="title1">
         My NETgosyo
     </div>
@@ -71,8 +72,26 @@
     <div class="title3">
         {{ date('F d, Y', strtotime($dateFrom)) }} to {{ date('F d, Y', strtotime($dateTo)) }}
     </div>
-</header>
+</div>
 <br>
+@else
+<div>
+    <table>
+        <tbody>
+            <tr>
+                <td colspan="9">My NETgosyo</td>
+            </tr>
+            <tr>
+                <td colspan="9">Customer Orders Summary</td>
+            </tr>
+            <tr>
+                <td colspan="9">{{ date('F d, Y', strtotime($dateFrom)) }} to {{ date('F d, Y', strtotime($dateTo)) }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+@endif
+
 <div>
     <table>
         <tr>
@@ -193,12 +212,26 @@
         </tr>
     </table>
 </div>
+
+@if(isset($type) && $type=='pdf')
 <br>
 <div style="font-size: 11px;">
     <em>
         Run Date and Time: {{ date('F d, Y H:i:s', strtotime('now')) }}
     </em>
 </div>
+@else
+<div style="font-size: 11px;">
+    <table>
+        <tbody>
+            <tr>
+                <td colspan="9">Run Date and Time: {{ date('F d, Y H:i:s', strtotime('now')) }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+@endif
+
 </body>
 
 </html>
