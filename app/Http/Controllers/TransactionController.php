@@ -592,7 +592,7 @@ class TransactionController extends Controller
         //     // $getTotal = $this->getTotalAmount();
         // }
 
-        // ============= 2022-096-08 ===================
+        // ============= 2022-06-08 ===================
         $searchT = DB::table('tb_tran_head')
             ->select('tb_tran_head.*', 'salesman_lists.first_name', 'salesman_lists.last_name')
             ->join('salesman_lists', 'tb_tran_head.sm_code', '=', 'salesman_lists.user_code')

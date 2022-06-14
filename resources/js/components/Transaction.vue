@@ -370,9 +370,9 @@
               <div class="panel-body">
                 <!-- Date Filters -->
                 <div class="row" style="padding:10px;">
-                  <div class="col-md-6">
+                  <div class="col-md-8">
                     <div class="row">
-                      <div class="col-md-9">
+                      <div class="col-md-8">
                         <form
                           action="order4"
                           @submit.prevent="submitformorder4"
@@ -401,16 +401,19 @@
                           </div>
                         </form>
                       </div>
-                      <div class="col-md-3">
-                        <button @click="exportToExcelDelivered()">
+                      <div class="col-md-4">
+                        <label>Select date range (test)</label>
+                        <button @click="exportToExcelDelivered()" class="btn btn-sm btn-success"
+                          :disabled="!dateActive4"
+                        >
                           Export to Excel
                         </button>
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-6">
-                    <div class="col-md-6"></div>
-                    <div class="col-md-6">
+                  <div class="col-md-4">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-8">
                       <label>Search</label>
                       <input
                         type="text"
