@@ -460,7 +460,8 @@ class SalesExportFilesController extends Controller
         $pdf = PDF::loadView('reports.unserved_flowrack', ['datas' => $data]);
         return $pdf->download($filename . '.pdf');
     }
-
+    
+    // export for bcom
     public function export()
     {
         $date = Carbon::parse(base64_decode(request()->date))->toDateString();
@@ -468,102 +469,153 @@ class SalesExportFilesController extends Controller
         return Excel::download(new SalesExport, $filename);
     }
 
+    // export for bulk
     public function export2()
     {
         $date = Carbon::parse(base64_decode(request()->date))->toDateString();
         $filename = "BULK_" . $date . ".csv";
         return Excel::download(new SalesExport2, $filename);
     }
-
+    
+    // data for various (flowrack)
     public function export3()
     {
         // kaloy 2022-03-09
-        set_time_limit(3600);
-        
-        $tranno = [];
-        $date = Carbon::now()->toDateString();
-        $date1 = Carbon::now()->toDateTimeString();
-        // $date = Carbon::parse(base64_decode(request()->date))->toDateString();
-        $date_process = Carbon::parse($date1);
-
-        $gethead = DB::table('tb_tran_head')
-            ->select('tb_tran_head.*', 'customer_master_files.account_name', 'salesman_lists.first_name', 'salesman_lists.last_name')
-            ->join('customer_master_files', 'customer_master_files.account_code', '=', 'tb_tran_head.account_code')
-            ->join('salesman_lists', 'salesman_lists.user_code', '=', 'tb_tran_head.sm_code')
-            ->where('tb_tran_head.tran_stat', 'Pending')
-            ->get();
-        foreach ($gethead as $datahead) {
-
-            $total_count = 0;
-            $tot_qty = 0;
-            $tranline = [];
-
-            $getFlowrack = SalesExportFiles::select('sef_no', 'acct_code', 'acct_name', 'usercode', 'user_fname', 'product_code', 'product_name', 'product_uom', 'qty_ordered', 'date_generate')
-                ->where('file_type', '=', 'FLOWRACK')
-                ->where('flag', '=', 1)
-                ->where('sef_no', '=', $datahead->tran_no)
-                ->orderBy('product_name', 'ASC')
+        set_time_limit(0);
+        try {
+            DB::beginTransaction();
+            $tranno = [];
+            $date = Carbon::now()->toDateString();
+            $date1 = Carbon::now()->toDateTimeString();
+            // $date = Carbon::parse(base64_decode(request()->date))->toDateString();
+            $date_process = Carbon::parse($date1);
+    
+            // cut_off time
+            $get_cut_off = DB::table('order_cut_off_time')->select('cut_off_time')->first();
+            $cut_off = $get_cut_off->cut_off_time;
+            $cut_off = new Carbon("$date $cut_off");
+            // $cut_off = "$date $cut_off";
+            // dd($cut_off);
+    
+            $gethead = DB::table('tb_tran_head')
+                ->select('tb_tran_head.*', 'customer_master_files.account_name', 
+                    'salesman_lists.first_name', 'salesman_lists.last_name'
+                )
+                ->join('customer_master_files', 
+                    'customer_master_files.account_code', '=', 'tb_tran_head.account_code'
+                )
+                ->join('salesman_lists', 'salesman_lists.user_code', '=', 'tb_tran_head.sm_code')
+                ->where('tb_tran_head.tran_stat', 'Pending')
                 ->get();
-
-            $total_count = $getFlowrack->count();
-
-            if ($getFlowrack->count() > 0) {
-
-                foreach ($getFlowrack as $dataline) {
-
-                    $tot_qty = $tot_qty + $dataline->qty_ordered;
-
-                    $tranline[] = array(
-                        'sef_no'   => $dataline->sef_no,
-                        'itemcode'  => $dataline->product_code,
-                        'date_generate' => date('m/d/Y', strtotime($dataline->date_generate)),
-                        'acct_name' => $dataline->acct_name,
-                        'acct_code' => $dataline->acct_code,
-                        'product_name'  => $dataline->product_name,
-                        'product_uom'   => $dataline->product_uom,
-                        'qty_ordered'   => $dataline->qty_ordered
+            foreach ($gethead as $datahead) {
+                $total_count = 0;
+                $tot_qty = 0;
+                $tranline = [];
+                $order_by = $datahead->order_by;
+    
+                $getFlowrack = SalesExportFiles::select(
+                        'sef_no', 'acct_code', 'acct_name', 'usercode', 'user_fname', 
+                        'product_code', 'product_name', 'product_uom', 
+                        'qty_ordered', 'date_generate','date_req'
+                    )
+                    ->where(function($q) use ($cut_off, $order_by){
+                        if($order_by=='Backend') {
+                            return $q->where('date_req','<=', $cut_off)
+                                ->orWhere('date_req', '>=', $cut_off);
+                        } else {
+                            return $q->where('date_req','<=', $cut_off);
+                        }
+                    })
+                    ->where('file_type', '=', 'FLOWRACK')
+                    ->where('flag', '=', 1)
+                    ->where('sef_no', '=', $datahead->tran_no)
+                    ->orderBy('product_name', 'ASC')
+                    ->get();
+    
+                $total_count = $getFlowrack->count();
+    
+                if ($getFlowrack->count() > 0) {
+                    foreach ($getFlowrack as $dataline) {
+                        $tot_qty = $tot_qty + $dataline->qty_ordered;
+    
+                        $tranline[] = array(
+                            'sef_no'   => $dataline->sef_no,
+                            'itemcode'  => $dataline->product_code,
+                            'date_generate' => date('m/d/Y', strtotime($dataline->date_generate)),
+                            'acct_name' => $dataline->acct_name,
+                            'acct_code' => $dataline->acct_code,
+                            'product_name'  => $dataline->product_name,
+                            'product_uom'   => $dataline->product_uom,
+                            'qty_ordered'   => $dataline->qty_ordered
+                        );
+                    }
+    
+                    $tranno[] = array(
+                        'store_name'    =>  $datahead->store_name,
+                        'so_no'     =>  $datahead->tran_no,
+                        'date_now'  =>  Carbon::now()->toDateTimeString(),
+                        'acct_code'     =>  $datahead->account_code,
+                        'acct_name'     =>  $datahead->account_name,
+                        'salesman_code' =>  $datahead->sm_code,
+                        'salesman_name' =>  $datahead->first_name . " " . $datahead->last_name,
+                        'tot_qty'       =>  $tot_qty,
+                        'date_req'      =>  date('m/d/Y', strtotime($datahead->date_req)),
+                        'customer_order'    => $tranline,
+                        'total_count'   =>  $total_count
                     );
                 }
-
-                $tranno[] = array(
-                    'store_name'    =>  $datahead->store_name,
-                    'so_no'     =>  $datahead->tran_no,
-                    'date_now'  =>  Carbon::now()->toDateTimeString(),
-                    'acct_code'     =>  $datahead->account_code,
-                    'acct_name'     =>  $datahead->account_name,
-                    'salesman_code' =>  $datahead->sm_code,
-                    'salesman_name' =>  $datahead->first_name . " " . $datahead->last_name,
-                    'tot_qty'       =>  $tot_qty,
-                    'date_req'      =>  date('m/d/Y', strtotime($datahead->date_req)),
-                    'customer_order'    => $tranline,
-                    'total_count'   =>  $total_count
-                );
             }
+    
+    
+            SalesExportFiles::join('tb_tran_head', 
+                    'tb_tran_head.tran_no', '=', 'sales_export_files.sef_no'
+                )
+                ->where('sales_export_files.downloaded', '=', 'no')
+                ->where('sales_export_files.flag', '=', 1)
+                ->where('sales_export_files.file_type', '=', 'FLOWRACK')
+                // ->where('tb_tran_head.tran_stat', 'Pending')
+                ->where("sales_export_files.date_req", '>=', $cut_off)
+                ->where('tb_tran_head.order_by', '=', 'Backend')
+                // ->get();
+                // dd($query);
+                ->update([
+                    'export_date' => $date_process,
+                    'date_app' => $date_process, 
+                    'tran_stat' => 'On-Process', 
+                    'isExported' => 1, 
+                    'sales_export_files.downloaded' => 'yes', 
+                    'sales_export_files.flag' => 0
+                ]);
+    
+            SalesExportFiles::join('tb_tran_head', 
+                    'tb_tran_head.tran_no', '=', 'sales_export_files.sef_no'
+                )
+                ->where('sales_export_files.downloaded', '=', 'no')
+                ->where('sales_export_files.flag', '=', 1)
+                ->where('sales_export_files.file_type', '=', 'FLOWRACK')
+                ->where("sales_export_files.date_req", '<=', $cut_off)
+                ->orderBy('sales_export_files.sef_id', 'DESC')
+                // ->union($query)
+                // ->get();
+                // dd($query2);
+                ->update([
+                    'export_date' => $date_process,
+                    'date_app' => $date_process, 
+                    'tran_stat' => 'On-Process', 
+                    'isExported' => 1, 
+                    'sales_export_files.downloaded' => 'yes', 
+                    'sales_export_files.flag' => 0
+                ]);
+            
+            DB::commit();
+            return $tranno;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return $th->getMessage();
         }
-
-        $get_cut_off = DB::table('order_cut_off_time')->select('cut_off_time')->first();
-        $cut_off = $get_cut_off->cut_off_time;
-
-        $query = SalesExportFiles::join('tb_tran_head', 'tb_tran_head.tran_no', '=', 'sales_export_files.sef_no')
-            ->where('sales_export_files.downloaded', '=', 'no')
-            ->where('sales_export_files.flag', '=', 1)
-            ->where('sales_export_files.file_type', '=', 'FLOWRACK')
-            ->where('tb_tran_head.tran_stat', 'Pending')
-            ->where('sales_export_files.date_req', '>=', "$date $cut_off")
-            ->where('tb_tran_head.order_by', '=', 'Backend');
-
-        SalesExportFiles::join('tb_tran_head', 'tb_tran_head.tran_no', '=', 'sales_export_files.sef_no')
-            ->where('sales_export_files.downloaded', '=', 'no')
-            ->where('sales_export_files.flag', '=', 1)
-            ->where('sales_export_files.file_type', '=', 'FLOWRACK')
-            ->where('sales_export_files.date_req', '<=', "$date $cut_off")
-            ->orderBy('sales_export_files.sef_id', 'DESC')
-            ->union($query)
-            ->update(['export_date' => $date_process,'date_app' => $date_process, 'tran_stat' => 'On-Process', 'isExported' => 1, 'sales_export_files.downloaded' => 'yes', 'sales_export_files.flag' => 0]);
-
-        return $tranno;
     }
 
+    // Export for various (flowrack)
     public function transaction()
     {
         $date = Carbon::parse(base64_decode(request()->date))->toDateString();
@@ -893,10 +945,13 @@ class SalesExportFilesController extends Controller
     }
 
 
+    /**
+     * Get data for sales export (BCOM, BULK, VARIOUS)
+     */
     public function getBcom()
     {
         // kaloy 2022-03-09
-        set_time_limit(3600);
+        set_time_limit(0);
         
         // dump(?);
         $ftype = '';
@@ -1072,6 +1127,9 @@ class SalesExportFilesController extends Controller
 
         $query = SalesExportFiles::select('sales_export_files.*')
             ->join('tb_tran_head', 'tb_tran_head.tran_no', '=', 'sales_export_files.sef_no')
+            // kaloy 2022-06-28
+            ->where('sales_export_files.downloaded', '=', 'no')
+            ->where('sales_export_files.flag', '=', 1)
             ->where('sales_export_files.date_req', '>=', "$date $cut_off")
             ->where('tb_tran_head.order_by', '=', 'Backend');
 
@@ -1083,7 +1141,7 @@ class SalesExportFilesController extends Controller
             ->orderBy('sales_export_files.sef_id', 'DESC')
             ->union($query)
             // kaloy 2021-10-14
-            ->paginate(1000000);
+            ->paginate(20000);
     }
 
 
