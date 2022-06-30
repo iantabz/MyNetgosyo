@@ -972,13 +972,29 @@ class SalesExportFilesController extends Controller
         }
 
 
+        // ->join('item_masterfiles',"item_masterfiles.itemcode","=","tb_tran_line.itm_code")
         $sef = DB::table("tb_tran_head")
             ->join("tb_tran_line", "tb_tran_line.tran_no", "=", "tb_tran_head.tran_no")
+            ->join('item_masterfiles', function($join){
+                $join->on('tb_tran_line.itm_code','=','item_masterfiles.itemcode');
+                $join->on('tb_tran_line.uom','=','item_masterfiles.uom');
+                // $join->on('tb_tran_line.item_desc','=','item_masterfiles.product_name');
+            })
             ->join("customer_master_files", "customer_master_files.account_code", '=', "tb_tran_head.account_code")
             ->join("salesman_lists", "salesman_lists.user_code", '=', "tb_tran_head.sm_code")
-            ->select('tb_tran_head.tran_no', 'tb_tran_head.date_req', 'tb_tran_head.account_code', 'tb_tran_head.date_app', 'tb_tran_head.sm_code', "tb_tran_line.itm_code", "tb_tran_line.item_desc", "req_qty", "tb_tran_line.uom", "customer_master_files.account_name", "customer_master_files.branch_code", "customer_master_files.branch_name", "salesman_lists.username", "salesman_lists.first_name", "salesman_lists.last_name")
+            ->select('tb_tran_head.tran_no', 'tb_tran_head.date_req', 'tb_tran_head.account_code', 
+                'tb_tran_head.date_app', 'tb_tran_head.sm_code', "tb_tran_line.itm_code", 
+                "tb_tran_line.item_desc", "req_qty", "tb_tran_line.uom", 
+                "customer_master_files.account_name", "customer_master_files.branch_code", 
+                "customer_master_files.branch_name", "salesman_lists.username", 
+                "salesman_lists.first_name", "salesman_lists.last_name",
+                "item_masterfiles.product_name"
+                
+            )
+            // "item_masterfiles.itemcode","item_masterfiles.uom","item_masterfiles.status"
             //->whereDate('tb_tran_head.date_req', '=', $date)
             ->where('tb_tran_head.tran_stat', '=', 'Pending')
+            ->where('item_masterfiles.status', '=', 1)
             ->get();
 
 
@@ -998,10 +1014,14 @@ class SalesExportFilesController extends Controller
             $fullname = $first_name . " " . $last_name;
 
             $itm_code = $sef_data->itm_code;
-            $item_desc = $sef_data->item_desc;
+            // $item_desc = $sef_data->item_desc;
+            $item_desc = $sef_data->product_name;
             $req_qty = $sef_data->req_qty;
             $uom = $sef_data->uom;
 
+            // $isItemActive = DB::table('item_masterfiles')->where('itemcode', $itm_code)
+            //     ->where('uom', $uom)->where('status', 1)->exists();
+            // dd($isItemActive);
 
             $check = SalesExportFiles::where([['sef_no', '=', $t_no], ['product_code', '=', $itm_code], ['product_uom', '=', $uom]])
                 // ->whereDate('date_req', $date)
@@ -1038,11 +1058,10 @@ class SalesExportFilesController extends Controller
                             // $ftype = '-';
                             $data = ItemMasterfile::where('itemcode', '=', $itm_code)
                                 ->where('uom', '=', $uom)
+                                // ->where('status', 1)
                                 ->get();
 
                             foreach ($data as $datas) {
-
-
                                 if ($datas['product_family'] == 'BASIC COMMODITIES' && $datas['conversion_qty'] != '1') {
                                     $ftype = 'BCOM';
                                 } else if ($datas['product_family'] != 'BASIC COMMODITIES' && $datas['conversion_qty'] != '1') {
@@ -1057,68 +1076,68 @@ class SalesExportFilesController extends Controller
                     }
                 }
 
-
-                if (empty($date_app)) {
-                    $date_app1 = '-';
-
-                    SalesExportFiles::insert(
-                        [
-                            'sef_no' => $t_no,
-                            'cust_name' => $account_name,
-                            'po' => '1',
-                            'acct_code' => $account_code,
-                            'acct_name' => $account_name,
-                            'branch_code' => $branch_code,
-                            'branch_name' => $branch_name,
-                            'username' => $username,
-                            'usercode' => $sm_code,
-                            'user_fname' => $fullname,
-                            'timestamp' => $datenow,
-                            'product_code' => $itm_code,
-                            'product_name' => $item_desc,
-                            'product_uom' => $uom,
-                            'qty_for_delivery' => $req_qty,
-                            'qty_ordered' => $req_qty,
-                            'date_generate' => $date,
-                            'downloaded' => 'no',
-                            'file_type' => $ftype,
-                            'tag' => 'Exported',
-                            'date_req'  => $date_req,
-                            'flag' => '1',
-                            'created_at' => $date,
-                            'updated_at' => $date
-                        ]
-                    );
-                } else {
-                    SalesExportFiles::insert(
-                        [
-                            'sef_no' => $t_no,
-                            'cust_name' => $account_name,
-                            'po' => '1',
-                            'acct_code' => $account_code,
-                            'acct_name' => $account_name,
-                            'branch_code' => $branch_code,
-                            'branch_name' => $branch_name,
-                            'username' => $username,
-                            'usercode' => $sm_code,
-                            'user_fname' => $fullname,
-                            'timestamp' => $datenow,
-                            'product_code' => $itm_code,
-                            'product_name' => $item_desc,
-                            'product_uom' => $uom,
-                            'qty_for_delivery' => $req_qty,
-                            'qty_ordered' => $req_qty,
-                            'date_generate' => $date,
-                            'downloaded' => 'no',
-                            'file_type' => $ftype,
-                            'tag' => 'Exported',
-                            'date_req'  => $date_req,
-                            'flag' => '1',
-                            'created_at' => $date,
-                            'updated_at' => $date
-                        ]
-                    );
-                }
+                // if($isItemActive) {
+                    if (empty($date_app)) {
+                        $date_app1 = '-';
+                        SalesExportFiles::insert(
+                                [
+                                    'sef_no' => $t_no,
+                                    'cust_name' => $account_name,
+                                    'po' => '1',
+                                    'acct_code' => $account_code,
+                                    'acct_name' => $account_name,
+                                    'branch_code' => $branch_code,
+                                    'branch_name' => $branch_name,
+                                    'username' => $username,
+                                    'usercode' => $sm_code,
+                                    'user_fname' => $fullname,
+                                    'timestamp' => $datenow,
+                                    'product_code' => $itm_code,
+                                    'product_name' => $item_desc,
+                                    'product_uom' => $uom,
+                                    'qty_for_delivery' => $req_qty,
+                                    'qty_ordered' => $req_qty,
+                                    'date_generate' => $date,
+                                    'downloaded' => 'no',
+                                    'file_type' => $ftype,
+                                    'tag' => 'Exported',
+                                    'date_req'  => $date_req,
+                                    'flag' => '1',
+                                    'created_at' => $date,
+                                    'updated_at' => $date
+                                ]
+                        );
+                    } else {
+                        SalesExportFiles::insert(
+                            [
+                                'sef_no' => $t_no,
+                                'cust_name' => $account_name,
+                                'po' => '1',
+                                'acct_code' => $account_code,
+                                'acct_name' => $account_name,
+                                'branch_code' => $branch_code,
+                                'branch_name' => $branch_name,
+                                'username' => $username,
+                                'usercode' => $sm_code,
+                                'user_fname' => $fullname,
+                                'timestamp' => $datenow,
+                                'product_code' => $itm_code,
+                                'product_name' => $item_desc,
+                                'product_uom' => $uom,
+                                'qty_for_delivery' => $req_qty,
+                                'qty_ordered' => $req_qty,
+                                'date_generate' => $date,
+                                'downloaded' => 'no',
+                                'file_type' => $ftype,
+                                'tag' => 'Exported',
+                                'date_req'  => $date_req,
+                                'flag' => '1',
+                                'created_at' => $date,
+                                'updated_at' => $date
+                            ]
+                        );
+                    }
+                // }
             }
         }
 

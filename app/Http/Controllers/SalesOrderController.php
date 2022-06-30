@@ -45,6 +45,8 @@ class SalesOrderController extends Controller
     {
         return DB::table('tb_tran_head')
             ->where([['order_by', '=', 'Backend']])
+            // kaloy 2022-06-28
+            // ->where('tran_stat','Pending')
             ->orderBy('id', 'DESC')
             ->paginate(10);
     }
@@ -52,7 +54,10 @@ class SalesOrderController extends Controller
     public function searchAddTrans()
     {
         $search = request()->name;
-        return DB::table('tb_tran_head')->where('store_name', 'LIKE', "%$search%")->paginate(10);
+        return DB::table('tb_tran_head')->where('store_name', 'LIKE', "%$search%")
+            // kaloy 2022-06-28
+            // ->where('tran_stat','Pending')
+            ->paginate(10);
     }
 
     public function cancelOrder(Request $request)

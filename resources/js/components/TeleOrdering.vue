@@ -493,6 +493,7 @@
                           v-else
                           @click="order1(MgaAddtlTrans)"
                           class="btn btn-purple btn-xs"
+                          :disabled="MgaAddtlTrans.tran_stat!='Pending'"
                         >
                           <i class="fa fa-cart-arrow-down"></i>
                         </button>

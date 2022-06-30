@@ -613,6 +613,7 @@ class ConsolidatedTransactionController extends Controller
                                 $check5 = DB::table('item_masterfiles')
                                     ->where('itemcode', '=', $itemcode)
                                     ->where('uom', '=', $uom)
+                                    // ->where('status', 1)
                                     ->get();
     
                                 foreach ($check5 as $data5) {

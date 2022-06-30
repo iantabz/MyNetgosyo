@@ -1986,6 +1986,10 @@ class TransactionController extends Controller
             $res_tb_unserved_items = DB::table('tb_unserved_items')
                 ->where('tran_no', $transaction_number)
                 ->delete();
+
+            $res_tb_returned_tran = DB::table('tb_returned_tran')
+                ->where('tran_no', $transaction_number)
+                ->delete();
         }
     }
     
