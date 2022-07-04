@@ -220,12 +220,8 @@ class ConsolidatedTransactionController extends Controller
                     if ($data_lines[$i] != NULL) {
                         $powdered = explode("|", $data_lines[$i]);
                         $t_type = trim($powdered[0]);
-                        if (strcasecmp($t_type,'invoice')==0) {
+                        if (strcasecmp($t_type,'invoice')==0 && $t_type[0] != '#') {
                             $inv_no = trim($powdered[1]);
-
-                            // // kaloy 2022-05-27 (halt)
-                            // $inv_no = substr($inv_no,0,17);
-                            // dd($inv_no);
 
                             $cust_code = trim($powdered[2]);
                             $posting_date = date('Y-m-d', strtotime(trim($powdered[3])));
@@ -265,7 +261,6 @@ class ConsolidatedTransactionController extends Controller
                                     ->get();
     
                                 if ($check2->count() > 0) {
-    
                                     foreach ($check2 as $data2) {
                                         $discount = $data2->discount;
                                         $principal_id = $data2->principal_id;
@@ -412,7 +407,6 @@ class ConsolidatedTransactionController extends Controller
                                                         // $date_request = Carbon::parse($posting_date)->toDateString();
     
                                                         //calculation
-    
     
                                                         DB::table('tb_tran_head')
                                                             ->where('tran_no', '=', $ref_no)
@@ -617,17 +611,15 @@ class ConsolidatedTransactionController extends Controller
                                     ->get();
     
                                 foreach ($check5 as $data5) {
-    
                                     $check6 = DB::table('tbl_item_discounts')
                                         ->where('item_id', '=', $data5->item_masterfiles_id)
                                         ->get();
     
                                     if ($check6->count() > 0) {
-    
                                         foreach ($check6 as $data6) {
                                             $discountm = $data6->discount;
     
-                                            //computation
+                                            // computation
                                             $total_disct = $discountm * $qty;
                                             $total_amount = $price * $qty;
     
@@ -774,45 +766,65 @@ class ConsolidatedTransactionController extends Controller
                                     );
                                 }
                             } else if ($data_ress->req_qty < $data_ress->del_qty) {
-    
                                 // kaloy 2022-03-31
+                                // kaloy 2022-07-04
+                                // EXCESS QTY *****************************************
+                                // DB::table('tb_tran_line')
+                                //     ->where('tran_no', '=', $transactionNumber)
+                                //     ->where('itm_code', '=', $data_ress->itm_code)
+                                //     ->where('uom', '=', $data_ress->uom)
+                                //     ->update(['itm_stat' => 'Excess']);
+                                
+                                // $check_unserved = DB::table('tb_unserved_items')
+                                //     ->where('tran_no', '=', $data_ress->tran_no)
+                                //     ->where('date', '=', $date_now)
+                                //     ->where('itm_code', '=', $data_ress->itm_code)
+                                //     ->where('item_desc', '=', $data_ress->itm_code)
+                                //     ->where('qty', '=', $tot_qty)
+                                //     ->where('uom', '=', $data_ress->uom)
+                                //     ->where('amt', '=', $data_ress->amt)
+                                //     ->where('tot_amt', '=', $totall_amt)
+                                //     ->where('itm_cat', '=', $data_ress->itm_cat)
+                                //     ->where('itm_stat', '=', 'Unserved')
+                                //     ->where('flag', '=', 0)
+                                //     ->exists();
+    
+                                // if ($check_unserved === false) {
+                                //     DB::table('tb_unserved_items')->insert(
+                                //         [
+                                //             'tran_no' => $data_ress->tran_no,
+                                //             'date' => $date_now,
+                                //             'itm_code' => $data_ress->itm_code,
+                                //             'item_desc' => $data_ress->item_desc,
+                                //             'qty' => $tot_qty,
+                                //             'uom' => $data_ress->uom,
+                                //             'amt' => $data_ress->amt,
+                                //             'tot_amt' => $totall_amt,
+                                //             'itm_cat' => $data_ress->itm_cat,
+                                //             'itm_stat' => 'Unserved',
+                                //             'flag' => 0
+                                //         ]
+                                //     );
+                                // }
+                                // /EXCESS QTY *****************************************
                                 DB::table('tb_tran_line')
                                     ->where('tran_no', '=', $transactionNumber)
                                     ->where('itm_code', '=', $data_ress->itm_code)
                                     ->where('uom', '=', $data_ress->uom)
-                                    ->update(['itm_stat' => 'Excess']);
-    
-                                $check_unserved = DB::table('tb_unserved_items')
-                                    ->where('tran_no', '=', $data_ress->tran_no)
-                                    ->where('date', '=', $date_now)
-                                    ->where('itm_code', '=', $data_ress->itm_code)
-                                    ->where('item_desc', '=', $data_ress->itm_code)
-                                    ->where('qty', '=', $tot_qty)
-                                    ->where('uom', '=', $data_ress->uom)
-                                    ->where('amt', '=', $data_ress->amt)
-                                    ->where('tot_amt', '=', $totall_amt)
-                                    ->where('itm_cat', '=', $data_ress->itm_cat)
-                                    ->where('itm_stat', '=', 'Unserved')
-                                    ->where('flag', '=', 0)
-                                    ->exists();
-    
-                                if ($check_unserved === false) {
-                                    DB::table('tb_unserved_items')->insert(
-                                        [
-                                            'tran_no' => $data_ress->tran_no,
-                                            'date' => $date_now,
-                                            'itm_code' => $data_ress->itm_code,
-                                            'item_desc' => $data_ress->item_desc,
-                                            'qty' => $tot_qty,
-                                            'uom' => $data_ress->uom,
-                                            'amt' => $data_ress->amt,
-                                            'tot_amt' => $totall_amt,
-                                            'itm_cat' => $data_ress->itm_cat,
-                                            'itm_stat' => 'Unserved',
-                                            'flag' => 0
-                                        ]
-                                    );
-                                }
+                                    ->update([
+                                        // 'itm_stat' => 'Excess'
+                                        'req_qty' => $data_ress->del_qty
+                                    ]);
+                                    
+                                $qtyToAdd = abs($tot_qty);
+                                $amtToAdd = abs($totall_amt);
+                                DB::table('tb_tran_head')
+                                    ->where('tran_no', '=', $transactionNumber)
+                                    ->update([
+                                        // 'itm_stat' => 'Excess'
+                                        'itm_count' => DB::raw("itm_count + $qtyToAdd"),
+                                        'tot_amt' => DB::raw("tot_amt + $amtToAdd")
+                                    ]);
                             }
                         }
                     }
