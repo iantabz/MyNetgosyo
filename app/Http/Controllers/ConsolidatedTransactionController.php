@@ -37,6 +37,7 @@ class ConsolidatedTransactionController extends Controller
 
         $data_res = [];
         $searchKey = $request->searchKey ?? '';
+        
         $manuallyAddedOnly = $request->is_manual ?? 'false';
         $is_manual = $manuallyAddedOnly == 'false' ? 0 : 1;
 
@@ -52,13 +53,20 @@ class ConsolidatedTransactionController extends Controller
             )
 
             ->where(function ($query) use (&$searchKey) {
-                $query->where('consolidated_transactions.sales_invoice', 'like', '%' . $searchKey . '%')
-                    ->orWhere('consolidated_transactions.reference_no', 'like', '%' . $searchKey . '%')
-                    ->orWhere('consolidated_transactions.itemcode', 'like', '%' . $searchKey . '%')
-                    ->orWhere('consolidated_transactions.customer_code', 'like', '%' . $searchKey . '%')
-                    // ->orWhere('consolidated_transactions.posting_date', 'like', '%' . $searchKey . '%')
-                    // ->orWhere('consolidated_transactions.date_uploaded', 'like', '%' . $searchKey . '%')
-                ;
+                $keys = explode(' ',$searchKey);
+
+                foreach ($keys as $key) {
+                    $query->where(function($q) use($key) {
+                        $q->where('consolidated_transactions.sales_invoice', 'like', '%' . $key . '%')
+                            ->orWhere('consolidated_transactions.reference_no', 'like', '%' . $key . '%')
+                            ->orWhere('consolidated_transactions.itemcode', 'like', '%' . $key . '%')
+                            ->orWhere('consolidated_transactions.customer_code', 'like', '%' . $key . '%')
+                            // ->orWhere('consolidated_transactions.posting_date', 'like', '%' . $searchKey . '%')
+                            // ->orWhere('consolidated_transactions.date_uploaded', 'like', '%' . $searchKey . '%')
+                        ;
+                    });
+                }
+
             })
 
             // ? ========================================================================
