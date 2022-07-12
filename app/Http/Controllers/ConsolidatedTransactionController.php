@@ -37,6 +37,11 @@ class ConsolidatedTransactionController extends Controller
 
         $data_res = [];
         $searchKey = $request->searchKey ?? '';
+        $postingDate = $request->postingDate ?? '';
+        $postingDate = substr($postingDate,0,10);
+        $uploadDate = $request->uploadDate ?? '';
+        $uploadDate = substr($uploadDate,0,10);
+        
         
         $manuallyAddedOnly = $request->is_manual ?? 'false';
         $is_manual = $manuallyAddedOnly == 'false' ? 0 : 1;
@@ -52,6 +57,9 @@ class ConsolidatedTransactionController extends Controller
                 'tb_tran_head.tran_no'
             )
 
+            ->where('consolidated_transactions.posting_date', 'like', '%' . $postingDate . '%')
+            ->where('consolidated_transactions.date_uploaded', 'like', '%' . $uploadDate . '%')
+
             ->where(function ($query) use (&$searchKey) {
                 $keys = explode(' ',$searchKey);
 
@@ -61,8 +69,7 @@ class ConsolidatedTransactionController extends Controller
                             ->orWhere('consolidated_transactions.reference_no', 'like', '%' . $key . '%')
                             ->orWhere('consolidated_transactions.itemcode', 'like', '%' . $key . '%')
                             ->orWhere('consolidated_transactions.customer_code', 'like', '%' . $key . '%')
-                            // ->orWhere('consolidated_transactions.posting_date', 'like', '%' . $searchKey . '%')
-                            // ->orWhere('consolidated_transactions.date_uploaded', 'like', '%' . $searchKey . '%')
+                            
                         ;
                     });
                 }

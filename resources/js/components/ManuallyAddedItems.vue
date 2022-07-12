@@ -14,7 +14,7 @@
       </div>
       <div
         class="col-md-3"
-        style="text-align:right;"
+        style="text-align:right;display:flex;"
       >
         <input
           type="search"
@@ -22,8 +22,50 @@
           class="form-control"
           placeholder="Search"
         />
+        <button @click="showExtraFilters1 = !showExtraFilters1"
+            class="btn btn-sm btn-default"
+            title="Toggle Extra Filters"
+        >EF</button>
       </div>
     </div>
+
+    <!-- extra filters -->
+    <div 
+        v-if="showExtraFilters1"
+        class="panel" 
+        style="border:1px dotted lightgray;padding:6px;"
+    >
+        <h5>Extra Filters
+            <button
+                class="btn btn-sm btn-danger"
+                style="padding-top:1px;padding-bottom:1px;"
+                @click="postingDate='';uploadDate='';"
+            >Clear</button>
+        </h5>
+        <div class="row">
+            <div class="col-md-2">
+                <label>Posting Date</label>
+                <datetime
+                input-class="form-control"
+                class="theme-orange"
+                v-model="postingDate"
+                value-zone="Asia/Manila"
+                zone="Asia/Manila"
+                ></datetime>
+            </div>
+            <div class="col-md-2">
+                <label>Upload Date</label>
+                <datetime
+                input-class="form-control"
+                class="theme-orange"
+                v-model="uploadDate"
+                value-zone="Asia/Manila"
+                zone="Asia/Manila"
+                ></datetime>
+            </div>
+        </div>
+    </div>
+    <!-- /extra filters -->
 
     <!-- table -->
     <div class="row">
@@ -470,6 +512,9 @@
 </template>
 <style></style>
 <script>
+import { Datetime } from "vue-datetime";
+// You need a specific loader for CSS files
+import "vue-datetime/dist/vue-datetime.css";
 import { Form } from "vform";
 import Swal from "sweetalert2";
 
@@ -508,13 +553,24 @@ export default {
       }),
 
       mankey: "",
+      postingDate: "",
+      uploadDate: "",
+      showExtraFilters1: false,
     };
   },
 
-  components: {},
+  components: {
+    datetime: Datetime,
+  },
 
   watch: {
     searchKey: _.debounce(function() {
+      this.getResultsConsolidated();
+    }, 250),
+    postingDate: _.debounce(function() {
+      this.getResultsConsolidated();
+    }, 250),
+    uploadDate: _.debounce(function() {
       this.getResultsConsolidated();
     }, 250),
   },
@@ -523,7 +579,7 @@ export default {
     getResultsConsolidated(page = 1) {
       let url = `/consolidated/getConsolidated/?date=${btoa(
         this.date
-      )}&searchKey=${this.searchKey}&is_manual=true&page=`;
+      )}&searchKey=${this.searchKey}&postingDate=${this.postingDate}&uploadDate=${this.uploadDate}&is_manual=true&page=`;
       axios.get(url + page).then((response) => {
         this.manually_added_items = response.data;
       });

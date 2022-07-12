@@ -1719,6 +1719,7 @@
 
     <!-- //? Ongoing Transactions -->
     <!-- //? View Order Items Modal -->
+    <!-- ongoing_order_items -->
     <div
       class="modal fade"
       id="setupMdl1"
@@ -1727,6 +1728,7 @@
       data-backdrop="false"
       data-keyboard="false"
       aria-hidden="true"
+      style="width:100%;"
     >
       <div
         class="modal-dialog"
@@ -1761,10 +1763,10 @@
                     <tr>
                       <th>Transaction No.</th>
                       <th>Description</th>
-                      <th>Itemcode</th>
+                      <th>Item Code</th>
                       <th>UOM</th>
-                      <th>ReqQty</th>
-                      <th>DelQty</th>
+                      <th>Requested Qty</th>
+                      <th>Delivered/Served Qty</th>
                       <th>Disct</th>
                       <th>Amount</th>
                       <th>Total Amt</th>
@@ -1777,11 +1779,14 @@
                       v-for="MgaOrder in order"
                       :key="MgaOrder.doc_no"
                       :style="
-                        MgaOrder.manually_included == 1 ? 'color:#998f09;' : ''
+                        MgaOrder.manually_included == 1 ? 'color:#998f09;' 
+                        : MgaOrder.del_qty < 1 ? 'color:#b84900;' 
+                        : ''
                       "
                       :title="
                         MgaOrder.manually_included == 1
                           ? 'Manually included item'
+                          : MgaOrder.del_qty < 1 ? 'Not yet approved'
                           : ''
                       "
                     >
@@ -1845,23 +1850,25 @@
                 </table>
               </div>
 
-              <!-- Amount -->
-              <br />
-              <div class="row" style="background-color:#f5f5f5;">
+            </div>
+            <!-- /panel-body -->
+          </div>
+          <div class="modal-footer">
+            <!-- Amount -->
+            <div class="row" style="background-colorx:#f5f5f5;">
                 <div class="col-md-6" style="text-align:right;"></div>
                 <div class="col-md-3" style="text-align:right;">
-                  <h4>
+                    <h4>
                     <span>Total Amount:</span>
                     <span>{{ total_amt_line | toCurrency }}</span>
-                  </h4>
+                    </h4>
                 </div>
                 <div class="col-md-3" style="text-align:right;">
-                  <h4>
+                    <h4>
                     <span>Total Amount Served:</span>
                     <span>{{ total_amt_served | toCurrency }}</span>
-                  </h4>
+                    </h4>
                 </div>
-              </div>
             </div>
           </div>
         </div>

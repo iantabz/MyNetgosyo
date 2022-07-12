@@ -81,7 +81,9 @@
 
                       <!-- import_si -->
                       <form id="myForm1" @submit.prevent="submitFiles1">
-                        <div class="row">
+                        <div class="row"
+                            style=""
+                        >
                           <div class="col-md-6">
                             <input
                               type="file"
@@ -123,14 +125,59 @@
                       </form>
                     </div>
                     <div class="col-md-3 table-toolbar-right">
-                      <input
-                        type="search"
-                        v-model="searchKey"
-                        class="form-control"
-                        placeholder="Search"
-                      />
+                        <div style="display:flex;">
+                            <input
+                                type="search"
+                                v-model="searchKey"
+                                class="form-control"
+                                placeholder="Search"
+                            />
+                            <button @click="showExtraFilters1 = !showExtraFilters1"
+                                class="btn btn-sm btn-default"
+                                title="Toggle Extra Filters"
+                            >EF</button>
+                        </div>
                     </div>
                   </div>
+
+                    <!-- extra filters -->
+                    <div 
+                        v-if="showExtraFilters1"
+                        class="panel" 
+                        style="border:1px dotted lightgray;padding:6px;"
+                    >
+                        <h5>Extra Filters
+                            <button
+                                class="btn btn-sm btn-danger"
+                                style="padding-top:1px;padding-bottom:1px;"
+                                @click="postingDate='';uploadDate='';"
+                            >Clear</button>
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label>Posting Date</label>
+                                <datetime
+                                input-class="form-control"
+                                class="theme-orange"
+                                v-model="postingDate"
+                                value-zone="Asia/Manila"
+                                zone="Asia/Manila"
+                                ></datetime>
+                            </div>
+                            <div class="col-md-2">
+                                <label>Upload Date</label>
+                                <datetime
+                                input-class="form-control"
+                                class="theme-orange"
+                                v-model="uploadDate"
+                                value-zone="Asia/Manila"
+                                zone="Asia/Manila"
+                                ></datetime>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /extra filters -->
+
                   <div style="background-color:#f2f2f2;padding:2px 6px;">
                     <a
                       href="javascript:void(0)"
@@ -1316,7 +1363,7 @@ import _ from "lodash";
 import { Datetime } from "vue-datetime";
 // You need a specific loader for CSS files
 import "vue-datetime/dist/vue-datetime.css";
-// import moment from 'moment'
+import moment from 'moment'
 import { DateTime } from "luxon";
 
 Vue.use(require("vue-moment"));
@@ -1440,6 +1487,9 @@ export default {
       searchItemsBCOM: null,
       category: null,
       searchKey: "",
+      postingDate: "",
+      uploadDate: "",
+      showExtraFilters1: false,
     };
   },
   components: {
@@ -1452,6 +1502,12 @@ export default {
     },
 
     searchKey: _.debounce(function() {
+      this.getResultsConsolidated();
+    }, 250),
+    postingDate: _.debounce(function() {
+      this.getResultsConsolidated();
+    }, 250),
+    uploadDate: _.debounce(function() {
       this.getResultsConsolidated();
     }, 250),
   },
@@ -1494,7 +1550,7 @@ export default {
     getResultsConsolidated(page = 1) {
       let url = `/consolidated/getConsolidated/?date=${btoa(
         this.date
-      )}&searchKey=${this.searchKey}&is_manual=false&page=`;
+      )}&searchKey=${this.searchKey}&postingDate=${this.postingDate}&uploadDate=${this.uploadDate}&is_manual=false&page=`;
       axios.get(url + page).then((response) => {
         this.consolidated = response.data;
       });
