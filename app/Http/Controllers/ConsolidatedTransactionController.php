@@ -331,7 +331,7 @@ class ConsolidatedTransactionController extends Controller
                                                         $consolidate->is_manual = $isItemManuallyAdded;
                                                         $consolidate->save();
     
-                                                        // $date_request = Carbon::parse($posting_date)->toDateString();
+                                                        // $date_request = Carbon:0707221-PAN-00648:parse($posting_date)->toDateString();
                                                         //calculation
                                                         $disct = $discount / 100;
                                                         $discounted_line_amt = $disct * $total_amt;
@@ -709,17 +709,15 @@ class ConsolidatedTransactionController extends Controller
                     $ress = DB::table('tb_tran_line')
                         ->where('tran_no', '=', $transactionNumber)
                         ->where('tb_tran_line.req_qty', '<>', 'tb_tran_line.del_qty')
-                        ->where('del_qty', '<>', 0)
+                        // ->where('del_qty', '<>', 0)
                         ->get();
     
                     $date_now = Carbon::now();
     
                     if ($ress->count() > 0) {
-    
                         // dd($ress);
     
                         foreach ($ress as $data_ress) {
-    
                             $qty1 = $data_ress->req_qty;
                             $qty2 = $data_ress->del_qty;
                             $amt1 = $data_ress->amt;
@@ -735,12 +733,15 @@ class ConsolidatedTransactionController extends Controller
                             //     ->update(['tot_del_amt' => $total2]);
     
                             if ($data_ress->req_qty > $data_ress->del_qty) {
-                                // kaloy 2022-03-31
-                                DB::table('tb_tran_line')
-                                    ->where('tran_no', '=', $transactionNumber)
-                                    ->where('itm_code', '=', $data_ress->itm_code)
-                                    ->where('uom', '=', $data_ress->uom)
-                                    ->update(['itm_stat' => 'Lacking']);
+                                
+                                // if del_qty is greater than zero, set status as 'lacking'
+                                if($data_ress->del_qty > 0) {
+                                    DB::table('tb_tran_line')
+                                        ->where('tran_no', '=', $transactionNumber)
+                                        ->where('itm_code', '=', $data_ress->itm_code)
+                                        ->where('uom', '=', $data_ress->uom)
+                                        ->update(['itm_stat' => 'Lacking']);
+                                }
     
                                 $check_unserved = DB::table('tb_unserved_items')
                                     ->where('tran_no', '=', $data_ress->tran_no)
