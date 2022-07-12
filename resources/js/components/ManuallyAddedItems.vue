@@ -81,7 +81,10 @@
             Refresh List
           </a>
         </div>
+
+        <spinner v-if="fetchingItems"></spinner>
         <table
+            v-else
           id="consolidated_table"
           class="
             table
@@ -170,6 +173,7 @@
             </tr>
           </tbody>
         </table>
+        
       </div>
     </div>
 
@@ -556,6 +560,7 @@ export default {
       postingDate: "",
       uploadDate: "",
       showExtraFilters1: false,
+      fetchingItems: false,
     };
   },
 
@@ -580,8 +585,12 @@ export default {
       let url = `/consolidated/getConsolidated/?date=${btoa(
         this.date
       )}&searchKey=${this.searchKey}&postingDate=${this.postingDate}&uploadDate=${this.uploadDate}&is_manual=true&page=`;
+
+      this.fetchingItems = true;
       axios.get(url + page).then((response) => {
         this.manually_added_items = response.data;
+      }).then(()=>{
+        this.fetchingItems=false;
       });
     },
 

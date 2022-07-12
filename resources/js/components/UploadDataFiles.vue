@@ -187,7 +187,10 @@
                       Refresh List
                     </a>
                   </div>
+                  
+                  <spinner v-if="fetchingItems"></spinner>
                   <table
+                    v-else
                     id="consolidated_table"
                     class="
                       table
@@ -264,6 +267,7 @@
                       </tr>
                     </tbody>
                   </table>
+
                   <div class="row">
                     <div class="col-md-12">
                       <div class="col-md-6">
@@ -1353,6 +1357,18 @@
 }
 </style>
 
+
+<!-- ******************************************************************** -->
+<!-- ******************************************************************** -->
+<!-- ******************************************************************** -->
+<!-- ******************************************************************** -->
+<!-- ******************************************************************** -->
+<!-- ******************************************************************** -->
+<!-- ******************************************************************** -->
+<!-- ******************************************************************** -->
+<!-- ******************************************************************** -->
+<!-- ******************************************************************** -->
+<!-- ******************************************************************** -->
 <script>
 /** @format */
 import Vue from "vue";
@@ -1490,6 +1506,7 @@ export default {
       postingDate: "",
       uploadDate: "",
       showExtraFilters1: false,
+      fetchingItems: false,
     };
   },
   components: {
@@ -1511,6 +1528,8 @@ export default {
       this.getResultsConsolidated();
     }, 250),
   },
+
+
   methods: {
     searchC() {
       this.searchForConsolidated(this.searchConsolidated, this);
@@ -1551,8 +1570,12 @@ export default {
       let url = `/consolidated/getConsolidated/?date=${btoa(
         this.date
       )}&searchKey=${this.searchKey}&postingDate=${this.postingDate}&uploadDate=${this.uploadDate}&is_manual=false&page=`;
+
+      this.fetchingItems = true;
       axios.get(url + page).then((response) => {
         this.consolidated = response.data;
+      }).then(()=>{
+        this.fetchingItems = false;
       });
     },
 
