@@ -59,7 +59,8 @@
             </li>
           </ul>
           <div class="tab-content" style="background-color:#ffffff; padding:0;">
-            <!-- Ongoing Transactions Tab -->
+
+            <!--************** ongoing_tab **************-->
             <div id="demo-lft-tab-1" class="tab-pane fade active in">
               <!-- style="background-color:#ffffff; padding:2px;" -->
               <div class="panel-body">
@@ -75,7 +76,7 @@
                           enctype="multipart/form-data"
                           class="form-horizontal"
                         >
-                          <div class="col-sm-6">
+                          <div class="col-sm-4">
                             <label>Date From</label>
                             <datetime
                               input-class="form-control"
@@ -86,7 +87,7 @@
                               id="dt-picker-from-1"
                             ></datetime>
                           </div>
-                          <div class="col-sm-6">
+                          <div class="col-sm-4">
                             <label>Date To</label>
                             <datetime
                               input-class="form-control"
@@ -97,6 +98,15 @@
                               id="dt-picker-to-1"
                             ></datetime>
                           </div>
+                          <div class="col-sm-4">
+                            <label>Status</label>
+                            <select v-model="ongoing_statusFilter" class="form-control">
+                                <option value="">All</option>
+                                <option value="Pending">Submitted</option>
+                                <option value="On-Process">On-Process</option>
+                                <option value="Approved">Approved</option>
+                            </select>
+                        </div>
                         </form>
                       </div>
                       <div class="col-sm-6">
@@ -113,8 +123,8 @@
                         </div>
                       </div>
                     </div>
-
                     <!-- /ongoingtrans_table_filter -->
+
                     <div class="table-responsive" style="padding:5px;">
                       <!-- kaloy 2021-10-11 -->
                       <!-- refresh_ongoing -->
@@ -365,7 +375,7 @@
               </div>
             </div>
 
-            <!-- Delivered Tab Content -->
+            <!--************** delivered_tab **************-->
             <div id="demo-lft-tab-5" class="tab-pane fade">
               <div class="panel-body">
                 <!-- Date Filters -->
@@ -2865,6 +2875,8 @@ export default {
       },
 
       showUndeliveredItems: false,
+      ongoing_statusFilter: '',
+
     }
   },
   components: {
@@ -2928,7 +2940,12 @@ export default {
     getAdvancedOrdersCount() {
       // console.log('Calling getResults7() from getAdvancedOrdersCount() watch method!')
       this.getResults7()
-    }
+    },
+
+    ongoing_statusFilter() {
+        console.log(this.ongoing_statusFilter);
+        this.getResults();
+    },
 
   },
 
@@ -2968,14 +2985,14 @@ export default {
             if (vm.dateActive === true) {
               vm.total_amt_tran = 0
 
-              vm.getTotalAmount(vm.dateFrom, vm.dateTo, searchT, vm.dateActive)
+              vm.getTotalAmount(vm.dateFrom, vm.dateTo, searchT, vm.dateActive, vm.ongoing_statusFilter)
             } else {
               vm.getAllTotalAmount()
             }
           } else {
             vm.total_amt_tran = 0
 
-            vm.getTotalAmount(vm.dateFrom, vm.dateTo, searchT, vm.dateActive)
+            vm.getTotalAmount(vm.dateFrom, vm.dateTo, searchT, vm.dateActive, vm.ongoing_statusFilter)
           }
 
         })
@@ -3195,12 +3212,12 @@ export default {
         })
     }, 500),
 
-    async getTotalAmount(dateFrom, dateTo, search, dateActive) {
+    async getTotalAmount(dateFrom, dateTo, search, dateActive, status) {
       // console.log(dateFrom, dateTo)
       const { data } = await axios.get(
         `transaction/getTotalAmount?dateFrom=${btoa(dateFrom)}&dateTo=${btoa(
           dateTo
-        )}&name=${search}&dateActive=${dateActive}`
+        )}&name=${search}&dateActive=${dateActive}&status=${status}`
       )
 
       // kaloy 2022-04-11
@@ -3259,7 +3276,7 @@ export default {
     },
 
     async getAllTotalAmount() {
-      const { data } = await axios.get('transaction/getTotalAll')
+      const { data } = await axios.get(`transaction/getTotalAll?status=${this.ongoing_statusFilter}`)
       // kaloy 2022-04-11
       this.total_amt_tran = data.total_amount_all_ongoing;
       this.total_amt_approved = data.total_amount_all_approved;
@@ -3309,7 +3326,7 @@ export default {
         this.dateFrom
       )}&dateTo=${btoa(this.dateTo)}&name=${this.searchTrans}&dateActive=${
         this.dateActive
-      }&page=`;
+      }&status=${this.ongoing_statusFilter}&page=`;
 
       // kaloy 2021-09-29
       this.isLoadingTextVisible = 1
@@ -3365,7 +3382,8 @@ export default {
             this.dateFrom,
             this.dateTo,
             this.searchTrans,
-            this.dateActive
+            this.dateActive,
+            this.ongoing_statusFilter
           );
         }
 

@@ -260,12 +260,15 @@ class TransactionController extends Controller
         $dateFrom = Carbon::parse(base64_decode(request()->dateFrom));
         $dateTo = Carbon::parse(base64_decode(request()->dateTo));
         $dateActive = request()->dateActive;
+        $status = request()->status ?? '';
 
         if ($dateFrom->isToday() === true && $dateTo->isToday() === true) {
             if ($dateActive === 'false') {
                 $searchT = DB::table('tb_tran_head')
                     ->select('tb_tran_head.*', 'salesman_lists.first_name', 'salesman_lists.last_name')
                     ->join('salesman_lists', 'tb_tran_head.sm_code', '=', 'salesman_lists.user_code')
+                    // kaloy 2022-0713
+                    ->where('tb_tran_head.tran_stat','LIKE', "%$status%")
                     ->where(function ($query) {
                         $search = request()->name;
                         $query->where('tb_tran_head.store_name', 'LIKE', "%$search%")
@@ -297,6 +300,8 @@ class TransactionController extends Controller
                 $searchT = DB::table('tb_tran_head')
                     ->select('tb_tran_head.*', 'salesman_lists.first_name', 'salesman_lists.last_name')
                     ->join('salesman_lists', 'tb_tran_head.sm_code', '=', 'salesman_lists.user_code')
+                    // kaloy 2022-0713
+                    ->where('tb_tran_head.tran_stat','LIKE', "%$status%")
                     ->where(function ($query) {
                         $search = request()->name;
                         $query->where('tb_tran_head.store_name', 'LIKE', "%$search%")
@@ -331,6 +336,8 @@ class TransactionController extends Controller
             $searchT = DB::table('tb_tran_head')
                 ->select('tb_tran_head.*', 'salesman_lists.first_name', 'salesman_lists.last_name')
                 ->join('salesman_lists', 'tb_tran_head.sm_code', '=', 'salesman_lists.user_code')
+                // kaloy 2022-0713
+                ->where('tb_tran_head.tran_stat','LIKE', "%$status%")
                 ->where(function ($query) {
                     $search = request()->name;
                     $query->where('tb_tran_head.store_name', 'LIKE', "%$search%")
@@ -922,11 +929,15 @@ class TransactionController extends Controller
 
         $dateActive = request()->dateActive;
 
+        // 2022-07-13
+        $status = request()->status ?? '';
+
         if (request()->name != 'null') {
             if ($dateFrom->isToday() === true && $dateTo->isToday() === true) {
 
                 if ($dateActive === 'false') {
                     $calc = DB::table('tb_tran_head')
+                        ->where('tb_tran_head.tran_stat', 'LIKE', "%$status%")
                         ->where(function ($query) {
                             $search = request()->name;
                             $query->where('tb_tran_head.store_name', 'LIKE', "%$search%")
@@ -936,7 +947,9 @@ class TransactionController extends Controller
                                 ->orWhere('tb_tran_head.tran_stat', 'LIKE', "%$search%")
                                 ->orWhere('tb_tran_head.p_meth', 'LIKE', "%$search%");
                         })
-                        ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
+                        // ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
+                        // kaloy 2022-07-13
+                        ->where('tb_tran_head.tran_stat','<>', 'Delivered')
                         // kaloy 2022-04-08 ==============================================
                         ->where(function($query){
                             $dateToday = date('Y-m-d', strtotime('today'));
@@ -973,6 +986,7 @@ class TransactionController extends Controller
                     }
                 } else {
                     $calc = DB::table('tb_tran_head')
+                        ->where('tb_tran_head.tran_stat', 'LIKE', "%$status%")
                         ->where(function ($query) {
                             $search = request()->name;
                             $query->where('tb_tran_head.store_name', 'LIKE', "%$search%")
@@ -982,7 +996,9 @@ class TransactionController extends Controller
                                 ->orWhere('tb_tran_head.tran_stat', 'LIKE', "%$search%")
                                 ->orWhere('tb_tran_head.p_meth', 'LIKE', "%$search%");
                         })
-                        ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
+                        // ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
+                        // kaloy 2022-07-13
+                        ->where('tb_tran_head.tran_stat','<>', 'Delivered')
                         ->whereDate('tb_tran_head.date_req', '>=', $dateFrom->toDateString())
                         ->WhereDate('tb_tran_head.date_req', '<=', $dateTo->toDateString())
                         // kaloy 2022-04-08 ==============================================
@@ -1022,6 +1038,7 @@ class TransactionController extends Controller
                 }
             } else {
                 $calc = DB::table('tb_tran_head')
+                    ->where('tb_tran_head.tran_stat', 'LIKE', "%$status%")
                     ->where(function ($query) {
                         $search = request()->name;
                         $query->where('tb_tran_head.store_name', 'LIKE', "%$search%")
@@ -1031,7 +1048,9 @@ class TransactionController extends Controller
                             ->orWhere('tb_tran_head.tran_stat', 'LIKE', "%$search%")
                             ->orWhere('tb_tran_head.p_meth', 'LIKE', "%$search%");
                     })
-                    ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
+                    // ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
+                    // kaloy 2022-07-13
+                    ->where('tb_tran_head.tran_stat','<>', 'Delivered')
                     ->whereDate('tb_tran_head.date_req', '>=', $dateFrom->toDateString())
                     ->WhereDate('tb_tran_head.date_req', '<=', $dateTo->toDateString())
                     // kaloy 2022-04-08 ==============================================
@@ -1071,7 +1090,10 @@ class TransactionController extends Controller
             }
         } else {
             $calc = DB::table('tb_tran_head')
-                ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
+                ->where('tb_tran_head.tran_stat', 'LIKE', "%$status%")
+                // ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
+                // kaloy 2022-07-13
+                ->where('tb_tran_head.tran_stat','<>', 'Delivered')
                 ->whereDate('tb_tran_head.date_req', '>=', $dateFrom->toDateString())
                 ->WhereDate('tb_tran_head.date_req', '<=', $dateTo->toDateString())
                 // kaloy 2022-04-08 ==============================================
@@ -1487,9 +1509,14 @@ class TransactionController extends Controller
         $totalAmountAllOngoing = 0.00;
         $totalAmountAllApproved = 0.00;
 
+        //kaloy 2022-07-13
+        $status = request()->status ?? '';
+
         $calc = DB::table('tb_tran_head')
         // kaloy 2022-04-11
-        ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
+        // ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
+        ->where('tb_tran_head.tran_stat','LIKE', "%$status%")
+        ->where('tb_tran_head.tran_stat','<>', 'Delivered')
         ->where(function($query){
             $dateToday = date('Y-m-d', strtotime('today'));
             $cutOffTime = DB::table('order_cut_off_time')
