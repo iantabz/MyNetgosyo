@@ -1918,7 +1918,9 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="MgaOrder in order" :key="MgaOrder.doc_no">
+                    <tr v-for="MgaOrder in order" :key="MgaOrder.doc_no"
+                        :style="MgaOrder.del_qty < 1 ? 'color:#b84900;' : ''"
+                    >
                       <!-- kaloy 09-22-21 -->
                       <td
                         @click="copyTextToClipboard($event)"
@@ -1953,6 +1955,55 @@
                     </tr>
                   </tbody>
                 </table>
+
+                <!-- undelivered -->
+                <div v-if="!showUndeliveredItems">
+                    <button class="btn btn-default" @click="showUndeliveredItems=true">View Undelivered Items</button>
+                </div>
+                <div v-else class="" style="border:1px dotted lightgrey;padding:6px;">
+                    <div style="display:flex;">
+                        <h5>
+                            Undelivered Items
+                        </h5>
+                        <button 
+                            class="btn btn-default" 
+                            style="padding-top:0;padding-bottom:0;"
+                            @click="showUndeliveredItems=false"
+                        >
+                            Hide
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table" style="font-size:12px;">
+                            <thead>
+                                <th>Description</th>
+                                <th>Itemcode</th>
+                                <th>UOM</th>
+                                <th>ReqQty</th>
+                                <th>DelQty</th>
+                                <th>Disct</th>
+                                <th>Amount</th>
+                                <th>Total Amt</th>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="undeliveredItem in order.filter(e=>e.itm_stat!='Delivered')"
+                                    :key="undeliveredItem.itm_code + 101"
+                                    :style="undeliveredItem.del_qty < 1 ? 'color:#b84900;' : 'color:orange;'"
+                                >
+                                    <td>{{ undeliveredItem.item_desc }}</td>
+                                    <td>{{ undeliveredItem.itm_code }}</td>
+                                    <td>{{ undeliveredItem.uom }}</td>
+                                    <td>{{ undeliveredItem.req_qty }}</td>
+                                    <td>{{ undeliveredItem.del_qty }}</td>
+                                    <td>{{ parseFloat(undeliveredItem.discount).toFixed(2) }}&#37;</td>
+                                    <td>{{ undeliveredItem.amt | toCurrency }}</td>
+                                    <td>{{ undeliveredItem.tot_amt | toCurrency }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
               </div>
               <br />
               <!-- <div class="row" style="text-align: right;">
@@ -1983,8 +2034,11 @@
                   </h4>
                 </div>
               </div>
+
+              
             </div>
           </div>
+          
         </div>
       </div>
     </div>
@@ -2809,6 +2863,8 @@ export default {
         new_qty: null,
         mankey: '',
       },
+
+      showUndeliveredItems: false,
     }
   },
   components: {
@@ -4242,7 +4298,6 @@ export default {
       let diff = moment(`${this.form.date_del}`).diff(moment(`${this.form.date_req}`));
       return humanizeDuration(diff);
     },
-
   },
 
   mounted() {

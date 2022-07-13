@@ -7,24 +7,34 @@
             <i class="fa fa-upload"></i> Miscellaneous Utilities
           </h3>
         </div>
-        <div class="row">
-          <div class="col-md-6">
-            <card title="Revert Transaction/s">
-              <RevertTrans></RevertTrans>
-            </card>
-          </div>
-          <div class="col-md-6">
-            <card title="Test 1">
-              <DeleteTrans></DeleteTrans>
-            </card>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <card title="Generate S.I. Test Data">
-              <GenerateSITest></GenerateSITest>
-            </card>
-          </div>
+        <div class="panel-body">
+            <div class="row">
+              <div class="col-md-6">
+                <button
+                    class="btn btn-sm btn-default" 
+                    @click="showRevert=!showRevert">{{ showRevert==true ? 'Hide' : 'Show' }}
+                </button>
+                <card title="Revert Transaction/s">
+                  <RevertTrans v-if="showRevert"></RevertTrans>
+                </card>
+              </div>
+              <div class="col-md-6">
+                <button
+                    class="btn btn-sm btn-default" 
+                    @click="showDelete=!showDelete">{{ showDelete==true ? 'Hide' : 'Show' }}
+                </button>
+                <card title="Delete Transaction/s">
+                  <DeleteTrans v-if="showDelete"></DeleteTrans>
+                </card>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <card title="Generate S.I. Test Data">
+                  <GenerateSITest></GenerateSITest>
+                </card>
+              </div>
+            </div>
         </div>
       </div>
     </div>
@@ -48,7 +58,8 @@ export default {
 
   data() {
     return {
-
+        showDelete: false,
+        showRevert: false,
     }
   },
 

@@ -178,13 +178,13 @@
                     </div>
                     <!-- /extra filters -->
 
-                  <div style="background-color:#f2f2f2;padding:2px 6px;">
+                  <div style="padding-right:4px;">
                     <a
                       href="javascript:void(0)"
-                      class="btn btn-sm btn-secondary"
+                      class="txt-info btn pull-right"
                       @click="getResultsConsolidated()"
                     >
-                      Refresh List
+                      <span class="primary fa fa-refresh"></span>
                     </a>
                   </div>
                   
