@@ -26,7 +26,11 @@ class ItemMasterfileImport implements ToModel, WithHeadingRow
         $default_path = 'item-images/no_image_item.jpg';
         $default_path1 = 'no_image_item.jpg';
 
-        $pname = ItemMasterfile::where([['product_name', '=', trim($row['Product Name'])], ['itemcode', '=', trim($row['Item Code'])], ['uom', '=', trim($row['Unit of Measure'])]])->exists();
+        $pname = ItemMasterfile::where([
+                // ['product_name', '=', trim($row['Product Name'])], 
+                ['itemcode', '=', trim($row['Item Code'])], 
+                ['uom', '=', trim($row['Unit of Measure'])]
+            ])->exists();
 
         if ($pname === false) {
 
@@ -78,7 +82,12 @@ class ItemMasterfileImport implements ToModel, WithHeadingRow
             //TODO: 2022-04-11 Lines below was transferred to ItemMasterfileController.php
             // ...
 
-            $s_data = ItemMasterfile::where([['product_name', '=', trim($row['Product Name'])], ['itemcode', '=', trim($row['Item Code'])], ['uom', '=', trim($row['Unit of Measure'])]])->get();
+            $s_data = ItemMasterfile::where([
+                    // ['product_name', '=', trim($row['Product Name'])], 
+                    ['itemcode', '=', trim($row['Item Code'])], 
+                    ['uom', '=', trim($row['Unit of Measure'])]
+                ])->get();
+
             if (!empty($s_data)) {
 
                 foreach ($s_data as $rows) {
@@ -89,12 +98,7 @@ class ItemMasterfileImport implements ToModel, WithHeadingRow
                         'status' => 1
                     ]);
 
-
-
                     if ($rows['list_price_wtax'] != trim($row['List Price with Tax'])) {
-
-
-
                         ItemMasterfile::where('item_masterfiles_id', '=', $rows['item_masterfiles_id'])
                             ->update(['list_price_wtax' => trim($row['List Price with Tax'])]);
 
@@ -257,8 +261,6 @@ class ItemMasterfileImport implements ToModel, WithHeadingRow
                     } else {
                     }
                     if ($rows['description'] != trim($row['Description'])) {
-
-
                         ItemMasterfile::where('item_masterfiles_id', '=', $rows['item_masterfiles_id'])
                             ->update(['description' => trim($row['Description'])]);
 
@@ -281,6 +283,39 @@ class ItemMasterfileImport implements ToModel, WithHeadingRow
                             'keywords2' => '',
                             'description1' => $rows['description'],
                             'description2' => trim($row['Description']),
+                            'date_from' => $rows['date_uploaded'],
+                            'date_to' => $date,
+                            'date_uploaded' => $date,
+                            'flag' => 0,
+
+                        ]);
+                    } else {
+                    }
+
+                    // kaloy 2022-07-14
+                    if ($rows['product_name'] != trim($row['Product Name'])) {
+                        ItemMasterfile::where('item_masterfiles_id', '=', $rows['item_masterfiles_id'])
+                            ->update(['product_name' => trim($row['Product Name'])]);
+
+                        ItemHistoryLog::create([
+                            'item_masterfile_id' => $rows['item_masterfiles_id'],
+                            'product_name' => $rows['product_name'],
+                            'itemcode'  => $rows['itemcode'],
+                            'uom'   =>  $rows['uom'],
+                            'price1' => $rows['list_price_wtax'],
+                            'price2' => '',
+                            'uom1' => $rows['uom'],
+                            'uom2' => '',
+                            'product_family1' => $rows['product_family'],
+                            'product_family2' => '',
+                            'principal1' => $rows['principal'],
+                            'principal2' => '',
+                            'brand1' => $rows['brand'],
+                            'brand2' => '',
+                            'keywords1' => $rows['keywords'],
+                            'keywords2' => '',
+                            'description1' => $rows['description'],
+                            'description2' => '',
                             'date_from' => $rows['date_uploaded'],
                             'date_to' => $date,
                             'date_uploaded' => $date,

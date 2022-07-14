@@ -267,18 +267,25 @@ class TransactionController extends Controller
                 $searchT = DB::table('tb_tran_head')
                     ->select('tb_tran_head.*', 'salesman_lists.first_name', 'salesman_lists.last_name')
                     ->join('salesman_lists', 'tb_tran_head.sm_code', '=', 'salesman_lists.user_code')
-                    // kaloy 2022-0713
-                    ->where('tb_tran_head.tran_stat','LIKE', "%$status%")
+                    
                     ->where(function ($query) {
                         $search = request()->name;
                         $query->where('tb_tran_head.store_name', 'LIKE', "%$search%")
                             ->orWhere('tb_tran_head.tran_no', 'LIKE', "%$search%")
                             ->orWhere('tb_tran_head.order_by', 'LIKE', "%$search%")
                             ->orWhere('tb_tran_head.tot_amt', 'LIKE', "%$search%")
-                            ->orWhere('tb_tran_head.tran_stat', 'LIKE', "%$search%")
+                            // ->orWhere('tb_tran_head.tran_stat', 'LIKE', "%$search%")
                             ->orWhere('tb_tran_head.p_meth', 'LIKE', "%$search%");
                     })
-                    ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
+                    // ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
+                    
+                    
+
+                    ->where(function($q) use($status) {
+                        $q->where('tb_tran_head.tran_stat','<>', 'Delivered')
+                            // kaloy 2022-0713
+                            ->where('tb_tran_head.tran_stat','LIKE', "%$status%");
+                    })
 
                     // kaloy 2021-09-23 ==============================================
                     ->where(function($query){
@@ -300,19 +307,24 @@ class TransactionController extends Controller
                 $searchT = DB::table('tb_tran_head')
                     ->select('tb_tran_head.*', 'salesman_lists.first_name', 'salesman_lists.last_name')
                     ->join('salesman_lists', 'tb_tran_head.sm_code', '=', 'salesman_lists.user_code')
-                    // kaloy 2022-0713
-                    ->where('tb_tran_head.tran_stat','LIKE', "%$status%")
+                    
                     ->where(function ($query) {
                         $search = request()->name;
                         $query->where('tb_tran_head.store_name', 'LIKE', "%$search%")
                             ->orWhere('tb_tran_head.tran_no', 'LIKE', "%$search%")
                             ->orWhere('tb_tran_head.order_by', 'LIKE', "%$search%")
                             ->orWhere('tb_tran_head.tot_amt', 'LIKE', "%$search%")
-                            ->orWhere('tb_tran_head.tran_stat', 'LIKE', "%$search%")
+                            // ->orWhere('tb_tran_head.tran_stat', 'LIKE', "%$search%")
                             ->orWhere('tb_tran_head.p_meth', 'LIKE', "%$search%");
                     })
-                    ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
-                    
+                    // ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
+
+                    ->where(function($q) use($status) {
+                        $q->where('tb_tran_head.tran_stat','<>', 'Delivered')
+                            // kaloy 2022-0713
+                            ->where('tb_tran_head.tran_stat','LIKE', "%$status%");
+                    })
+
                     ->whereDate('tb_tran_head.date_req', '>=', $dateFrom->toDateString())
                     ->WhereDate('tb_tran_head.date_req', '<=', $dateTo->toDateString())
 
@@ -336,18 +348,24 @@ class TransactionController extends Controller
             $searchT = DB::table('tb_tran_head')
                 ->select('tb_tran_head.*', 'salesman_lists.first_name', 'salesman_lists.last_name')
                 ->join('salesman_lists', 'tb_tran_head.sm_code', '=', 'salesman_lists.user_code')
-                // kaloy 2022-0713
-                ->where('tb_tran_head.tran_stat','LIKE', "%$status%")
+                
                 ->where(function ($query) {
                     $search = request()->name;
                     $query->where('tb_tran_head.store_name', 'LIKE', "%$search%")
                         ->orWhere('tb_tran_head.tran_no', 'LIKE', "%$search%")
                         ->orWhere('tb_tran_head.order_by', 'LIKE', "%$search%")
                         ->orWhere('tb_tran_head.tot_amt', 'LIKE', "%$search%")
-                        ->orWhere('tb_tran_head.tran_stat', 'LIKE', "%$search%")
+                        // ->orWhere('tb_tran_head.tran_stat', 'LIKE', "%$search%")
                         ->orWhere('tb_tran_head.p_meth', 'LIKE', "%$search%");
                 })
-                ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
+                // ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
+
+                ->where(function($q) use($status) {
+                        $q->where('tb_tran_head.tran_stat','<>', 'Delivered')
+                            // kaloy 2022-0713
+                            ->where('tb_tran_head.tran_stat','LIKE', "%$status%");
+                    })
+
                 ->whereDate('tb_tran_head.date_req', '>=', $dateFrom->toDateString())
                 ->WhereDate('tb_tran_head.date_req', '<=', $dateTo->toDateString())
 

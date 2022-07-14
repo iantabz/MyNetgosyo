@@ -125,11 +125,11 @@
                     </div>
                     <!-- /ongoingtrans_table_filter -->
 
-                    <div class="table-responsive" style="padding:5px;">
+                    <div class="table-responsive" style="padding:4px;border:1px dotted #eeeeee;">
                       <!-- kaloy 2021-10-11 -->
                       <!-- refresh_ongoing -->
                       <div
-                        style="padding-top:2px; padding-bottom:2px;background-color:#eeeeee;"
+                        style="padding-top:2px; padding-bottom:2px;background-color:#f7f7f7;"
                         class="text-right"
                       >
                         <a
@@ -141,8 +141,9 @@
                           class="text-info"
                           title="Click to refresh list"
                           style="margin-right:7px;"
-                          ><span class="fa fa-refresh"></span
-                        ></a>
+                        >
+                            <span class="fa fa-refresh"></span>
+                        </a>
                       </div>
 
                       <table
@@ -2976,7 +2977,7 @@ export default {
             vm.dateFrom
           )}&dateTo=${btoa(vm.dateTo)}&name=${searchT}&dateActive=${
             vm.dateActive
-          }&page=1`
+          }&status=${vm.ongoing_statusFilter}&page=1`
         )
         .then(response => {
           vm.transaction = response.data
