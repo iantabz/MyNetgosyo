@@ -278,8 +278,6 @@ class TransactionController extends Controller
                             ->orWhere('tb_tran_head.p_meth', 'LIKE', "%$search%");
                     })
                     // ->whereIn('tb_tran_head.tran_stat', ['Pending', 'On-Process', 'Approved'])
-                    
-                    
 
                     ->where(function($q) use($status) {
                         $q->where('tb_tran_head.tran_stat','<>', 'Delivered')

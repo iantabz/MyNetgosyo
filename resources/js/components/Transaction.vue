@@ -202,11 +202,7 @@
                             </td>
                             <td>{{ MgaTransaction.store_name }}</td>
                             <!-- kaloy 2021-09-28 -->
-                            <td
-                              :class="
-                                MgaTransaction.order_by === 'Backend' ? '' : ''
-                              "
-                            >
+                            <td>
                               <!-- <td><span class="badge badge-sm" :class="MgaTransaction.order_by==='Backend' ? 'badge-warning' : 'badge-primary'"> -->
                               {{ MgaTransaction.order_by }}
                             </td>

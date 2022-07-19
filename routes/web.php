@@ -130,6 +130,11 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('cut_off_time')->group(function () {
         Route::post('set_time_cutoff', 'SalesExportFilesController@setCutoffTime');
         Route::get('get_time_setup', 'SalesExportFilesController@getTimeSetup');
+
+        // kaloy 2022-07-18
+        Route::get('get-cut-offs', 'CutoffController@getCutoffs');
+        Route::get('get-cut-off', 'CutoffController@getCutoff');
+        Route::post('update-cut-off', 'CutoffController@updateCutoff');
     });
 
     Route::prefix('transaction')->group(function () {

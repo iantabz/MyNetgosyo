@@ -35,6 +35,34 @@
             </div>
           </div>
         </div>
+
+        <!-- kaloy 2022-07-18 -->
+        <hr>
+        <div class="row">
+            <div 
+                v-for="cutoff in cutoffs"
+                :key="cutoff.cut_off_id"
+                class="col-md-6"
+            >
+                <div class="form-group">
+                    <label>
+                        <h4>{{ cutoff.cut_off_code }}</h4>
+                    </label>
+                    <div style="display:flex;">
+                        <input
+                            type="time"
+                            class="form-control"
+                            v-model="cutoff.cut_off_time"
+                        />
+                        <button
+                            class="btn btn-sm btn-success"
+                            style="padding: 1px 50px;"
+                            @click="updateCutoff(cutoff.cut_off_code, cutoff.cut_off_time)"
+                        >Set</button>
+                    </div>
+                </div>
+            </div>
+        </div>
       </div>
     </div>
   </div>
@@ -44,14 +72,16 @@
 import { Datetime } from 'vue-datetime'
 import 'vue-datetime/dist/vue-datetime.css'
 import format from 'date-fns/format'
+import Swal from "sweetalert2"
 
 export default {
   data() {
     return {
-      form: {
-        time_cut_off: ''
-      },
-      setup_time_display: ''
+        form: {
+            time_cut_off: '',
+        },
+        setup_time_display: '',
+        cutoffs: [],
     }
   },
   components: {
@@ -71,18 +101,43 @@ export default {
       alert(data.message)
       window.location.reload()
     },
+
     async retrieveTimeSetup() {
       const { data } = await axios.get(`cut_off_time/get_time_setup`)
       this.setup_time_display = data.cut_off_time
 
       //   console.log()
-    }
+    },
+
+
+    async getCutoffs() {
+      const { data } = await axios.get(`cut_off_time/get-cut-offs`)
+      this.cutoffs = data;
+    },
+
+    async updateCutoff(code, time) {
+        const { data } = await axios.post(
+            `cut_off_time/update-cut-off`,
+            {
+                cut_off_code: code,
+                cut_off_time: time
+            }
+        );
+        Swal.fire('Done!','','success');
+    },
   },
+
+  created() {
+    this.getCutoffs();
+  },
+
   mounted() {
     console.log('Component mounted.')
     this.retrieveTimeSetup()
     this.$root.currentPage = this.$route.meta.name
     $('#container').css('position', 'relative')
+
+    
   }
 }
 </script>
