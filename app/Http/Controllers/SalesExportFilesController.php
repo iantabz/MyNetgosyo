@@ -491,7 +491,12 @@ class SalesExportFilesController extends Controller
             $date_process = Carbon::parse($date1);
     
             // cut_off time
-            $get_cut_off = DB::table('order_cut_off_time')->select('cut_off_time')->first();
+            // $get_cut_off = DB::table('order_cut_off_time')->select('cut_off_time')->first();
+            // kaloy 2022-07-19
+            $get_cut_off = DB::table('tbl_cut_off')
+            ->select('cut_off_time')
+            ->leftJoin('salesman_lists','salesman_lists.division','tbl_cut_off.division')
+            ->first();
             $cut_off = $get_cut_off->cut_off_time;
             $cut_off = new Carbon("$date $cut_off");
             // $cut_off = "$date $cut_off";
