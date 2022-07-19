@@ -288,10 +288,16 @@ class TransactionController extends Controller
                     // kaloy 2021-09-23 ==============================================
                     ->where(function($query){
                         $dateToday = date('Y-m-d', strtotime('today'));
-                        $cutOffTime = DB::table('order_cut_off_time')
+                        // $cutOffTime = DB::table('order_cut_off_time')
+                        //     ->select('cut_off_time')
+                        //     ->where('status', 1)
+                        //     ->first();
+                        // kaloy 2022-07-19
+                        $cutOffTime = DB::table('tbl_cut_off')
                             ->select('cut_off_time')
-                            ->where('status', 1)
+                            ->leftJoin('salesman_lists','salesman_lists.division','tbl_cut_off.division')
                             ->first();
+                        // dd($cutOffTime);
                         $query->whereRaw("DATE(date_req) = DATE('$dateToday')")
                         ->whereRaw("TIME(date_req) < TIME('$cutOffTime->cut_off_time')")
                         ->orWhereRaw("DATE(date_req) < DATE('$dateToday')")
@@ -329,9 +335,14 @@ class TransactionController extends Controller
                     // kaloy 2021-09-23 ==============================================
                     ->where(function($query){
                         $dateToday = date('Y-m-d', strtotime('today'));
-                        $cutOffTime = DB::table('order_cut_off_time')
+                        // $cutOffTime = DB::table('order_cut_off_time')
+                        //     ->select('cut_off_time')
+                        //     ->where('status', 1)
+                        //     ->first();
+                        // kaloy 2022-07-19
+                        $cutOffTime = DB::table('tbl_cut_off')
                             ->select('cut_off_time')
-                            ->where('status', 1)
+                            ->leftJoin('salesman_lists','salesman_lists.division','tbl_cut_off.division')
                             ->first();
                         $query->whereRaw("DATE(date_req) = DATE('$dateToday')")
                         ->whereRaw("TIME(date_req) < TIME('$cutOffTime->cut_off_time')")
@@ -370,10 +381,15 @@ class TransactionController extends Controller
                 // kaloy 2021-09-23 ==============================================
                 ->where(function($query){
                     $dateToday = date('Y-m-d', strtotime('today'));
-                    $cutOffTime = DB::table('order_cut_off_time')
-                        ->select('cut_off_time')
-                        ->where('status', 1)
-                        ->first();
+                    // $cutOffTime = DB::table('order_cut_off_time')
+                    //     ->select('cut_off_time')
+                    //     ->where('status', 1)
+                    //     ->first();
+                    // kaloy 2022-07-19
+                    $cutOffTime = DB::table('tbl_cut_off')
+                            ->select('cut_off_time')
+                            ->leftJoin('salesman_lists','salesman_lists.division','tbl_cut_off.division')
+                            ->first();
                     $query->whereRaw("DATE(date_req) = DATE('$dateToday')")
                     ->whereRaw("TIME(date_req) < TIME('$cutOffTime->cut_off_time')")
                     ->orWhereRaw("DATE(date_req) < DATE('$dateToday')")
@@ -790,9 +806,14 @@ class TransactionController extends Controller
 
         // kaloy 09-22-21
         $dateToday = date('Y-m-d', strtotime('today'));
-        $cutOffTime = DB::table('order_cut_off_time')
+        // $cutOffTime = DB::table('order_cut_off_time')
+        //     ->select('cut_off_time')
+        //     ->where('status', 1)
+        //     ->first();
+        // kaloy 2022-07-19
+        $cutOffTime = DB::table('tbl_cut_off')
             ->select('cut_off_time')
-            ->where('status', 1)
+            ->leftJoin('salesman_lists','salesman_lists.division','tbl_cut_off.division')
             ->first();
 
         $searchT = DB::table('tb_tran_head')
@@ -969,9 +990,14 @@ class TransactionController extends Controller
                         // kaloy 2022-04-08 ==============================================
                         ->where(function($query){
                             $dateToday = date('Y-m-d', strtotime('today'));
-                            $cutOffTime = DB::table('order_cut_off_time')
+                            // $cutOffTime = DB::table('order_cut_off_time')
+                            //     ->select('cut_off_time')
+                            //     ->where('status', 1)
+                            //     ->first();
+                            // kaloy 2022-07-19
+                            $cutOffTime = DB::table('tbl_cut_off')
                                 ->select('cut_off_time')
-                                ->where('status', 1)
+                                ->leftJoin('salesman_lists','salesman_lists.division','tbl_cut_off.division')
                                 ->first();
                             $query->whereRaw("DATE(date_req) = DATE('$dateToday')")
                             ->whereRaw("TIME(date_req) < TIME('$cutOffTime->cut_off_time')")
@@ -1020,9 +1046,13 @@ class TransactionController extends Controller
                         // kaloy 2022-04-08 ==============================================
                         ->where(function($query){
                             $dateToday = date('Y-m-d', strtotime('today'));
-                            $cutOffTime = DB::table('order_cut_off_time')
+                            // $cutOffTime = DB::table('order_cut_off_time')
+                            //     ->select('cut_off_time')
+                            //     ->where('status', 1)
+                            //     ->first();
+                            $cutOffTime = DB::table('tbl_cut_off')
                                 ->select('cut_off_time')
-                                ->where('status', 1)
+                                ->leftJoin('salesman_lists','salesman_lists.division','tbl_cut_off.division')
                                 ->first();
                             $query->whereRaw("DATE(date_req) = DATE('$dateToday')")
                             ->whereRaw("TIME(date_req) < TIME('$cutOffTime->cut_off_time')")
@@ -1072,10 +1102,14 @@ class TransactionController extends Controller
                     // kaloy 2022-04-08 ==============================================
                     ->where(function($query){
                         $dateToday = date('Y-m-d', strtotime('today'));
-                        $cutOffTime = DB::table('order_cut_off_time')
-                            ->select('cut_off_time')
-                            ->where('status', 1)
-                            ->first();
+                        // $cutOffTime = DB::table('order_cut_off_time')
+                        //     ->select('cut_off_time')
+                        //     ->where('status', 1)
+                        //     ->first();
+                        $cutOffTime = DB::table('tbl_cut_off')
+                                ->select('cut_off_time')
+                                ->leftJoin('salesman_lists','salesman_lists.division','tbl_cut_off.division')
+                                ->first();
                         $query->whereRaw("DATE(date_req) = DATE('$dateToday')")
                         ->whereRaw("TIME(date_req) < TIME('$cutOffTime->cut_off_time')")
                         ->orWhereRaw("DATE(date_req) < DATE('$dateToday')")
@@ -1115,10 +1149,14 @@ class TransactionController extends Controller
                 // kaloy 2022-04-08 ==============================================
                 ->where(function($query){
                     $dateToday = date('Y-m-d', strtotime('today'));
-                    $cutOffTime = DB::table('order_cut_off_time')
-                        ->select('cut_off_time')
-                        ->where('status', 1)
-                        ->first();
+                    // $cutOffTime = DB::table('order_cut_off_time')
+                    //     ->select('cut_off_time')
+                    //     ->where('status', 1)
+                    //     ->first();
+                    $cutOffTime = DB::table('tbl_cut_off')
+                                ->select('cut_off_time')
+                                ->leftJoin('salesman_lists','salesman_lists.division','tbl_cut_off.division')
+                                ->first();
                     $query->whereRaw("DATE(date_req) = DATE('$dateToday')")
                     ->whereRaw("TIME(date_req) < TIME('$cutOffTime->cut_off_time')")
                     ->orWhereRaw("DATE(date_req) < DATE('$dateToday')")
@@ -1535,10 +1573,14 @@ class TransactionController extends Controller
         ->where('tb_tran_head.tran_stat','<>', 'Delivered')
         ->where(function($query){
             $dateToday = date('Y-m-d', strtotime('today'));
-            $cutOffTime = DB::table('order_cut_off_time')
-                ->select('cut_off_time')
-                ->where('status', 1)
-                ->first();
+            // $cutOffTime = DB::table('order_cut_off_time')
+            //     ->select('cut_off_time')
+            //     ->where('status', 1)
+            //     ->first();
+            $cutOffTime = DB::table('tbl_cut_off')
+                                ->select('cut_off_time')
+                                ->leftJoin('salesman_lists','salesman_lists.division','tbl_cut_off.division')
+                                ->first();
             $query->whereRaw("DATE(date_req) = DATE('$dateToday')")
             ->whereRaw("TIME(date_req) < TIME('$cutOffTime->cut_off_time')")
             ->orWhereRaw("DATE(date_req) < DATE('$dateToday')")
@@ -1649,10 +1691,14 @@ class TransactionController extends Controller
 
         // kaloy 09-22-21
         $dateToday = date('Y-m-d', strtotime('today'));
-        $cutOffTime = DB::table('order_cut_off_time')
-            ->select('cut_off_time')
-            ->where('status', 1)
-            ->first();
+        // $cutOffTime = DB::table('order_cut_off_time')
+        //     ->select('cut_off_time')
+        //     ->where('status', 1)
+        //     ->first();
+        $cutOffTime = DB::table('tbl_cut_off')
+                                ->select('cut_off_time')
+                                ->leftJoin('salesman_lists','salesman_lists.division','tbl_cut_off.division')
+                                ->first();
             
         $searchT = DB::table('tb_tran_head')
             ->select('tb_tran_head.*', 'salesman_lists.first_name', 'salesman_lists.last_name')
@@ -1897,10 +1943,15 @@ class TransactionController extends Controller
 
         $res->where(function($query){
             $dateToday = date('Y-m-d', strtotime('today'));
-            $cutOffTime = DB::table('order_cut_off_time')
-                ->select('cut_off_time')
-                ->where('status', 1)
-                ->first();
+            // $cutOffTime = DB::table('order_cut_off_time')
+            //     ->select('cut_off_time')
+            //     ->where('status', 1)
+            //     ->first();
+            // kaloy 2022-07-19
+            $cutOffTime = DB::table('tbl_cut_off')
+            ->select('cut_off_time')
+            ->leftJoin('salesman_lists','salesman_lists.division','tbl_cut_off.division')
+            ->first();
             $query->whereRaw("DATE(date_req) = DATE('$dateToday')")
             ->whereRaw("TIME(date_req) < TIME('$cutOffTime->cut_off_time')")
             ->orWhereRaw("DATE(date_req) < DATE('$dateToday')")
@@ -1922,10 +1973,14 @@ class TransactionController extends Controller
         ->where('tran_stat','Pending')
         ->where(function($query){
             $dateToday = date('Y-m-d', strtotime('today'));
-            $cutOffTime = DB::table('order_cut_off_time')
-                ->select('cut_off_time')
-                ->where('status', 1)
-                ->first();
+            // $cutOffTime = DB::table('order_cut_off_time')
+            //     ->select('cut_off_time')
+            //     ->where('status', 1)
+            //     ->first();
+            $cutOffTime = DB::table('tbl_cut_off')
+                                ->select('cut_off_time')
+                                ->leftJoin('salesman_lists','salesman_lists.division','tbl_cut_off.division')
+                                ->first();
             $query->whereRaw("DATE(date_req) = DATE('$dateToday')")
             ->whereRaw("TIME(date_req) >= TIME('$cutOffTime->cut_off_time')")
             ->whereRaw("DATE(date_req) = DATE('$dateToday')")

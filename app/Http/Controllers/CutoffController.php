@@ -18,18 +18,18 @@ class CutoffController extends Controller
     }
 
     public function getCutoff() {
-        $cut_off_code = request()->cut_off_code ?? '';
+        $division = request()->division ?? '';
         $res = DB::table('tbl_cut_off')
-            ->where('cut_off_code', $cut_off_code)
+            ->where('division', $division)
             ->first();
         return response()->json($res);
     }
 
     public function updateCutoff() {
-        $cut_off_code = request()->cut_off_code ?? '';
+        $division = request()->division ?? '';
         $cut_off_time = request()->cut_off_time ?? '';
         $res = DB::table('tbl_cut_off')
-            ->where('cut_off_code', $cut_off_code)
+            ->where('division', $division)
             ->update([
                 'cut_off_time' => new Carbon($cut_off_time)
             ]);

@@ -204,7 +204,7 @@
                             <!-- kaloy 2021-09-28 -->
                             <td>
                               <!-- <td><span class="badge badge-sm" :class="MgaTransaction.order_by==='Backend' ? 'badge-warning' : 'badge-primary'"> -->
-                              {{ MgaTransaction.order_by }}
+                              {{ MgaTransaction.order_by=='Salesman' ? MgaTransaction.order_by + ' (' + MgaTransaction.sm_code + ')' : MgaTransaction.order_by }}
                             </td>
                             <td
                               :title="
@@ -1174,7 +1174,7 @@
                               {{ MgaTransaction7.tran_no }}
                             </td>
                             <td>{{ MgaTransaction7.store_name }}</td>
-                            <td>{{ MgaTransaction7.order_by }}</td>
+                            <td>{{ MgaTransaction7.order_by=='Salesman' ? MgaTransaction7.order_by + ' (' + MgaTransaction7.sm_code + ')' : MgaTransaction7.order_by }}</td>
                             <td>{{ MgaTransaction7.date_req }}</td>
                             <td
                               v-if="MgaTransaction7.tran_stat === 'On-Process'"

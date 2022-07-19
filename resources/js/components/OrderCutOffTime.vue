@@ -9,7 +9,7 @@
             <i class="fa fa-vcard-o"></i> Setup Order Cut-off Time
           </h3>
         </div>
-        <div class="row">
+        <div class="row" style="display:none;">
           <div class="col-md-12">
             <div class="col-md-6">
               <h1>Cut-off Time : {{ setup_time_display | formatTime }}</h1>
@@ -44,12 +44,13 @@
                 :key="cutoff.cut_off_id"
                 class="col-md-6"
             >
-                <div class="form-group">
+                <div class="form-group" style="border:1px solid #ebebeb;padding: 6px;">
                     <label>
-                        <h4>{{ cutoff.cut_off_code }}</h4>
+                        <h4>{{ cutoff.division }}</h4>
                     </label>
                     <div style="display:flex;">
                         <input
+                            style="font-size:large;font-weight: bold;"
                             type="time"
                             class="form-control"
                             v-model="cutoff.cut_off_time"
@@ -57,8 +58,8 @@
                         <button
                             class="btn btn-sm btn-success"
                             style="padding: 1px 50px;"
-                            @click="updateCutoff(cutoff.cut_off_code, cutoff.cut_off_time)"
-                        >Set</button>
+                            @click="updateCutoff(cutoff.division, cutoff.cut_off_time)"
+                        >SET</button>
                     </div>
                 </div>
             </div>
@@ -115,11 +116,11 @@ export default {
       this.cutoffs = data;
     },
 
-    async updateCutoff(code, time) {
+    async updateCutoff(division, time) {
         const { data } = await axios.post(
             `cut_off_time/update-cut-off`,
             {
-                cut_off_code: code,
+                division: division,
                 cut_off_time: time
             }
         );
